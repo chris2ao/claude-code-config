@@ -4,11 +4,7 @@
 
 When implementing new functionality:
 1. Search for battle-tested skeleton projects
-2. Use parallel agents to evaluate options:
-   - Security assessment
-   - Extensibility analysis
-   - Relevance scoring
-   - Implementation planning
+2. Evaluate options for security, extensibility, and relevance
 3. Clone best match as foundation
 4. Iterate within proven structure
 
@@ -17,10 +13,9 @@ When implementing new functionality:
 ### Repository Pattern
 
 Encapsulate data access behind a consistent interface:
-- Define standard operations: findAll, findById, create, update, delete
-- Concrete implementations handle storage details (database, API, file, etc.)
-- Business logic depends on the abstract interface, not the storage mechanism
-- Enables easy swapping of data sources and simplifies testing with mocks
+- Standard operations: findAll, findById, create, update, delete
+- Business logic depends on the abstract interface, not storage
+- Enables easy swapping of data sources and simplifies testing
 
 ### API Response Format
 
