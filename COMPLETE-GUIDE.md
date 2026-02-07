@@ -179,7 +179,7 @@ MCP stands for **Model Context Protocol**. MCP servers are external programs tha
 
 > **Important:** There's a common confusion — `~/.claude/mcp-servers.json` is for **Claude Desktop** (the desktop app), NOT Claude Code (the CLI). Claude Code reads MCP config from `~/.claude.json`. If you put your servers in the wrong file, they won't load.
 
-Here's the configuration:
+We recommend 2 MCP servers that provide capabilities not already built into Claude Code. Here's a minimal configuration:
 
 ```json
 {
@@ -194,24 +194,6 @@ Here's the configuration:
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"],
-      "env": {}
-    },
-    "sequential-thinking": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "env": {}
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
-      }
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "D:/Users/YourName"],
       "env": {}
     }
   }
@@ -317,118 +299,22 @@ Claude: "According to the current React documentation..." (gives you accurate, u
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
 ```
 
-#### Server 3: Sequential Thinking
+#### Other Servers (Optional)
 
-```json
-"sequential-thinking": {
-  "type": "stdio",
-  "command": "npx",
-  "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-  "env": {}
-}
-```
+We initially used 3 additional servers but later dropped them because they duplicate built-in Claude Code features:
 
-**What it does:** Gives Claude a structured way to think through complex problems step by step. Instead of jumping to a conclusion, Claude can break a problem into numbered steps, reconsider earlier steps, and branch its reasoning.
+| Server | Why We Dropped It |
+|--------|------------------|
+| **sequential-thinking** | Claude Code's built-in extended thinking (up to 31,999 tokens) provides the same step-by-step reasoning. An external MCP server for this is redundant. |
+| **filesystem** | Claude Code's built-in Read, Write, Edit, Glob, and Grep tools already handle file operations. The MCP server adds move/copy but rarely justifies the overhead. |
+| **github** | The `gh` CLI via Bash covers most GitHub operations. The MCP server is convenient but not essential. Consider it if you do heavy GitHub API work (code search, bulk operations). |
 
-**When it's useful:**
-- Debugging problems with multiple possible causes
-- Making architecture decisions with many trade-offs
-- Any problem where the first instinct might be wrong
-
-**Example in conversation:**
-```
-You: "Why is our API returning 500 errors intermittently?"
-Claude: (uses sequential thinking to systematically consider: database timeouts,
-        memory leaks, race conditions, network issues — testing each hypothesis)
-```
-
-**Tools it adds:**
-| Tool | What It Does |
-|------|-------------|
-| `sequentialthinking` | Step-by-step reasoning with backtracking support |
-
-**How to add it:**
-```bash
-claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
-```
-
-#### Server 4: GitHub
-
-```json
-"github": {
-  "command": "npx",
-  "args": ["-y", "@modelcontextprotocol/server-github"],
-  "env": {
-    "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
-  }
-}
-```
-
-**What it does:** Gives Claude full access to the GitHub API — creating repositories, managing pull requests and issues, searching code across all of GitHub, and more.
-
-**The `env` field:** This server needs authentication. The `GITHUB_PERSONAL_ACCESS_TOKEN` is a special password you generate on GitHub that lets the server act on your behalf.
-
-**How to get a token:**
-1. Go to github.com > Settings > Developer settings > Personal access tokens > Fine-grained tokens
-2. Click "Generate new token"
-3. Give it a name like "Claude Code MCP"
-4. Select the permissions you want (at minimum: repository read/write, issues read/write, pull requests read/write)
-5. Copy the token (you'll only see it once!)
-
-**Tools it adds:**
-| Tool | What It Does |
-|------|-------------|
-| `create_repository` | Create a new GitHub repo |
-| `create_pull_request` | Open a pull request |
-| `create_issue` | File an issue |
-| `search_code` | Search code across all of GitHub |
-| `search_repositories` | Find repos by keyword |
-| `get_file_contents` | Read files from any public repo |
-| `push_files` | Push multiple files at once |
-| `list_issues` | List issues in a repo |
-| `list_commits` | List commits |
-| `fork_repository` | Fork a repo |
-| ...and more | Full GitHub API coverage |
-
-**How to add it:**
+If you want to add the GitHub server anyway:
 ```bash
 claude mcp add-json --scope user github '{"command":"npx","args":["-y","@modelcontextprotocol/server-github"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"your-token-here"}}'
 ```
 
 > **Note:** We use `add-json` instead of `add` because the `--env` flag can be finicky with long token values. The JSON format is more reliable.
-
-#### Server 5: Filesystem
-
-```json
-"filesystem": {
-  "command": "npx",
-  "args": ["-y", "@modelcontextprotocol/server-filesystem", "D:/Users/YourName"],
-  "env": {}
-}
-```
-
-**What it does:** Gives Claude extended file operations — moving files, copying files, listing directories, creating folders — beyond what Claude Code's built-in tools can do. Crucially, it can work **outside** the current project directory.
-
-**The last argument (`D:/Users/YourName`):** This is the **sandbox boundary**. The filesystem server can ONLY access files within this directory. This is a security feature — you don't want Claude accidentally modifying system files.
-
-**Tools it adds:**
-| Tool | What It Does |
-|------|-------------|
-| `read_file` | Read a file |
-| `write_file` | Write to a file |
-| `edit_file` | Make targeted edits |
-| `create_directory` | Create folders |
-| `list_directory` | List folder contents |
-| `directory_tree` | Show full folder tree |
-| `move_file` | Move or rename files |
-| `search_files` | Search for files by pattern |
-| `get_file_info` | Get file metadata (size, dates) |
-| `list_allowed_directories` | Show the sandbox boundaries |
-
-**How to add it (adjust the path for your system):**
-```bash
-claude mcp add --scope user filesystem -- npx -y @modelcontextprotocol/server-filesystem /Users/YourName
-```
 
 #### Verifying your MCP servers
 
@@ -463,14 +349,7 @@ This rule enforces consistent, high-quality code across all your projects.
 
 ## Immutability (CRITICAL)
 
-ALWAYS create new objects, NEVER mutate existing ones:
-
-// Pseudocode
-WRONG:  modify(original, field, value)  changes original in-place
-CORRECT: update(original, field, value)  returns new copy with change
-
-Rationale: Immutable data prevents hidden side effects, makes debugging
-easier, and enables safe concurrency.
+ALWAYS create new objects, NEVER mutate existing ones.
 ```
 
 **What this means in plain English:** When you need to change data, don't modify the original — make a copy with the changes. This prevents bugs where one part of your program changes data that another part was still using.
@@ -483,7 +362,7 @@ easier, and enables safe concurrency.
 MANY SMALL FILES > FEW LARGE FILES:
 - High cohesion, low coupling
 - 200-400 lines typical, 800 max
-- Extract utilities from large modules
+- Functions under 50 lines, nesting under 4 levels
 - Organize by feature/domain, not by type
 ```
 
@@ -513,20 +392,7 @@ ALWAYS validate at system boundaries:
 
 **What this means:** Any data coming from outside your program (user typing in a form, data from another website's API, contents of a file) could be wrong, incomplete, or malicious. Always check it before using it.
 
-```markdown
-## Code Quality Checklist
-
-Before marking work complete:
-- [ ] Code is readable and well-named
-- [ ] Functions are small (<50 lines)
-- [ ] Files are focused (<800 lines)
-- [ ] No deep nesting (>4 levels)
-- [ ] Proper error handling
-- [ ] No hardcoded values (use constants or config)
-- [ ] No mutation (immutable patterns used)
-```
-
-**What this means:** Claude will check its own work against this list before telling you it's done. This prevents sloppy output.
+> **Note:** We intentionally removed the "Code Quality Checklist" that was in the original everything-claude-code version. It restated the rules above and added context window cost without changing Claude's behavior.
 
 ---
 
@@ -562,13 +428,15 @@ Types: feat, fix, refactor, docs, test, chore, perf, ci
 ```markdown
 ## Feature Implementation Workflow
 
-1. Plan First — Use planner agent
-2. TDD Approach — Write tests first
-3. Code Review — Use code-reviewer agent
-4. Commit & Push
+1. Plan First — Analyze requirements, identify dependencies, break into phases
+2. TDD — Write tests first (RED), implement (GREEN), refactor (IMPROVE), verify 80%+ coverage
+3. Review — Review code immediately after writing; address CRITICAL and HIGH issues
+4. Commit — Detailed messages following conventional commits format
 ```
 
 **What this means:** For any significant feature, Claude will follow a structured workflow: plan what to build, write tests to define what "working" means, implement the code, review it for quality, then commit. This prevents the common mistake of diving in without thinking.
+
+> **Note:** The original everything-claude-code version referenced specific agents (planner, tdd-guide, code-reviewer) in each step. We removed those references so the workflow stands alone — it works whether or not you have the plugin installed.
 
 ---
 
@@ -599,12 +467,10 @@ Test Types (ALL required):
 ## Test-Driven Development
 
 MANDATORY workflow:
-1. Write test first (RED) — the test fails because the feature doesn't exist yet
-2. Run test - it should FAIL
-3. Write minimal implementation (GREEN) — just enough code to make the test pass
-4. Run test - it should PASS
-5. Refactor (IMPROVE) — clean up the code without changing behavior
-6. Verify coverage (80%+)
+1. Write test first (RED) - it should FAIL
+2. Write minimal implementation (GREEN) - it should PASS
+3. Refactor (IMPROVE)
+4. Verify coverage (80%+)
 ```
 
 **What is TDD?** Test-Driven Development means writing the test *before* the code. It sounds backwards, but it's one of the most effective practices in software:
@@ -662,10 +528,9 @@ Before ANY commit:
 
 If security issue found:
 1. STOP immediately
-2. Use security-reviewer agent
-3. Fix CRITICAL issues before continuing
-4. Rotate any exposed secrets
-5. Review entire codebase for similar issues
+2. Fix CRITICAL issues before continuing
+3. Rotate any exposed secrets
+4. Review entire codebase for similar issues
 ```
 
 **What "rotate secrets" means:** If a password or token was accidentally exposed (committed to git, shown in a log), you can't just delete it — someone may have already seen it. You need to generate a **new** password/token and deactivate the old one.
@@ -680,19 +545,13 @@ If security issue found:
 ## Model Selection Strategy
 
 Haiku 4.5 (90% of Sonnet capability, 3x cost savings):
-- Lightweight agents with frequent invocation
-- Pair programming and code generation
-- Worker agents in multi-agent systems
+- Lightweight agents, background tasks, pair programming
 
 Sonnet 4.5 (Best coding model):
-- Main development work
-- Orchestrating multi-agent workflows
-- Complex coding tasks
+- Main development work, complex coding tasks
 
-Opus 4.5 (Deepest reasoning):
-- Complex architectural decisions
-- Maximum reasoning requirements
-- Research and analysis tasks
+Opus 4.6 (Deepest reasoning):
+- Architectural decisions, security analysis, research
 ```
 
 **What are models?** Claude comes in different sizes, like T-shirt sizes:
@@ -701,17 +560,16 @@ Opus 4.5 (Deepest reasoning):
 |-------|-----------|------|-------------|
 | **Haiku** | Fast, cheap, good enough for routine tasks | $ | Background tasks, simple code generation |
 | **Sonnet** | Great balance of speed, quality, and cost | $$ | Day-to-day coding work |
-| **Opus** | Deepest reasoning, best for complex problems | $$$ | Architecture decisions, security analysis, hard bugs |
+| **Opus 4.6** | Deepest reasoning, best for complex problems | $$$ | Architecture decisions, security analysis, hard bugs |
 
 Claude Code uses a mix of these models. The rule tells Claude to use the cheapest model that's good enough for each task — like using a sedan for grocery runs and saving the SUV for road trips.
 
 ```markdown
 ## Context Window Management
 
-Avoid last 20% of context window for:
-- Large-scale refactoring
-- Feature implementation spanning multiple files
-- Debugging complex interactions
+Avoid last 20% of context window for large-scale refactoring, multi-file
+features, and complex debugging. Single-file edits, utilities, docs, and
+simple bug fixes are fine at any context level.
 ```
 
 **What is the context window?** Claude can only "remember" a certain amount of text in a conversation. The context window is like Claude's short-term memory. When it fills up, older parts of the conversation are compressed or forgotten.
@@ -725,26 +583,7 @@ Avoid last 20% of context window for:
 
 This tells Claude to summarize the conversation so far, freeing up space for new work.
 
-```markdown
-## Extended Thinking + Plan Mode
-
-Extended thinking is enabled by default, reserving up to 31,999 tokens
-for internal reasoning.
-
-Control extended thinking via:
-- Toggle: Alt+T (Windows/Linux) / Option+T (macOS)
-- Config: Set alwaysThinkingEnabled in ~/.claude/settings.json
-- Verbose mode: Ctrl+O to see thinking output
-```
-
-**What is extended thinking?** Before answering, Claude can "think" internally — considering approaches, weighing trade-offs, catching mistakes. Extended thinking gives Claude more space to think, which improves quality on complex tasks.
-
-**Keyboard shortcuts:**
-| Shortcut | What It Does |
-|----------|-------------|
-| `Alt+T` | Toggle extended thinking on/off |
-| `Ctrl+O` | Show/hide Claude's thinking process |
-| `Esc, Esc` | Cancel current response |
+> **Note:** The original everything-claude-code version included an "Extended Thinking + Plan Mode" section with UI keybindings (`Alt+T`, `Ctrl+O`). We removed it because it documented UI features rather than giving Claude behavioral instructions — it added context window cost without changing how Claude works.
 
 ---
 
@@ -757,7 +596,7 @@ Control extended thinking via:
 
 When implementing new functionality:
 1. Search for battle-tested skeleton projects
-2. Use parallel agents to evaluate options
+2. Evaluate options for security, extensibility, and relevance
 3. Clone best match as foundation
 4. Iterate within proven structure
 ```
@@ -824,7 +663,6 @@ This consistency makes it easy for anyone consuming your API to know what to exp
 ```markdown
 ## Auto-Accept Permissions
 
-Use with caution:
 - Enable for trusted, well-defined plans
 - Disable for exploratory work
 - Never use dangerously-skip-permissions flag
@@ -833,12 +671,18 @@ Use with caution:
 
 **What are permissions?** By default, Claude Code asks your permission before doing anything potentially risky (running commands, editing files). You can pre-approve specific actions so it doesn't ask every time. But be careful — auto-accepting everything is like giving someone your house keys.
 
+> **Note:** The original everything-claude-code version included a "TodoWrite Best Practices" section in this rule. We removed it because it wasn't related to hooks and didn't change Claude's behavior enough to justify the context window cost.
+
 ---
 
 #### Rule 8: `agents.md` — Specialized AI Assistants
 
+> **Note:** This rule requires the [everything-claude-code](https://github.com/affaan-m/everything-claude-code) plugin. Without it, the agent references won't do anything. The other 7 rules work standalone.
+
 ```markdown
 # Agent Orchestration
+
+> Requires: everything-claude-code plugin.
 
 ## Available Agents
 
@@ -891,6 +735,8 @@ ALWAYS use parallel Task execution for independent operations.
 ```
 
 **What this means:** When Claude needs to do multiple independent things (e.g., review security AND check performance AND verify types), it runs them all simultaneously instead of one at a time. This is faster.
+
+> **Note:** The original everything-claude-code version included a verbose GOOD/BAD code example for parallel execution. We trimmed it to a single directive — Claude already understands what parallel execution means.
 
 ---
 
@@ -1300,27 +1146,22 @@ The rules from this config:
 
 ### Step 4: Set Up MCP Servers
 
-Run these commands one by one:
+We recommend 2 servers that provide capabilities Claude Code doesn't have built in:
 
 ```bash
-# Memory — persistent knowledge across sessions
+# Memory — persistent knowledge across sessions (no built-in equivalent)
 claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory
 
-# Context7 — live documentation lookup
+# Context7 — live documentation lookup (beats relying on training data)
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
-
-# Sequential Thinking — structured reasoning
-claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
-
-# GitHub — full GitHub API access (replace YOUR_TOKEN)
-claude mcp add-json --scope user github '{"command":"npx","args":["-y","@modelcontextprotocol/server-github"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"YOUR_TOKEN_HERE"}}'
-
-# Filesystem — extended file operations (adjust path for your OS)
-# Windows:
-claude mcp add --scope user filesystem -- npx -y @modelcontextprotocol/server-filesystem C:/Users/YourName
-# Mac/Linux:
-claude mcp add --scope user filesystem -- npx -y @modelcontextprotocol/server-filesystem /Users/YourName
 ```
+
+Optional — add the GitHub server if you do heavy GitHub API work:
+```bash
+claude mcp add-json --scope user github '{"command":"npx","args":["-y","@modelcontextprotocol/server-github"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"YOUR_TOKEN_HERE"}}'
+```
+
+> **Why only 2?** We initially installed 5 servers but dropped filesystem (duplicates built-in Read/Write/Edit/Glob/Grep), sequential-thinking (duplicates built-in extended thinking), and github (largely covered by the `gh` CLI). See the [MCP Servers](#mcp-servers) section for details.
 
 ### Step 5: Create a Project with CLAUDE.md
 
