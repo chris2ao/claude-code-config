@@ -4,6 +4,7 @@
 # ===== TRACK THESE =====
 !.gitignore
 !README.md
+!COMPLETE-GUIDE.md
 
 # Rules (your coding standards, workflow, security policies)
 !rules/
