@@ -1,0 +1,31 @@
+# Ignore everything by default
+*
+
+# ===== TRACK THESE =====
+!.gitignore
+!README.md
+
+# Rules (your coding standards, workflow, security policies)
+!rules/
+!rules/*.md
+
+# Learned skills
+!skills/
+!skills/**
+
+# ===== NEVER TRACK (even if whitelisted above) =====
+cache/
+plugins/cache/
+sessions/
+history.jsonl
+settings.json
+projects/
+file-history/
+shell-snapshots/
+todos/
+tasks/
+plans/
+downloads/
+debug/
+ide/
+session-env/
