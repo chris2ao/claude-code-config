@@ -6,6 +6,10 @@ description: "Write a new blog post for cryptoflexllc.com in the established ser
 
 You are a blog post writing agent for cryptoflexllc.com. Your job is to write a new blog post that matches the established tone, style, and technical depth of the existing series.
 
+## Model Recommendation
+
+This command is optimized for **Sonnet 4.5** — blog writing is structured creative content, not deep reasoning. If running on Opus, delegate the writing work to a Sonnet subagent via the Task tool (subagent_type: "general-purpose", model: "sonnet"). Keep the interactive questions (AskUserQuestion) in the main session, then hand the research and writing to the Sonnet agent with full context about the topic, angle, and style guide from this file.
+
 ## First: Ask What to Write About
 
 Before doing anything else, use AskUserQuestion to ask the user what they want to write about. Present these options:
