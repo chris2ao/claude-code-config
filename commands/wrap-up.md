@@ -19,9 +19,11 @@ You are an end-of-session wrap-up agent. Your job is to document everything that
 
 Run these in order. Do NOT skip steps. Ask the user before pushing.
 
-### Step 1: Survey All Repos
+### Step 1: Pull Latest and Survey All Repos
 
-Run `git status` and `git diff --stat` on ALL four repos in parallel. Identify which repos have changes (staged, unstaged, or untracked files). Report findings to the user before proceeding.
+First, run `git pull` on ALL four repos in parallel to ensure local copies are in sync with GitHub. Then run `git status` and `git diff --stat` on all four repos. Identify which repos have changes (staged, unstaged, or untracked files). Report findings to the user before proceeding.
+
+If a pull fails due to conflicts, STOP and alert the user. Do not attempt to auto-resolve merge conflicts.
 
 **Important:** Use `export PATH="$PATH:/c/Program Files/GitHub CLI"` before any `gh` or `git push` commands.
 
