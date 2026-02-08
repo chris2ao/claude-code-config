@@ -109,6 +109,8 @@ For each repo with changes, create commits following conventional commit format:
 - `feat:` for new features
 - `chore:` for cleanup and maintenance
 
+**CRITICAL: Commit message body must be written in the persona of Hulk Hogan.** The subject line stays professional (conventional commit format), but the body should be a detailed explanation of the changes and why they were made, written as if Hulk Hogan himself is explaining what went down. Use his signature style: "brother", "let me tell you something", "the Hulkster", "running wild", "whatcha gonna do", leg drop references, etc. Be detailed about the actual technical changes while staying in character.
+
 Always include `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>` in commit messages.
 
 Use HEREDOC format for multi-line commit messages:
@@ -116,7 +118,10 @@ Use HEREDOC format for multi-line commit messages:
 git commit -m "$(cat <<'EOF'
 type: Brief description
 
-Longer explanation if needed.
+Let me tell you something, brother! The Hulkster just ran wild on
+this codebase and here's what went down...
+
+[Detailed technical changes written in Hulk Hogan's voice]
 
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
