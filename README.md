@@ -38,15 +38,32 @@ Rules in `rules/` are loaded automatically into every Claude Code session across
 
 The rules are intentionally concise — every line is a behavioral instruction, not documentation. Total context cost across all 8 files is ~170 lines.
 
-### 3 Learned Skills
+### 11 Learned Skills
 
 Skills in `skills/learned/` are reusable patterns extracted from real debugging sessions using the `/learn` command. Each one documents a problem that wastes hours if you don't know about it:
 
-| Skill | The Gotcha |
-|-------|-----------|
-| **powershell-stdin-hooks.md** | PowerShell's `$input` silently returns nothing when hooks are invoked via `-File`. You need `[Console]::In.ReadToEnd()` + dot-sourcing. No error, no warning — just empty data. |
-| **mcp-config-location.md** | `~/.claude/mcp-servers.json` is for Claude Desktop, not Claude Code. Claude Code reads `~/.claude.json`. Servers configured in the wrong file silently don't appear. |
-| **command-yaml-frontmatter.md** | Custom slash commands in `.md` files are silently ignored without `---\ndescription: ...\n---` YAML frontmatter. The file exists, the content is valid, but Claude Code acts like it doesn't exist. |
+| # | Skill | The Gotcha |
+|---|-------|-----------|
+| 1 | **powershell-stdin-hooks.md** | PowerShell's `$input` silently returns nothing when hooks are invoked via `-File`. You need `[Console]::In.ReadToEnd()` + dot-sourcing. No error, no warning — just empty data. |
+| 2 | **mcp-config-location.md** | `~/.claude/mcp-servers.json` is for Claude Desktop, not Claude Code. Claude Code reads `~/.claude.json`. Servers configured in the wrong file silently don't appear. |
+| 3 | **command-yaml-frontmatter.md** | Custom slash commands in `.md` files are silently ignored without `---\ndescription: ...\n---` YAML frontmatter. The file exists, the content is valid, but Claude Code acts like it doesn't exist. |
+| 4 | **git-bash-npm-path-mangling.md** | Git Bash rewrites Windows absolute paths, prepending `C:\Program Files\Git` to npm module paths. npm commands fail with `MODULE_NOT_FOUND` while they work fine in PowerShell. |
+| 5 | **nextjs-client-component-metadata.md** | Can't export `metadata` from a `"use client"` component in Next.js 15+. Fix: create a server component `layout.tsx` wrapper that exports the metadata and passes children through. |
+| 6 | **mdx-same-date-sort-order.md** | Blog posts with identical date strings sort non-deterministically because `fs.readdirSync()` order is platform-dependent. Fix: use ISO timestamps (`2026-02-07T14:00:00`) to differentiate. |
+| 7 | **slug-path-traversal-guard.md** | URL slug parameters used directly in `path.join()` allow `../../etc/passwd` path traversal attacks. Fix: reject slugs containing `/`, `\`, or `..` before building file paths. |
+| 8 | **git-bash-powershell-variable-stripping.md** | Git Bash strips `$` characters from inline PowerShell commands, so variables like `$env:USERPROFILE` become empty. Fix: write a temp `.ps1` file and execute with `powershell.exe -File`. |
+| 9 | **claude-code-debug-diagnostics.md** | `claude doctor` requires an interactive TTY and crashes when piped. Fix: use `claude --debug --debug-file <path> --print "say OK"` to capture full startup diagnostics to a file. |
+| 10 | **token-secret-safety.md** | Reading config files containing plaintext API keys exposes them in transcripts and session archives. Fix: never echo full token values — redact to first 10-15 chars and immediately flag for rotation. |
+| 11 | **heredoc-permission-pollution.md** | HEREDOC commit message bodies with parentheses get captured as garbage permission entries in `settings.local.json` by the auto-approve system. Fix: check and clean settings after HEREDOC commits. |
+
+### 2 Custom Commands
+
+Commands in `commands/` are user-level slash commands that work from any project. They encode complex multi-step workflows into a single invocation:
+
+| Command | What It Does |
+|---------|-------------|
+| **`/wrap-up`** | 12-step end-of-session agent: pulls all repos, reviews the session, updates CHANGELOG/README/MEMORY, extracts learned skills, cleans global state and permissions, commits (in Hulk Hogan's voice), and pushes after confirmation. |
+| **`/blog-post`** | Interactive blog writing agent for cryptoflexllc.com. Asks what to write about, gathers source material from git logs, writes a fully formatted MDX post matching the series tone. Delegates to Sonnet 4.5 for cost-efficient content generation. |
 
 ### The Complete Guide
 
@@ -117,10 +134,18 @@ Coding standards and workflow policies that apply to all projects:
 - `testing.md` — 80% coverage requirement, TDD workflow
 
 ### Skills (`skills/learned/`)
-Learned patterns extracted from Claude Code sessions:
+Learned patterns extracted from Claude Code sessions (11 total):
 - `powershell-stdin-hooks.md` — PowerShell stdin reading in Claude Code hooks (Windows)
 - `mcp-config-location.md` — MCP server config: Claude Code vs Claude Desktop
 - `command-yaml-frontmatter.md` — YAML frontmatter requirement for slash commands
+- `git-bash-npm-path-mangling.md` — Git Bash path rewriting breaks npm module resolution
+- `nextjs-client-component-metadata.md` — Client component metadata export workaround
+- `mdx-same-date-sort-order.md` — Same-date MDX posts have non-deterministic sort order
+- `slug-path-traversal-guard.md` — URL slug parameters need path traversal sanitization
+- `git-bash-powershell-variable-stripping.md` — Git Bash strips $ from PowerShell inline commands
+- `claude-code-debug-diagnostics.md` — Startup diagnostics via --debug --debug-file + --print
+- `token-secret-safety.md` — Redact secrets in output, flag for rotation
+- `heredoc-permission-pollution.md` — HEREDOC commit bodies pollute auto-approved permissions
 
 ### Guide (`COMPLETE-GUIDE.md`)
 Comprehensive educational walkthrough of the entire configuration — from "what is a CLI?" to advanced MCP server setup.

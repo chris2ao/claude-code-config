@@ -12,6 +12,8 @@ A line-by-line walkthrough of a real-world Claude Code configuration. Whether yo
    - [Settings: `~/.claude/settings.json`](#settings-file)
    - [MCP Servers: `~/.claude.json`](#mcp-servers)
    - [Rules: `~/.claude/rules/*.md`](#rules)
+   - [Learned Skills: `~/.claude/skills/learned/`](#learned-skills)
+   - [Custom Commands: `~/.claude/commands/`](#custom-commands)
    - [Backup: `~/.claude/.gitignore`](#backup-strategy)
 4. [Project-Level Configuration (One Project Only)](#project-level-configuration)
    - [Project Instructions: `CLAUDE.md`](#project-instructions-claudemd)
@@ -737,6 +739,93 @@ ALWAYS use parallel Task execution for independent operations.
 **What this means:** When Claude needs to do multiple independent things (e.g., review security AND check performance AND verify types), it runs them all simultaneously instead of one at a time. This is faster.
 
 > **Note:** The original everything-claude-code version included a verbose GOOD/BAD code example for parallel execution. We trimmed it to a single directive — Claude already understands what parallel execution means.
+
+---
+
+### Learned Skills
+
+**Location:** `~/.claude/skills/learned/` (one `.md` file per skill)
+
+Learned skills are reusable patterns extracted from real debugging sessions using the `/learn` command. Each skill documents a non-obvious problem, its solution, and when the pattern applies. Claude loads these at session start and uses them to avoid repeating past mistakes.
+
+**How skills get created:** During or after a session where you solve a tricky problem, run `/learn`. Claude analyzes the session, identifies non-trivial patterns worth preserving, and creates skill files with a consistent structure:
+
+```markdown
+# Descriptive Pattern Name
+
+**Extracted:** 2026-02-08
+**Context:** Brief description of when this applies
+
+## Problem
+What went wrong and why it's non-obvious
+
+## Solution
+The fix or workaround
+
+## When to Use
+Trigger conditions — how to recognize this situation
+```
+
+**Current skills (11 total):**
+
+| # | Skill File | What It Catches |
+|---|-----------|----------------|
+| 1 | `powershell-stdin-hooks.md` | PowerShell's `$input` silently returns nothing when hooks are invoked via `-File`. You need `[Console]::In.ReadToEnd()` + dot-sourcing. |
+| 2 | `mcp-config-location.md` | `~/.claude/mcp-servers.json` is for Claude Desktop, not Claude Code. Claude Code reads `~/.claude.json`. |
+| 3 | `command-yaml-frontmatter.md` | Custom slash commands are silently ignored without YAML frontmatter (`---\ndescription: ...\n---`). |
+| 4 | `git-bash-npm-path-mangling.md` | Git Bash rewrites Windows paths, breaking npm module resolution with `MODULE_NOT_FOUND`. |
+| 5 | `nextjs-client-component-metadata.md` | Can't export `metadata` from a `"use client"` component in Next.js 15+. Fix: wrapper `layout.tsx`. |
+| 6 | `mdx-same-date-sort-order.md` | Blog posts with identical date strings sort non-deterministically. Fix: use ISO timestamps. |
+| 7 | `slug-path-traversal-guard.md` | URL slug parameters in `path.join()` allow path traversal attacks. Fix: reject slugs with `/`, `\`, or `..`. |
+| 8 | `git-bash-powershell-variable-stripping.md` | Git Bash strips `$` from inline PowerShell commands. Fix: write a temp `.ps1` file. |
+| 9 | `claude-code-debug-diagnostics.md` | `claude doctor` requires an interactive TTY. Fix: `claude --debug --debug-file <path> --print "say OK"`. |
+| 10 | `token-secret-safety.md` | Reading config files with plaintext API keys exposes them in transcripts. Fix: redact to first 10-15 chars. |
+| 11 | `heredoc-permission-pollution.md` | HEREDOC commit bodies with parentheses get captured as garbage permission entries. Fix: clean settings after. |
+
+**Why this matters:** Every skill represents hours of debugging compressed into a few lines. When Claude encounters a similar situation in a future session, it recognizes the pattern and applies the fix immediately instead of going through the same trial-and-error process.
+
+---
+
+### Custom Commands
+
+**Location:** `~/.claude/commands/` (one `.md` file per command)
+
+Custom commands are user-level slash commands that encode complex multi-step workflows into a single invocation. They work from any project.
+
+Each command file is a markdown document with YAML frontmatter and detailed instructions. When you type the command (e.g., `/wrap-up`), Claude reads the file and follows the instructions with full access to the conversation history and all its tools.
+
+**Current commands (2 total):**
+
+| Command | File | What It Does |
+|---------|------|-------------|
+| **`/wrap-up`** | `wrap-up.md` | 12-step end-of-session agent. Pulls all repos, reviews the session, updates CHANGELOG/README/MEMORY, extracts learned skills, cleans global state and permissions, commits with Hulk Hogan persona, and pushes after confirmation. |
+| **`/blog-post`** | `blog-post.md` | Interactive blog writing agent for cryptoflexllc.com. Asks what to write about, gathers source material from git logs and session history, writes a fully formatted MDX post. Delegates to Sonnet 4.5 for cost-efficient content generation. |
+
+**How to create your own:**
+
+1. Create a `.md` file in `~/.claude/commands/` (user-level) or `.claude/commands/` (project-level)
+2. Add YAML frontmatter with a `description` field — **this is required** or Claude Code silently ignores the file
+3. Write instructions as if briefing a capable assistant on a complex task
+4. Restart Claude Code — commands are discovered at session start, not mid-session
+
+```markdown
+---
+description: "What this command does in one line"
+---
+
+# /your-command - Title
+
+You are a [role]. Your job is to [objective].
+
+## Steps
+1. First thing to do
+2. Second thing to do
+
+## Important Notes
+- Safety rails and constraints
+```
+
+**Key insight:** You're not writing code — you're writing instructions for an agent. The quality of the output depends entirely on the quality of your instructions. Be specific about formats, include examples, and add safety rails for things that could go wrong.
 
 ---
 
