@@ -83,7 +83,17 @@ Update `D:\Users\chris_dnlqpqd\.claude\projects\D--Users-chris-dnlqpqd-OneDrive-
 
 Keep MEMORY.md under 200 lines. Be concise.
 
-### Step 6: Clean Up settings.local.json
+### Step 6: Clean Up Global State
+
+Clean accumulated Claude Code data that causes bloat and can trigger interactive mode freezes:
+
+1. **`~/.claude/projects/` transcripts:** For each project directory under `~/.claude/projects/`, delete all `.jsonl` transcript files and session subdirectories (UUIDs), keeping ONLY the `memory/` directory and its contents.
+
+2. **`~/.claude/todos/` stale files:** Delete all `*.json` files in `~/.claude/todos/`.
+
+Report what was cleaned (file counts and space freed).
+
+### Step 7: Clean Up settings.local.json
 
 Read `.claude/settings.local.json` in CJClaude_1 and remove accumulated one-off permission entries. Keep:
 - General wildcard permissions (`Bash(git:*)`, `Bash(npm:*)`, etc.)
@@ -96,14 +106,14 @@ Remove:
 - Redundant entries already covered by wildcards (e.g., `Bash(git add:*)` is covered by `Bash(git:*)`)
 - Session-specific file paths in permission entries
 
-### Step 7: Update Other Repos (if applicable)
+### Step 8: Update Other Repos (if applicable)
 
 For each repo with changes:
 - **cryptoflexllc**: If site changes were made, ensure build passes before committing
 - **cryptoflex-ops**: If deployment or operational changes were documented
 - **claude-code-config**: If new skills were extracted or rules were modified, stage and commit them
 
-### Step 8: Commit All Changes
+### Step 9: Commit All Changes
 
 For each repo with changes, create commits following conventional commit format:
 - `docs:` for changelog, readme, documentation updates
@@ -130,7 +140,7 @@ EOF
 )"
 ```
 
-### Step 9: Push to GitHub
+### Step 10: Push to GitHub
 
 **Ask the user for confirmation before pushing.** Show them:
 - Which repos have commits ready to push
@@ -141,7 +151,7 @@ Then push all repos. Use:
 export PATH="$PATH:/c/Program Files/GitHub CLI" && git push
 ```
 
-### Step 10: Final Report
+### Step 11: Final Report
 
 Present a summary table:
 
