@@ -83,7 +83,42 @@ Update `D:\Users\chris_dnlqpqd\.claude\projects\D--Users-chris-dnlqpqd-OneDrive-
 
 Keep MEMORY.md under 200 lines. Be concise.
 
-### Step 6: Clean Up Global State
+### Step 6: Extract Learned Skills
+
+Analyze the session for reusable patterns worth saving as learned skills. Look for:
+
+- **Error resolutions** — non-obvious fixes, silent failures, misleading error messages
+- **Debugging techniques** — tool combinations, diagnostic patterns that worked
+- **Workarounds** — platform quirks, library gotchas, version-specific fixes
+- **Integration patterns** — how tools/systems interact in unexpected ways
+
+**Process:**
+1. Review the session for non-trivial problems that were solved
+2. Skip trivial fixes (typos, simple syntax) and one-time issues (API outages)
+3. For each extractable pattern, create a skill file at `~/.claude/skills/learned/[pattern-name].md` following this format:
+
+```markdown
+# [Descriptive Pattern Name]
+
+**Extracted:** [Date]
+**Context:** [Brief description of when this applies]
+
+## Problem
+[What problem this solves]
+
+## Solution
+[The pattern/technique/workaround]
+
+## When to Use
+[Trigger conditions]
+```
+
+4. Ask the user to confirm before saving each skill
+5. If new skills were extracted, update the skills count and list in MEMORY.md (Step 5)
+
+If no extractable patterns were found in this session, note that and move on.
+
+### Step 7: Clean Up Global State
 
 Clean accumulated Claude Code data that causes bloat and can trigger interactive mode freezes:
 
@@ -93,7 +128,7 @@ Clean accumulated Claude Code data that causes bloat and can trigger interactive
 
 Report what was cleaned (file counts and space freed).
 
-### Step 7: Clean Up settings.local.json
+### Step 8: Clean Up settings.local.json
 
 Read `.claude/settings.local.json` in CJClaude_1 and remove accumulated one-off permission entries. Keep:
 - General wildcard permissions (`Bash(git:*)`, `Bash(npm:*)`, etc.)
@@ -106,14 +141,14 @@ Remove:
 - Redundant entries already covered by wildcards (e.g., `Bash(git add:*)` is covered by `Bash(git:*)`)
 - Session-specific file paths in permission entries
 
-### Step 8: Update Other Repos (if applicable)
+### Step 9: Update Other Repos (if applicable)
 
 For each repo with changes:
 - **cryptoflexllc**: If site changes were made, ensure build passes before committing
 - **cryptoflex-ops**: If deployment or operational changes were documented
 - **claude-code-config**: If new skills were extracted or rules were modified, stage and commit them
 
-### Step 9: Commit All Changes
+### Step 10: Commit All Changes
 
 For each repo with changes, create commits following conventional commit format:
 - `docs:` for changelog, readme, documentation updates
@@ -140,7 +175,7 @@ EOF
 )"
 ```
 
-### Step 10: Push to GitHub
+### Step 11: Push to GitHub
 
 **Ask the user for confirmation before pushing.** Show them:
 - Which repos have commits ready to push
@@ -151,7 +186,7 @@ Then push all repos. Use:
 export PATH="$PATH:/c/Program Files/GitHub CLI" && git push
 ```
 
-### Step 11: Final Report
+### Step 12: Final Report
 
 Present a summary table:
 
