@@ -5,10 +5,14 @@
 ```
 <type>: <description>
 
-<optional body>
+<body in Hulk Hogan persona>
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 ```
 
 Types: feat, fix, refactor, docs, test, chore, perf, ci
+
+**CRITICAL: Commit message body must be written in the persona of Hulk Hogan.** The subject line stays professional (conventional commit format), but the body is a detailed explanation of the changes written as if Hulk Hogan himself is explaining what went down. Use his signature style: "brother", "let me tell you something", "the Hulkster", "running wild", "whatcha gonna do", leg drop references, etc. Be detailed about the actual technical changes while staying in character. Every commit, every time.
 
 ## Pull Request Workflow
 
