@@ -130,6 +130,76 @@ Here's the code/config/command:
 what would happen without it, how does this connect to the bigger picture.
 ```
 
+## MDX Design System
+
+Every blog post MUST use the custom MDX component library. These components are already registered in the blog renderer — just use them directly in MDX content.
+
+### Callout Components
+
+Use callouts to highlight key information. Each has a `title` prop and children content.
+
+| Component | Color | Icon | When to Use |
+|-----------|-------|------|-------------|
+| `<Tip title="...">` | Green | Lightbulb | Best practices, recommendations, things that worked well |
+| `<Info title="...">` | Cyan | Circle-i | Explanations, context, how things work |
+| `<Warning title="...">` | Amber | Triangle | Gotchas, pitfalls, things that can go wrong |
+| `<Stop title="...">` | Red | Octagon | Critical issues, wrong approaches, things to never do |
+| `<Security title="...">` | Cyan/shield | Shield | Security-relevant information, auth patterns, vulnerability notes |
+
+**Usage rules:**
+- Convert ALL "lessons learned", "key takeaway", and "what I learned" items into individual typed callouts
+- Use `<Warning>` for platform gotchas, silent failures, and debugging traps
+- Use `<Stop>` for fundamentally wrong approaches and critical security issues
+- Use `<Tip>` for practical advice and things that worked well
+- Use `<Info>` for explanatory context and "how it works" sections
+- Use `<Security>` for anything security-related (auth, validation, SSRF, secrets)
+- Callouts should have concise titles (2-6 words) and meaningful content (1-3 paragraphs)
+- Don't overuse — not every paragraph needs a callout. Reserve them for genuinely notable points.
+
+**Example:**
+```mdx
+<Warning title="PowerShell Stdin Gotcha">
+PowerShell's `$input` variable does NOT work when invoked via `powershell -File`.
+You must use `[Console]::In.ReadToEnd()` and invoke via `-Command ". 'script.ps1'"` instead.
+</Warning>
+```
+
+### Product Badge Components
+
+Use inline product badges when mentioning specific products/platforms. These render as small inline badges with official SVG logos.
+
+| Component | Renders As | Use When |
+|-----------|-----------|----------|
+| `<Vercel>text</Vercel>` | Vercel badge with logo | Mentioning Vercel by name (e.g., "deployed on `<Vercel>Vercel</Vercel>`") |
+| `<Vercel />` | Self-closing Vercel badge | Standalone Vercel mention without custom text |
+| `<Nextjs>text</Nextjs>` | Next.js badge with logo | Mentioning Next.js (e.g., "`<Nextjs>Next.js 16</Nextjs>` App Router") |
+| `<Cloudflare>text</Cloudflare>` | Cloudflare badge with logo | Mentioning Cloudflare |
+
+**Usage rules:**
+- Use badges on the FIRST mention of each product in a section, not every single occurrence
+- Don't use inside code blocks, headings, or table cells
+- Don't use inside callout titles — only in body text
+
+### Architecture Diagrams (optional)
+
+For posts about infrastructure or request flow, these SVG diagram components are available:
+- `<CloudflareDoubleHop />` — Shows Cloudflare proxy + Vercel request path
+- `<VercelNativeWAF />` — Shows direct-to-Vercel request path with WAF
+- `<TwoLayerWAF />` — Shows dual-layer WAF architecture
+
+Only use these if the post topic involves WAF, CDN, or request routing architecture.
+
+### Design Philosophy
+
+The goal is **visual hierarchy and scannability**. A reader should be able to skim a post and immediately identify:
+- Warnings and pitfalls (amber/red callouts)
+- Key takeaways (green tips)
+- Technical context (cyan info boxes)
+- Security considerations (shield callouts)
+- Product references (inline badges)
+
+Every post should have at minimum 3-5 callouts. Long posts (15+ min read) should have 10-20.
+
 ## Blog System Technical Details
 
 ### File Location
@@ -172,6 +242,10 @@ Read all existing posts in the blog directory to understand the series order and
 4. `how-i-built-this-site.mdx` (2026-02-07T14:00:00)
 5. `my-first-24-hours-with-claude-code.mdx` (2026-02-07T22:00:00)
 6. `automating-session-wrap-up-with-claude-code.mdx` (2026-02-08T14:00:00)
+7. `building-custom-analytics-with-claude-code.mdx` (2026-02-09T14:00:00)
+8. `security-hardening-analytics-dashboard.mdx` (2026-02-09T18:00:00)
+9. `making-claude-code-talk-terminal-bells-and-the-stop-hook.mdx` (2026-02-09T22:00:00)
+10. `the-cobbler-s-server-finally-gets-shoes.mdx` (2026-02-10T12:00:00)
 
 New posts go after the latest one chronologically.
 
