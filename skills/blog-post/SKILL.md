@@ -28,6 +28,7 @@ Then ask about angle: "You decide", "Technical deep dive", or "Journey narrative
 - **Technically detailed** - real commands, code, error messages
 - **No fluff** - every paragraph earns its place
 - **No emojis**
+- **No em dashes** - never use — (em dash). Rewrite naturally with commas, periods, colons, or parentheses
 
 ## MDX Design System
 

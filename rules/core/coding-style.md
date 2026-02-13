@@ -19,6 +19,12 @@ MANY SMALL FILES > FEW LARGE FILES:
 - Log detailed error context on the server side
 - Never silently swallow errors
 
+## Writing Style
+
+- NEVER use em dashes (—) in any written content: blog posts, documentation, READMEs, changelogs, comments, or commit messages
+- Rewrite sentences to flow naturally without them — use commas, periods, colons, or parentheses instead
+- This applies to all prose output, not just code
+
 ## Input Validation
 
 - Validate all user input at system boundaries
