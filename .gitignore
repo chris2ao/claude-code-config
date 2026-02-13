@@ -8,7 +8,11 @@
 
 # Rules (your coding standards, workflow, security policies)
 !rules/
-!rules/*.md
+!rules/**
+
+# Custom agents
+!agents/
+!agents/*.md
 
 # Learned skills
 !skills/
