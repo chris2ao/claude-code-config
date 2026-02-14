@@ -1,6 +1,6 @@
 # Learned Skills Index
 
-16 skills organized by domain. Original files remain at `learned/` root for backward compatibility.
+18 skills organized by domain. Original files remain at `learned/` root for backward compatibility.
 Organized copies in subdirectories for browsing.
 
 ## Platform (3 skills)
@@ -20,6 +20,12 @@ Organized copies in subdirectories for browsing.
 - `claude-code/claude-code-debug-diagnostics.md` — Debug startup diagnostics
 - `claude-code/heredoc-permission-pollution.md` — HEREDOC commit body pollution
 - `claude-code/shallow-fetch-force-push.md` — Shallow fetch breaks force push
+
+## API (1 skill)
+- `anthropic-model-id-format.md` — Anthropic model IDs require exact date suffixes, no `-latest` for Haiku
+
+## Testing (1 skill)
+- `vitest-class-mock-constructor.md` — Class-based factory mock for SDK constructors in vitest
 
 ## Next.js (4 skills)
 - `nextjs/nextjs-client-component-metadata.md` — Client component metadata workaround
