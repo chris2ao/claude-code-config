@@ -11,8 +11,10 @@ A line-by-line walkthrough of a real-world Claude Code configuration. Whether yo
 3. [User-Level Configuration (Applies to ALL Projects)](#user-level-configuration)
    - [Settings: `~/.claude/settings.json`](#settings-file)
    - [MCP Servers: `~/.claude.json`](#mcp-servers)
-   - [Rules: `~/.claude/rules/*.md`](#rules)
+   - [Rules: `~/.claude/rules/**/*.md`](#rules)
+   - [Custom Agents: `~/.claude/agents/`](#custom-agents)
    - [Learned Skills: `~/.claude/skills/learned/`](#learned-skills)
+   - [Custom Skills: `~/.claude/skills/*/SKILL.md`](#custom-skills)
    - [Custom Commands: `~/.claude/commands/`](#custom-commands)
    - [Backup: `~/.claude/.gitignore`](#backup-strategy)
 4. [Project-Level Configuration (One Project Only)](#project-level-configuration)
@@ -336,11 +338,28 @@ You should see all servers listed as "connected." If any show "failed," see the 
 
 ### Rules
 
-**Location:** `~/.claude/rules/` (one `.md` file per topic)
+**Location:** `~/.claude/rules/` (organized in subdirectories)
 
-Rules are the most powerful part of this configuration. They are **persistent instructions** that Claude follows in every session, in every project. Think of them as your coding standards document — except instead of hoping developers read it, the AI actually follows it.
+Rules are the most powerful part of this configuration. They are **persistent instructions** that Claude follows in every session, in every project. Think of them as your coding standards document, except instead of hoping developers read it, the AI actually follows it.
 
-Each rule is a simple Markdown file. Claude reads all files in `~/.claude/rules/` at the start of every session.
+Each rule is a simple Markdown file. Claude reads all files in `~/.claude/rules/` (including subdirectories) at the start of every session. We organize rules into three subdirectories:
+
+```
+rules/
+  agents.md              — Agent orchestration
+  core/                  — Fundamental coding principles
+    agentic-workflow.md   — Parallel task decomposition
+    coding-style.md       — Code quality standards
+    security.md           — Security checklist
+  development/           — Development workflow
+    git-workflow.md       — Commits, PRs, TDD
+    patterns.md           — Design patterns
+    testing.md            — Test requirements
+  operations/            — Operational concerns
+    hooks.md              — Hook system
+    performance.md        — Model routing
+    windows-platform.md   — Windows quirks
+```
 
 #### Rule 1: `coding-style.md` — How Code Should Look
 
@@ -393,6 +412,8 @@ ALWAYS validate at system boundaries:
 ```
 
 **What this means:** Any data coming from outside your program (user typing in a form, data from another website's API, contents of a file) could be wrong, incomplete, or malicious. Always check it before using it.
+
+**Writing Style section (new):** The rule also includes a Writing Style section that prohibits em dashes in all written content (blog posts, docs, changelogs, comments). This applies to all prose output, not just code. Sentences should use commas, periods, colons, or parentheses instead.
 
 > **Note:** We intentionally removed the "Code Quality Checklist" that was in the original everything-claude-code version. It restated the rules above and added context window cost without changing Claude's behavior.
 
@@ -648,12 +669,13 @@ This consistency makes it easy for anyone consuming your API to know what to exp
 
 ## Hook Types
 
-- PreToolUse: Before tool execution (validation, parameter modification)
-- PostToolUse: After tool execution (auto-format, checks)
-- Stop: When session ends (final verification)
+- PreToolUse: Before tool execution (validation, parameter modification, file protection)
+- PostToolUse: After tool execution (auto-format, checks, logging)
+- Stop: When session ends (final verification, notifications)
+- SessionEnd: When session closes (archiving, cleanup)
 ```
 
-**What are hooks?** Hooks are scripts that run automatically when Claude Code does something. They're like tripwires — when a specific event happens, your script fires.
+**What are hooks?** Hooks are scripts that run automatically when Claude Code does something. They're like tripwires, when a specific event happens, your script fires.
 
 | Hook Type | When It Fires | Example Use |
 |-----------|--------------|-------------|
@@ -728,17 +750,32 @@ No user prompt needed:
 4. Architectural decision - Use architect agent
 ```
 
-**What "proactive" means:** Claude doesn't wait for you to ask — if you request a complex feature, Claude automatically activates the planner. If it just wrote code, it automatically runs the code reviewer. This is like having a team where everyone knows when to step in.
+**What "proactive" means:** Claude doesn't wait for you to ask. If you request a complex feature, Claude automatically activates the planner. If it just wrote code, it automatically runs the code reviewer. This is like having a team where everyone knows when to step in.
 
 ```markdown
-## Parallel Task Execution
+## Custom Agents (~/.claude/agents/)
 
+| Agent | Purpose | Model |
+|-------|---------|-------|
+| changelog-writer | Auto-generate CHANGELOG entries | haiku |
+| multi-repo-orchestrator | Parallel cross-repo operations | haiku |
+| session-analyzer | Extract patterns from archives | sonnet |
+| deploy-verifier | Post-deploy verification | haiku |
+| config-sync | Sync config to git repo | haiku |
+| context-health | Monitor context window | haiku |
+| skill-extractor | Extract skills from transcripts | sonnet |
+```
+
+**What are custom agents?** Beyond the plugin's agents, you can define your own. Custom agents are markdown files in `~/.claude/agents/` with YAML frontmatter specifying the model and available tools. Claude Code's Task tool spawns them as specialized subprocesses with their own context windows.
+
+```markdown
+## Mandatory Parallel Execution
+
+See rules/core/agentic-workflow.md for full decomposition rules.
 ALWAYS use parallel Task execution for independent operations.
 ```
 
-**What this means:** When Claude needs to do multiple independent things (e.g., review security AND check performance AND verify types), it runs them all simultaneously instead of one at a time. This is faster.
-
-> **Note:** The original everything-claude-code version included a verbose GOOD/BAD code example for parallel execution. We trimmed it to a single directive — Claude already understands what parallel execution means.
+**What this means:** When Claude needs to do multiple independent things (e.g., review security AND check performance AND verify types), it runs them all simultaneously instead of one at a time. This is faster. The `agentic-workflow.md` rule (new in the restructured config) provides detailed patterns for parallel execution, automatic agent triggers, and cost optimization.
 
 ---
 
@@ -766,7 +803,7 @@ The fix or workaround
 Trigger conditions — how to recognize this situation
 ```
 
-**Current skills (11 total):**
+**Current skills (18 total, organized in 6 categories via INDEX.md):**
 
 | # | Skill File | What It Catches |
 |---|-----------|----------------|
@@ -781,8 +818,84 @@ Trigger conditions — how to recognize this situation
 | 9 | `claude-code-debug-diagnostics.md` | `claude doctor` requires an interactive TTY. Fix: `claude --debug --debug-file <path> --print "say OK"`. |
 | 10 | `token-secret-safety.md` | Reading config files with plaintext API keys exposes them in transcripts. Fix: redact to first 10-15 chars. |
 | 11 | `heredoc-permission-pollution.md` | HEREDOC commit bodies with parentheses get captured as garbage permission entries. Fix: clean settings after. |
+| 12 | `cookie-auth-over-query-strings.md` | `?secret=X` leaks in URLs, browser history, Referer headers, logs. Fix: httpOnly cookies with HMAC tokens. |
+| 13 | `ssrf-prevention-ip-validation.md` | Validate IPs against private ranges (127.x, 10.x, 172.16-31.x, 192.168.x) before external API calls. |
+| 14 | `shallow-fetch-force-push.md` | `git fetch --depth=1` + `git push --force` fails. Fix: full fetch (no `--depth`) before force push. |
+| 15 | `mdx-blog-design-system.md` | MDX callout components (`<Tip>`, `<Warning>`, `<Security>`) and product badges (`<Vercel>`, `<Nextjs>`). |
+| 16 | `vercel-json-waf-syntax.md` | vercel.json uses `routes` with `mitigate: { action: "deny" }`, not `rules`. |
+| 17 | `anthropic-model-id-format.md` | Haiku requires exact date suffix (`-20251001`), not `-latest` alias. |
+| 18 | `vitest-class-mock-constructor.md` | Arrow functions can't be called with `new`. Use `class` expressions in `vi.mock` factory functions. |
 
 **Why this matters:** Every skill represents hours of debugging compressed into a few lines. When Claude encounters a similar situation in a future session, it recognizes the pattern and applies the fix immediately instead of going through the same trial-and-error process.
+
+---
+
+### Custom Agents
+
+**Location:** `~/.claude/agents/` (one `.md` file per agent)
+
+Custom agents are specialized agent definitions that Claude Code's Task tool can spawn as subprocesses. Each agent has its own context window and focused instructions, making them ideal for specific tasks.
+
+Each agent file has YAML frontmatter specifying:
+- `description` — What the agent does
+- `model` — Which Claude model to use (haiku, sonnet, opus)
+- `tools` — Which tools the agent can access
+
+**Current agents (7 total):**
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| **changelog-writer** | haiku | Generates CHANGELOG.md entries from git diffs and session context |
+| **multi-repo-orchestrator** | haiku | Runs parallel git operations across all project repos |
+| **session-analyzer** | sonnet | Reads session archive transcripts and extracts actionable patterns |
+| **deploy-verifier** | haiku | Verifies builds and live site after deployment |
+| **config-sync** | haiku | Compares local `~/.claude/` config against the git repo for drift |
+| **context-health** | haiku | Monitors context window usage and suggests compaction points |
+| **skill-extractor** | sonnet | Identifies reusable patterns in sessions worth preserving as skills |
+
+**How to create your own agent:**
+
+1. Create a `.md` file in `~/.claude/agents/`
+2. Add YAML frontmatter with `description`, `model`, and `tools`
+3. Write instructions as if briefing a specialist on their role
+
+```markdown
+---
+description: "What this agent does"
+model: haiku
+tools: [Read, Grep, Glob, Bash]
+---
+
+# Agent Name
+
+You are a [specialist role]. Your job is to [objective].
+
+## Process
+1. First step
+2. Second step
+
+## Output
+Describe the expected output format.
+```
+
+---
+
+### Custom Skills
+
+**Location:** `~/.claude/skills/*/SKILL.md`
+
+Custom skills are user-invocable workflows (similar to slash commands) that provide complex multi-step automation. Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML frontmatter and detailed instructions.
+
+Skills take priority over commands when both exist for the same name.
+
+**Current skills (4 total):**
+
+| Skill | What It Does |
+|-------|-------------|
+| **`/wrap-up`** | 12-step end-of-session agent: pulls repos, reviews session, updates CHANGELOG/README/MEMORY, extracts skills, cleans state, commits, pushes. |
+| **`/blog-post`** | Interactive blog writing agent. Asks what to write about, gathers source material, writes a formatted MDX post. Delegates to Sonnet for cost-efficient content generation. |
+| **`/multi-repo-status`** | Quick dashboard showing git status across all 4 project repos in parallel. |
+| **`/skill-catalog`** | Full inventory of all agents, skills, commands, and hooks with descriptions. |
 
 ---
 
@@ -842,14 +955,23 @@ This file controls what gets backed up to GitHub and what stays local. It uses a
 # ===== TRACK THESE =====
 !.gitignore
 !README.md
+!COMPLETE-GUIDE.md
 
-# Rules (your coding standards, workflow, security policies)
+# Rules (organized in subdirectories: core/, development/, operations/)
 !rules/
-!rules/*.md
+!rules/**
 
-# Learned skills
+# Custom agents
+!agents/
+!agents/*.md
+
+# Skills (custom SKILL.md + learned patterns)
 !skills/
 !skills/**
+
+# Custom commands
+!commands/
+!commands/*.md
 
 # ===== NEVER TRACK (even if whitelisted above) =====
 cache/
@@ -880,10 +1002,14 @@ session-env/
 
 | Tracked | Why Back It Up |
 |---------|---------------|
-| Rule files (`rules/*.md`) | Your coding standards — hard to recreate |
-| Learned skills (`skills/`) | Patterns Claude learned from your sessions |
+| Rule files (`rules/**/*.md`) | Your coding standards, organized in subdirectories |
+| Agent files (`agents/*.md`) | Custom agent definitions |
+| Learned skills (`skills/learned/`) | Patterns Claude learned from your sessions |
+| Custom skills (`skills/*/SKILL.md`) | Workflow automation |
+| Custom commands (`commands/*.md`) | Slash command definitions |
 | `.gitignore` | So the ignore rules themselves are versioned |
 | `README.md` | Documents what's in the repo |
+| `COMPLETE-GUIDE.md` | Comprehensive setup walkthrough |
 
 **What stays local and why:**
 
@@ -1221,17 +1347,23 @@ Create or edit `~/.claude/settings.json`:
 
 ### Step 3: Create Your Rules
 
-Create the directory `~/.claude/rules/` and add the rule files. You can copy them from this repository or write your own.
+Create the directory structure `~/.claude/rules/` with subdirectories and add the rule files. You can copy them from this repository or write your own.
 
-The rules from this config:
-1. `coding-style.md` — Code quality standards
-2. `git-workflow.md` — Commit and PR standards
-3. `testing.md` — TDD and coverage requirements
-4. `security.md` — Security checklist
-5. `performance.md` — Model selection and context management
-6. `patterns.md` — Reusable design patterns
-7. `hooks.md` — Hook system guidelines
-8. `agents.md` — Agent orchestration rules
+```bash
+mkdir -p ~/.claude/rules/core ~/.claude/rules/development ~/.claude/rules/operations
+```
+
+The rules from this config (10 files in 3 subdirectories + root):
+- `agents.md` — Agent orchestration (plugin + custom)
+- `core/agentic-workflow.md` — Parallel task decomposition
+- `core/coding-style.md` — Code quality + writing style
+- `core/security.md` — Security checklist
+- `development/git-workflow.md` — Commits, PRs, TDD workflow
+- `development/patterns.md` — Design patterns
+- `development/testing.md` — TDD and coverage
+- `operations/hooks.md` — Hook types and file protection
+- `operations/performance.md` — Model routing and cost optimization
+- `operations/windows-platform.md` — Windows-specific workarounds
 
 ### Step 4: Set Up MCP Servers
 

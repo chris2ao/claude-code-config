@@ -6,11 +6,15 @@
 !README.md
 !COMPLETE-GUIDE.md
 
-# Rules (your coding standards, workflow, security policies)
+# Rules (organized in subdirectories: core/, development/, operations/)
 !rules/
-!rules/*.md
+!rules/**
 
-# Learned skills
+# Custom agents
+!agents/
+!agents/*.md
+
+# Skills (custom SKILL.md + learned patterns)
 !skills/
 !skills/**
 

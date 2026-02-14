@@ -1,8 +1,8 @@
 # Agent Orchestration
 
-> **Requires:** [everything-claude-code](https://github.com/affaan-m/everything-claude-code) plugin. Without it, these agents are not available. Install via `/plugin marketplace add affaan-m/everything-claude-code`.
+## Plugin Agents (everything-claude-code)
 
-## Available Agents
+> **Requires:** [everything-claude-code](https://github.com/affaan-m/everything-claude-code) plugin.
 
 | Agent | Purpose | When to Use |
 |-------|---------|-------------|
@@ -16,6 +16,18 @@
 | refactor-cleaner | Dead code cleanup | Code maintenance |
 | doc-updater | Documentation | Updating docs |
 
+## Custom Agents (~/.claude/agents/)
+
+| Agent | Purpose | Model |
+|-------|---------|-------|
+| changelog-writer | Auto-generate CHANGELOG entries | haiku |
+| multi-repo-orchestrator | Parallel cross-repo operations | haiku |
+| session-analyzer | Extract patterns from archives | sonnet |
+| deploy-verifier | Post-deploy verification | haiku |
+| config-sync | Sync config to git repo | haiku |
+| context-health | Monitor context window | haiku |
+| skill-extractor | Extract skills from transcripts | sonnet |
+
 ## Immediate Agent Usage
 
 No user prompt needed:
@@ -24,6 +36,7 @@ No user prompt needed:
 3. Bug fix or new feature - Use **tdd-guide** agent
 4. Architectural decision - Use **architect** agent
 
-## Parallel Task Execution
+## Mandatory Parallel Execution
 
+See `rules/core/agentic-workflow.md` for full decomposition rules.
 ALWAYS use parallel Task execution for independent operations.
