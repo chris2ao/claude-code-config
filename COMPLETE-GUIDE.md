@@ -763,7 +763,7 @@ No user prompt needed:
 | deploy-verifier | Post-deploy verification | haiku |
 | config-sync | Sync config to git repo | haiku |
 | context-health | Monitor context window | haiku |
-| skill-extractor | Extract skills from transcripts | sonnet |
+| skill-extractor | Extract instincts from transcripts (Homunculus v2) | sonnet |
 ```
 
 **What are custom agents?** Beyond the plugin's agents, you can define your own. Custom agents are markdown files in `~/.claude/agents/` with YAML frontmatter specifying the model and available tools. Claude Code's Task tool spawns them as specialized subprocesses with their own context windows.
@@ -785,7 +785,7 @@ ALWAYS use parallel Task execution for independent operations.
 
 Learned skills are reusable patterns extracted from real debugging sessions using the `/learn` command. Each skill documents a non-obvious problem, its solution, and when the pattern applies. Claude loads these at session start and uses them to avoid repeating past mistakes.
 
-**How skills get created:** During or after a session where you solve a tricky problem, run `/learn`. Claude analyzes the session, identifies non-trivial patterns worth preserving, and creates skill files with a consistent structure:
+**How skills get created:** The primary path is through the **Homunculus v2 instinct system**: session observations become atomic instincts (with confidence scoring), and when 3+ instincts cluster in a domain, `/evolve` graduates them into learned skills. You can also run `/learn` mid-session or invoke the `skill-extractor` agent to extract instincts from transcripts. Each learned skill documents a non-obvious problem, its solution, and when the pattern applies:
 
 ```markdown
 # Descriptive Pattern Name
@@ -851,7 +851,7 @@ Each agent file has YAML frontmatter specifying:
 | **deploy-verifier** | haiku | Verifies builds and live site after deployment |
 | **config-sync** | haiku | Compares local `~/.claude/` config against the git repo for drift |
 | **context-health** | haiku | Monitors context window usage and suggests compaction points |
-| **skill-extractor** | sonnet | Identifies reusable patterns in sessions worth preserving as skills |
+| **skill-extractor** | sonnet | Extracts instincts from session transcripts for Homunculus v2 learning system |
 
 **How to create your own agent:**
 

@@ -26,7 +26,7 @@
 | deploy-verifier | Post-deploy verification | haiku |
 | config-sync | Sync config to git repo | haiku |
 | context-health | Monitor context window | haiku |
-| skill-extractor | Extract skills from transcripts | sonnet |
+| skill-extractor | Extract instincts from transcripts (Homunculus v2) | sonnet |
 
 ## Immediate Agent Usage
 

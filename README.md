@@ -58,7 +58,7 @@ Agents in `agents/` are specialized agent definitions that Claude Code's Task to
 | **deploy-verifier** | haiku | Post-deploy verification for cryptoflexllc.com |
 | **config-sync** | haiku | Compare local config against this git repo |
 | **context-health** | haiku | Monitor context window, suggest compaction points |
-| **skill-extractor** | sonnet | Extract reusable skills from conversation history |
+| **skill-extractor** | sonnet | Extract instincts from session transcripts (Homunculus v2) |
 
 ### 18 Learned Skills
 
@@ -177,7 +177,7 @@ agents/
   deploy-verifier.md                      — Post-deploy site verification
   config-sync.md                          — Config drift detection
   context-health.md                       — Context window monitoring
-  skill-extractor.md                      — Skill extraction from sessions
+  skill-extractor.md                      — Instinct extraction from sessions (Homunculus v2)
 
 skills/
   wrap-up/SKILL.md                        — End-of-session documentation
