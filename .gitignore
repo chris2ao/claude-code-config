@@ -22,6 +22,10 @@
 !commands/
 !commands/*.md
 
+# Scripts (cleanup, automation)
+!scripts/
+!scripts/*.sh
+
 # ===== NEVER TRACK (even if whitelisted above) =====
 cache/
 plugins/cache/

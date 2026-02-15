@@ -2,85 +2,109 @@
 description: "End-of-session wrap-up: update docs, clean up, commit and push all repos"
 ---
 
-# /wrap-up - End of Session Documentation & Cleanup
+# /wrap-up - End of Session Wrap-Up
 
-You are an end-of-session wrap-up agent. Your job is to document everything that was done in this session, clean up accumulated artifacts, and push all changes to GitHub.
+You are an end-of-session wrap-up agent. Document the session, clean up artifacts, and push changes to GitHub.
 
 ## Repository Locations
 
-| Repo | Local Path | Remote | Purpose |
-|------|-----------|--------|---------|
-| CJClaude_1 | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\CJClaude_1` | `chris2ao/CJClaude_1` (public) | Learning journal, changelog, session history |
-| cryptoflexllc | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc` | `chris2ao/cryptoflexllc` (public) | CryptoFlex LLC website |
-| cryptoflex-ops | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflex-ops` | `chris2ao/cryptoflex-ops` (private) | Deployment and operational docs |
-| claude-code-config | `D:\Users\chris_dnlqpqd\.claude` | `chris2ao/claude-code-config` (private) | Claude Code rules, skills, config |
+| Repo | Local Path | Remote | Branch |
+|------|-----------|--------|--------|
+| CJClaude_1 | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\CJClaude_1` | `chris2ao/CJClaude_1` (public) | main |
+| cryptoflexllc | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc` | `chris2ao/cryptoflexllc` (public) | main |
+| cryptoflex-ops | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflex-ops` | `chris2ao/cryptoflex-ops` (private) | main |
+| claude-code-config | `D:\Users\chris_dnlqpqd\.claude` | `chris2ao/claude-code-config` (private) | master |
 
-## Execution Steps
+## Phase 1: Survey
 
-Run these in order. Do NOT skip steps. Ask the user before pushing.
-
-### Step 1: Pull Latest and Survey All Repos
-
-Run `git pull` on ALL four repos in parallel. Then run `git status` and `git diff --stat` on all four repos. Report findings before proceeding.
+Run `git pull`, `git status`, and `git diff --stat` on ALL four repos **in parallel** (4 Bash calls in one message). Report which repos have changes before proceeding.
 
 If a pull fails due to conflicts, STOP and alert the user.
 
-**Important:** Use `export PATH="$PATH:/c/Program Files/GitHub CLI"` before any `gh` or `git push` commands.
+## Phase 2: Document
 
-### Step 2: Review Session Context
+### 2a. Review session context
+Analyze the conversation history. Identify: tasks completed, lessons learned, failures, config changes.
 
-Analyze the conversation history to identify:
-- What tasks were completed
-- What was learned (new patterns, gotchas, fixes)
-- What failed and why
-- Any new learned skills extracted
-- Any config changes made
+### 2b. Update CJClaude_1 CHANGELOG.md
+Read only the **first 30 lines** (for format reference). Add a new dated entry at the TOP:
 
-### Step 3: Update CJClaude_1 CHANGELOG.md
+```markdown
+## YYYY-MM-DD - [Brief title]
 
-Add a new dated entry at the TOP of the changelog. Use bold action verbs: **Fixed**, **Added**, **Removed**, **Configured**, **Extracted**. Include technical details and document failures.
+### What changed
+- **Action verb** description with technical details
 
-### Step 4: Update CJClaude_1 README.md
+### What was learned
+- Key takeaways, gotchas, debugging insights
 
-If significant new work, add a new Phase entry to the narrative. Skip for minor fixes.
+---
+```
 
-### Step 5: Update MEMORY.md
+Action verbs: **Fixed**, **Added**, **Removed**, **Configured**, **Extracted**, **Refactored**, **Updated**. Document failures, not just successes.
 
-Update if new skills, learnings, architecture changes, repos, or blog posts were added. Keep under 200 lines.
+### 2c. Update CJClaude_1 README.md (significant work only)
+Read only the **last 50 lines** to find the latest Phase number. Add a new Phase entry only for significant work (new features, architectural changes). Skip for config tweaks, minor fixes, or documentation-only sessions.
 
-### Step 6: Extract Learned Skills
+### 2d. Update MEMORY.md (if applicable)
+Update if new skills, architecture changes, repos, or blog posts were added. Keep under 200 lines.
 
-Look for non-obvious error resolutions, debugging techniques, workarounds, and integration patterns. Create skill files at `~/.claude/skills/learned/[pattern-name].md`. Ask user to confirm before saving.
+**Both** MEMORY.md files may need updates:
+- Current project: auto-loaded MEMORY.md (whichever project this session is in)
+- CJClaude_1: `D:\Users\chris_dnlqpqd\.claude\projects\d--Users-chris-dnlqpqd-OneDrive-AI-Projects-Claude-CJClaude-1\memory\MEMORY.md`
 
-### Step 7: Clean Up Global State
+## Phase 3: Clean
 
-1. Delete `.jsonl` transcript files from `~/.claude/projects/` (keep `memory/` dirs)
-2. Delete `*.json` from `~/.claude/todos/`
+### 3a. Run cleanup script
+```bash
+bash ~/.claude/scripts/cleanup-session.sh
+```
+This deletes transcript `.jsonl` files and stale todo `.json` files automatically.
 
-### Step 8: Clean Up settings.local.json
+### 3b. Settings bloat check (conditional)
+Read `settings.local.json` in the current project. **Only clean up if >30 permission entries.** When cleaning:
+- Keep: wildcard permissions (`Bash(git:*)`), WebFetch domains, MCP tools, hooks
+- Remove: one-off specific commands, entries covered by existing wildcards, session-specific paths
 
-Remove accumulated one-off permission entries. Keep wildcards, WebFetch domains, MCP tools, and hooks.
+If 30 or fewer entries, skip this step.
 
-### Step 9: Update Other Repos (if applicable)
+## Phase 4: Commit & Push
 
-Commit changes in cryptoflexllc, cryptoflex-ops, claude-code-config as needed.
+### 4a. Skill extraction (opt-in)
+Ask the user: "Any patterns from this session worth extracting as a learned skill?" If yes, create skill files at `~/.claude/skills/learned/[name].md`. If no, skip.
 
-### Step 10: Commit All Changes
+### 4b. Commit all repos with changes
+For each repo with changes, stage relevant files and commit. Use conventional commit format (`docs:`, `feat:`, `fix:`, `chore:`) with Hulk Hogan persona in the body. Always include `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>`.
 
-Use conventional commit format with Hulk Hogan persona in the body. Always include `Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>`.
+```bash
+git commit -m "$(cat <<'EOF'
+type: Brief description
 
-### Step 11: Push to GitHub
+[Hulk Hogan persona body with technical details]
 
-Ask user for confirmation first. Show which repos have commits ready.
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+EOF
+)"
+```
 
-### Step 12: Final Report
+### 4c. Push (with confirmation)
+Show which repos have commits ready (repo name + one-line commit summary). **Wait for user confirmation**, then push all:
+```bash
+export PATH="$PATH:/c/Program Files/GitHub CLI" && git push
+```
 
-Present a summary table of all repos, actions, commits, and status.
+## Phase 5: Report
+
+Present a summary table:
+
+| Repo | Action | Commit | Status |
+|------|--------|--------|--------|
+| CJClaude_1 | Updated CHANGELOG | abc1234 | Pushed |
+| ... | ... | ... | ... |
 
 ## Important Notes
 
-- **Never commit secrets.** STOP and alert if found.
+- **Never commit secrets.** STOP and alert if tokens, keys, or passwords are found in staged files.
 - **Never force push.**
-- **PowerShell from Git Bash:** Write temp .ps1 files for `$` variables.
-- **Git push PATH:** Always `export PATH="$PATH:/c/Program Files/GitHub CLI"` first.
-- **Preserve history.** Never delete changelog entries or README phases.
+- **PowerShell from Git Bash:** Write temp `.ps1` files for commands with `$` variables.
+- **Preserve history.** Never delete changelog entries or README phases. Append only.
