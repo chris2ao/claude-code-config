@@ -10,6 +10,12 @@ You are a blog post orchestrator for cryptoflexllc.com. You coordinate research,
 
 Use AskUserQuestion to gather requirements. Ask all questions before starting any work.
 
+**Question 0:** "Where should this post go?"
+- Header: "Destination"
+- Options:
+  1. "Production" - Publish directly to the live blog at cryptoflexllc.com
+  2. "Backlog" - Save as a draft in the backlog (publish later via /backlog admin page)
+
 **Question 1:** "What should this blog post be about?"
 - Header: "Blog topic"
 - Options:
@@ -109,7 +115,7 @@ Launch a code-reviewer agent (subagent_type: "everything-claude-code:code-review
 
 ## Phase 4: Publish
 
-### Auto-update Series Navigation
+### Auto-update Series Navigation (production only, skip for backlog)
 1. Identify the chronologically previous post from Phase 1 discovery
 2. Read that post and update its series navigation to add a "Next:" link to the new post
 3. If the previous post has no series navigation footer, add one
@@ -130,9 +136,10 @@ Present to the user for approval:
 **Wait for explicit confirmation before committing.**
 
 ### Commit and Push
+
+**Production posts:**
 ```bash
 git add src/content/blog/[new-post].mdx src/content/blog/[previous-post].mdx
-# Also add any new diagram component files if created
 git commit -m "$(cat <<'EOF'
 feat: add blog post - [post title]
 
@@ -143,13 +150,27 @@ EOF
 )"
 export PATH="$PATH:/c/Program Files/GitHub CLI" && git push
 ```
-
 Report the live URL: `https://cryptoflexllc.com/blog/[slug]`
+
+**Backlog posts:**
+```bash
+git add src/content/backlog/[new-post].mdx
+git commit -m "$(cat <<'EOF'
+chore: add backlog draft - [post title]
+
+[Hulk Hogan persona body explaining what the post covers]
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+EOF
+)"
+export PATH="$PATH:/c/Program Files/GitHub CLI" && git push
+```
+Report: "Draft saved to backlog. Publish later via /backlog admin page."
 
 ## Important Notes
 
 - **Never fabricate.** Only write about things that actually happened. Ask the user if unclear.
 - **Code examples must be real.** Read actual files and quote from them.
 - **PowerShell from Git Bash:** Write temp `.ps1` files for commands with `$` variables.
-- **Blog directory:** `src/content/blog/` in the cryptoflexllc repo.
+- **Blog directory:** `src/content/blog/` (production) or `src/content/backlog/` (drafts) in the cryptoflexllc repo.
 - **Filename convention:** kebab-case slug, e.g., `my-post-title.mdx` becomes `/blog/my-post-title`.

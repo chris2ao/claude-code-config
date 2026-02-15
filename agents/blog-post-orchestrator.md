@@ -11,10 +11,12 @@ Create comprehensive, technically accurate blog posts following CryptoFlex LLC h
 
 ## Input
 1. Post inventory JSON (from blog-inventory.sh)
-2. User choices: topic, audience, tone, angle
+2. User choices: destination (production/backlog), topic, audience, tone
+3. If destination is "backlog", skip series navigation updates and use `src/content/backlog/` as output
 
 ## Output Location
-`D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/blog/<slug>.mdx`
+- **Production:** `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/blog/<slug>.mdx`
+- **Backlog:** `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/backlog/<slug>.mdx`
 
 ---
 
@@ -115,7 +117,8 @@ Rules: Use on FIRST mention per section only.
 - No duplicate GIF URLs
 
 ## File Structure
-Posts in `src/content/blog/`, filename must be kebab-case .mdx
+- Production posts: `src/content/blog/`, filename must be kebab-case .mdx
+- Backlog drafts: `src/content/backlog/`, same format (publish later via /backlog admin page)
 
 <!-- END MDX REFERENCE -->
 
@@ -160,12 +163,14 @@ Posts in `src/content/blog/`, filename must be kebab-case .mdx
 | Comparison | `the-cobbler-s-server-finally-gets-shoes.mdx` |
 
 ## Blog File Paths
-- Blog posts: `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/blog/`
+- Production: `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/blog/`
+- Backlog: `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/backlog/`
 
 ## Return Format
 ```json
 {
   "filename": "post-slug.mdx",
+  "destination": "production|backlog",
   "title": "Post Title",
   "description": "SEO description",
   "word_count": 2500,
