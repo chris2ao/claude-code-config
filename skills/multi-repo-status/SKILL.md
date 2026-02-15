@@ -4,35 +4,25 @@ description: "Quick dashboard showing git status across all project repos"
 
 # /multi-repo-status - Repository Dashboard
 
-Run `git status`, `git log -1 --oneline`, and branch info across all 4 repos in parallel. Return a formatted status table.
+Quick status overview of all 4 project repositories.
 
-## Repository Map
+## Survey
 
-| Repo | Local Path | Remote | Default Branch |
-|------|-----------|--------|----------------|
-| CJClaude_1 | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\CJClaude_1` | `chris2ao/CJClaude_1` | main |
-| cryptoflexllc | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
-| cryptoflex-ops | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
-| claude-code-config | `D:\Users\chris_dnlqpqd\.claude` | `chris2ao/claude-code-config` | master |
+!`bash ~/.claude/scripts/wrap-up-survey.sh`
 
-## Execution
+## Display
 
-Run these commands in parallel (one per repo):
-```bash
-cd "<path>" && git status --short && git log -1 --oneline && git rev-parse --abbrev-ref HEAD
-```
+Format the survey JSON as a status table:
 
-## Output Format
+| Repo | Branch | Clean? | Last Commit | Ahead/Behind |
+|------|--------|--------|-------------|--------------|
 
-Present results as:
+For each repo in the JSON:
+- Show branch name
+- Show clean (true/false based on modified_files + untracked_files being empty)
+- Show last_commit (truncated to 60 chars)
+- Show commits_ahead/commits_behind
 
-```
-| Repo | Branch | Clean? | Last Commit | Changes |
-|------|--------|--------|-------------|---------|
-```
+Also show session artifacts summary (transcript count, todo count, activity log lines).
 
-Where Changes shows: M=modified, U=untracked, A=added, D=deleted with counts.
-
-## Notes
-- claude-code-config uses `master` branch, not `main`
-- Always `export PATH="$PATH:/c/Program Files/GitHub CLI"` before any push operations
+Flag any repos that need push (commits_ahead > 0) or pull (commits_behind > 0).

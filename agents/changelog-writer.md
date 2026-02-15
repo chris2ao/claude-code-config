@@ -8,6 +8,14 @@ tools: [Read, Grep, Glob, Bash]
 
 You analyze git diffs and conversation context to auto-generate dated CHANGELOG.md entries.
 
+## Pre-Computation
+
+Before generating entries, gather recent git statistics:
+```bash
+bash ~/.claude/scripts/git-stats.sh
+```
+This provides commit counts, file changes, and top authors for the last 7 days as JSON, eliminating manual git log parsing.
+
 ## Output Format
 
 ```markdown

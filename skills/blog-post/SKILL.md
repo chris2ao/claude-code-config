@@ -2,52 +2,39 @@
 description: "Write a new blog post for cryptoflexllc.com in the established series tone and style"
 ---
 
-# /blog-post - Write a New Blog Post
+# /blog-post - Blog Post Generator
 
-You are a blog post writing agent for cryptoflexllc.com. Write posts matching the established tone, style, and technical depth.
+Automates blog post creation from research through MDX file generation.
 
-## Model Recommendation
+## Post Inventory
 
-Delegate writing to a Sonnet subagent via the Task tool (subagent_type: "general-purpose", model: "sonnet"). Keep interactive questions in the main session.
+!`bash ~/.claude/scripts/blog-inventory.sh --minimal`
 
-## First: Ask What to Write About
+## User Discovery
 
-Use AskUserQuestion with options:
-1. "This session" - Current session accomplishments
-2. "Today's work" - Everything done today
-3. "A specific feature" - Deep dive on a feature
-4. "Last 24 hours" - Narrative of recent work
+Ask the user (use AskUserQuestion):
+1. **Topic/Focus:** What is this post about? (be specific)
+2. **Target Audience:** Technical developers / Business audience / General readers
+3. **Tone:** Educational and friendly / Witty and accessible / Technical reference
+4. **Unique Angle:** What makes this post different or interesting?
 
-Then ask about angle: "You decide", "Technical deep dive", or "Journey narrative".
+## Orchestration
 
-## Writing Style Guide
+After getting user answers, spawn a Task agent:
+- **subagent_type:** general-purpose
+- **model:** sonnet
+- **name:** blog-post-orchestrator
 
-- **Educational and friendly** - like explaining to a colleague over coffee
-- **First-person** - "I", "my", "we"
-- **Honest about mistakes** - document what went wrong
-- **Technically detailed** - real commands, code, error messages
-- **No fluff** - every paragraph earns its place
-- **No emojis**
-- **No em dashes** - never use em dashes. Rewrite naturally with commas, periods, colons, or parentheses
+Pass to the agent:
+1. The inventory JSON output from above
+2. The user's answers to all 4 questions
+3. Instruction: "You are a blog post orchestrator. Follow the instructions in ~/.claude/agents/blog-post-orchestrator.md"
 
-## MDX Design System
+## After Agent Returns
 
-Use callout components: `<Tip>`, `<Info>`, `<Warning>`, `<Stop>`, `<Security>` with `title` prop.
-Use product badges: `<Vercel>`, `<Nextjs>`, `<Cloudflare>` on first mention per section.
-Every post should have 3-5+ callouts minimum.
+The agent returns JSON with `filename`, `title`, `description`, `word_count`, `tags`, `summary`.
 
-## Blog System
-
-- Posts go in: `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc\src\content\blog\`
-- Filename: kebab-case `.mdx`
-- Frontmatter: title, date (ISO with time), description, tags
-- Add series navigation at bottom
-- Update previous post's "Next:" link
-
-## Post-Writing Steps
-
-1. Update series navigation on previous post
-2. Verify build: `export PATH="/c/Program Files/nodejs:$PATH" && npx next build`
-3. Show user title, description, tags, word count for review
-4. Ask confirmation before committing
-5. Commit and push
+1. Display the post details to the user
+2. Update MEMORY.md blog post list with the new entry
+3. Offer to verify the build: `export PATH="/c/Program Files/nodejs:$PATH" && cd "D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc" && npx next build`
+4. Ask if user wants to commit and push

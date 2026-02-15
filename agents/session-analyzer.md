@@ -8,6 +8,14 @@ tools: [Read, Grep, Glob]
 
 You read session archive .jsonl files and extract actionable patterns.
 
+## Pre-Computation
+
+Before beginning analysis, gather transcript metadata by running:
+```bash
+bash ~/.claude/scripts/context-health.sh
+```
+This provides transcript counts, sizes, and token estimates as JSON, reducing the number of file enumeration calls needed.
+
 ## Analysis Targets
 
 1. **Repeated patterns** — Actions or sequences that appear across multiple sessions

@@ -4,50 +4,30 @@ description: "List all available agents, skills, commands, and hooks with descri
 
 # /skill-catalog - Full Capability Inventory
 
-List all available agents, skills, commands, and hooks with descriptions.
+List all available agents, skills, commands, and hooks.
 
-## Execution
+## File Listing
+
+!`ls -1 ~/.claude/agents/*.md ~/.claude/skills/*/SKILL.md ~/.claude/skills/learned/*.md ~/.claude/commands/*.md 2>/dev/null`
+
+## Catalog Construction
+
+Read the description from each file's YAML frontmatter and present organized tables:
 
 ### 1. Plugin Agents (everything-claude-code)
-
-Known plugin agents:
-| Agent | Purpose |
-|-------|---------|
-| planner | Implementation planning |
-| architect | System design |
-| tdd-guide | Test-driven development |
-| code-reviewer | Code review |
-| security-reviewer | Security analysis |
-| build-error-resolver | Fix build errors |
-| e2e-runner | E2E testing |
-| refactor-cleaner | Dead code cleanup |
-| doc-updater | Documentation |
+Known: planner, architect, tdd-guide, code-reviewer, security-reviewer, build-error-resolver, e2e-runner, refactor-cleaner, doc-updater
 
 ### 2. Custom Agents (~/.claude/agents/)
-
-List all `.md` files in `D:\Users\chris_dnlqpqd\.claude\agents\` and read their description from frontmatter.
+List each .md file found above with its frontmatter description.
 
 ### 3. Custom Skills (~/.claude/skills/)
+List each SKILL.md found above with its frontmatter description.
 
-List all `SKILL.md` files in `D:\Users\chris_dnlqpqd\.claude\skills\` subdirectories and read their descriptions.
+### 4. Learned Skills (~/.claude/skills/learned/)
+List each .md found above, grouped by category.
 
-### 4. Custom Commands (~/.claude/commands/)
+### 5. Active Hooks
+Read `.claude/settings.local.json` in the current project and list configured hooks.
 
-List all `.md` files in `D:\Users\chris_dnlqpqd\.claude\commands\` and read their descriptions.
-
-### 5. Learned Skills (~/.claude/skills/learned/)
-
-List all `.md` files in `D:\Users\chris_dnlqpqd\.claude\skills\learned\` and summarize by category.
-
-### 6. Active Hooks
-
-Read `.claude/settings.local.json` in the current project and list all configured hooks.
-
-## Output Format
-
-Present as categorized tables with descriptions. Include counts at the top:
-- X plugin agents
-- X custom agents
-- X skills (custom + learned)
-- X commands
-- X active hooks
+## Output
+Present as categorized tables with counts at the top.

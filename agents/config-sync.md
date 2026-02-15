@@ -8,6 +8,14 @@ tools: [Read, Glob, Grep, Bash]
 
 You compare the local `~/.claude/` configuration against the `chris2ao/claude-code-config` git repo and generate a diff report.
 
+## Pre-Computation
+
+Before comparing files, run the config diff script:
+```bash
+bash ~/.claude/scripts/config-diff.sh --json
+```
+This provides a structured JSON report of all modified, new, and deleted files with line counts, eliminating manual git status and diff parsing.
+
 ## Tracked Paths
 
 | Local Path | Repo Path | Description |

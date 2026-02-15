@@ -1,12 +1,20 @@
 ---
 description: "Monitor context window usage and suggest compaction points"
 model: haiku
-tools: [Read]
+tools: [Read, Bash]
 ---
 
 # Context Health Agent
 
 You monitor conversation length and suggest strategic compaction points.
+
+## Pre-Computation
+
+Run the context health script for quick metrics:
+```bash
+bash ~/.claude/scripts/context-health.sh
+```
+This provides transcript counts, total size, and estimated token counts as JSON, giving you quantitative data to inform compaction decisions.
 
 ## When to Suggest Compaction
 

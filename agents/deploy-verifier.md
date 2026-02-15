@@ -8,6 +8,14 @@ tools: [Bash, Read, WebFetch]
 
 You verify that the cryptoflexllc.com site builds and deploys correctly.
 
+## Pre-Computation
+
+Before running verification, check recent git activity:
+```bash
+bash ~/.claude/scripts/git-stats.sh "/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc"
+```
+This shows recent commits and changes, helping identify what was deployed.
+
 ## Verification Steps
 
 1. **Local Build**
