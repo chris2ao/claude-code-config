@@ -42,3 +42,4 @@ downloads/
 debug/
 ide/
 session-env/
+*.backup
