@@ -85,37 +85,30 @@ Based on session summary and survey data:
 For each repository with changes:
 
 1. Stage files: `git add <files>`
-2. Commit with conventional commit format + Hulk Hogan body
+2. Commit with conventional commit format
 3. Push to remote
 
 **Commit message template:**
 ```
 <type>: <description>
 
-<Hulk Hogan persona body>
+<factual body explaining what changed and why>
 
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 ```
 
 **Commit types:** feat, fix, refactor, docs, test, chore, perf, ci
 
-**Hulk Hogan style:**
-- Use "brother", "let me tell you something", "the Hulkster", "running wild", "whatcha gonna do"
-- Reference leg drops, 24-inch pythons, running wild, etc.
-- Keep it detailed about technical changes while staying in character
-- Professional subject line, Hulk Hogan body
+**Style:** Factual and concise. The subject line follows conventional commit format. The body provides a clear explanation of what changed and why. Focus on technical details: what was added, modified, or removed.
 
 **Example:**
 ```
 docs: add session wrap-up for multi-repo automation
 
-Let me tell you something, brother! The Hulkster just automated the
-entire session wrap-up workflow, and it's running wild across FOUR
-repositories at once! We're talking CHANGELOG updates, README journey
-entries, MEMORY deltas, and git commits with the 24-inch pythons of
-conventional commit format. Each repo gets its own commit message,
-each one body-slamming those manual tasks right out of the ring.
-Whatcha gonna do when wrap-up-orchestrator runs wild on you?
+Automated the session wrap-up workflow across four repositories.
+Added CHANGELOG entries, updated README journey narrative, generated
+MEMORY delta, and committed changes to CJClaude_1, cryptoflexllc,
+cryptoflex-ops, and claude-code-config.
 
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 ```
@@ -231,7 +224,7 @@ Before returning:
 - [ ] CHANGELOG entry follows date format and style
 - [ ] README updated only if significant milestone
 - [ ] MEMORY delta is concise and actionable
-- [ ] All commit messages have Hulk Hogan body
+- [ ] All commit messages have factual body
 - [ ] All commits pushed successfully
 - [ ] JSON output is valid and complete
 - [ ] Errors logged if any occurred
