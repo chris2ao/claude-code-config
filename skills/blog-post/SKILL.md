@@ -8,7 +8,10 @@ Automates blog post creation from research through MDX file generation.
 
 ## Post Inventory
 
-!`bash ~/.claude/scripts/blog-inventory.sh --minimal`
+First, run the blog inventory script to see what posts exist:
+```bash
+bash ~/.claude/scripts/blog-inventory.sh --minimal
+```
 
 ## User Discovery
 
