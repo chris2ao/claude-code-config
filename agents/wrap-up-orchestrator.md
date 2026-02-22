@@ -80,13 +80,16 @@ Based on session summary and survey data:
 - Update journey narrative in existing phases
 - Add new phase section if warranted
 
-### 3. Commit and Push Changes
+### 3. Commit and Push ALL Dirty Repos
+
+CRITICAL: Commit and push ALL repositories that have uncommitted changes, not just repos with session-specific work. If the survey shows a repo is dirty (modified or untracked files), it MUST be committed and pushed. This includes pre-existing changes from previous sessions.
 
 For each repository with changes:
 
-1. Stage files: `git add <files>`
-2. Commit with conventional commit format
+1. Stage ALL files: `git add -A`
+2. Commit with conventional commit format (inspect the diff to write an accurate message)
 3. Push to remote
+4. If a repo has only pre-existing changes (not from this session), still commit them with an appropriate message describing what the changes contain
 
 **Commit message template:**
 ```
@@ -151,7 +154,11 @@ Return JSON:
 
 ### No Changes to Commit
 
-If survey shows no file changes in a repo, skip commit for that repo. Not an error.
+If survey shows a repo is clean (no modified or untracked files), skip commit for that repo. Not an error.
+
+### Pre-Existing Uncommitted Changes
+
+If the survey shows a repo has uncommitted changes that were NOT from the current session, still commit and push them. Use `git diff --stat` to understand the changes and write an appropriate commit message. Do not skip repos just because the changes predate the current session.
 
 ### claude-code-config (master branch)
 
