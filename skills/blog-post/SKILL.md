@@ -20,8 +20,17 @@ Ask the user (use AskUserQuestion):
    - "Production" - Write to `src/content/blog/` (live on cryptoflexllc.com after deploy)
    - "Backlog" - Write to `src/content/backlog/` (draft, publish later via /backlog admin page)
 2. **Topic/Focus:** What is this post about? (be specific)
-3. **Target Audience:** Technical developers / Business audience / General readers
-4. **Tone:** Educational and friendly / Witty and accessible / Technical reference
+3. **Series:** Which blog series does this belong to? (or standalone)
+   - "Building in Public" - The journey from zero to production site
+   - "Site Feature Builds" - Adding specific features (analytics, newsletter, comments, etc.)
+   - "Claude Code Workflow" - Automation, hooks, agents, optimization
+   - "Security Engineering" - Audits, WAFs, pentesting
+   - "Second Conflict" - The retro game rebuild project
+   - "None (standalone)" - Not part of a series
+   NOTE: If "Other" is selected, the user provides a new series name.
+   When a series is selected (not "None"), look up the current highest seriesOrder for that series from the inventory and set seriesOrder to the next value.
+4. **Target Audience:** Technical developers / Business audience / General readers
+5. **Tone:** Educational and friendly / Witty and accessible / Technical reference
 
 ## Orchestration
 
@@ -32,9 +41,10 @@ After getting user answers, spawn a Task agent:
 
 Pass to the agent:
 1. The inventory JSON output from above
-2. The user's answers (destination, topic, audience, tone)
+2. The user's answers (destination, topic, series, audience, tone)
 3. Instruction: "You are a blog post orchestrator. Follow the instructions in ~/.claude/agents/blog-post-orchestrator.md"
 4. If destination is "Backlog", add: "Write the post to src/content/backlog/ instead of src/content/blog/. Skip series navigation updates. The commit message should use 'chore: add backlog draft' prefix instead of 'feat: add blog post'."
+5. If a series was selected (not "None"), determine the next seriesOrder by scanning existing posts in that series (grep for `series: '<name>'` in the blog directory), then tell the agent: "Add `series: '<name>'` and `seriesOrder: <next>` to the frontmatter."
 
 ## After Agent Returns
 

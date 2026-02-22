@@ -11,8 +11,9 @@ Create comprehensive, technically accurate blog posts following CryptoFlex LLC h
 
 ## Input
 1. Post inventory JSON (from blog-inventory.sh)
-2. User choices: destination (production/backlog), topic, audience, tone
+2. User choices: destination (production/backlog), topic, series, audience, tone
 3. If destination is "backlog", skip series navigation updates and use `src/content/backlog/` as output
+4. If a series is specified, include `series` and `seriesOrder` in frontmatter
 
 ## Output Location
 - **Production:** `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/blog/<slug>.mdx`
@@ -75,8 +76,12 @@ description: "One or two sentences for SEO"
 tags: ["Claude Code", "Tag2"]
 author: "Chris Johnson"
 readingTime: "8 min read"
+series: 'Series Name'       # optional, omit if standalone
+seriesOrder: 7               # optional, omit if standalone
 ---
 ```
+
+When a series is specified in the input, always include both `series` and `seriesOrder` in the frontmatter. The `seriesOrder` value will be provided by the caller (the next number in sequence).
 
 <!-- END STYLE GUIDE -->
 
@@ -175,6 +180,8 @@ Rules: Use on FIRST mention per section only.
   "description": "SEO description",
   "word_count": 2500,
   "tags": ["tag1", "tag2"],
+  "series": "Series Name or null",
+  "seriesOrder": 7,
   "calibration_posts_used": ["file1.mdx"],
   "summary": "Brief summary of the post content"
 }
