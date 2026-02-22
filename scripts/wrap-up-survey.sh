@@ -13,6 +13,7 @@ CJCLAUDE="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1"
 CRYPTOFLEX="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc"
 CRYPTOFLEX_OPS="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflex-ops"
 CLAUDE_CONFIG="$HOME/.claude"
+THIRD_CONFLICT="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/Third-Conflict"
 
 # Function to escape JSON strings
 json_escape() {
@@ -126,7 +127,7 @@ printf '  "timestamp":"%s",\n' "$TIMESTAMP"
 
 # Collect repo info into temp files so we can also track health
 REPO_OUTPUT=""
-for repo_pair in "CJClaude_1|$CJCLAUDE" "cryptoflexllc|$CRYPTOFLEX" "cryptoflex-ops|$CRYPTOFLEX_OPS" "claude-code-config|$CLAUDE_CONFIG"; do
+for repo_pair in "CJClaude_1|$CJCLAUDE" "cryptoflexllc|$CRYPTOFLEX" "cryptoflex-ops|$CRYPTOFLEX_OPS" "Third-Conflict|$THIRD_CONFLICT" "claude-code-config|$CLAUDE_CONFIG"; do
     name="${repo_pair%%|*}"
     path="${repo_pair#*|}"
 

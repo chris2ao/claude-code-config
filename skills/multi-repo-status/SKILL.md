@@ -4,7 +4,7 @@ description: "Quick dashboard showing git status across all project repos"
 
 # /multi-repo-status - Repository Dashboard
 
-Quick status overview of all 4 project repositories.
+Quick status overview of all 5 project repositories.
 
 ## Survey
 
