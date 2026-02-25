@@ -25,7 +25,7 @@ Ask the user (use AskUserQuestion):
    - "Site Feature Builds" - Adding specific features (analytics, newsletter, comments, etc.)
    - "Claude Code Workflow" - Automation, hooks, agents, optimization
    - "Security Engineering" - Audits, WAFs, pentesting
-   - "Second Conflict" - The retro game rebuild project
+   - "Game Development with Claude Code" - Retro game rebuilds (Second Conflict, Third Conflict, Cann Cann)
    - "None (standalone)" - Not part of a series
    NOTE: If "Other" is selected, the user provides a new series name.
    When a series is selected (not "None"), look up the current highest seriesOrder for that series from the inventory and set seriesOrder to the next value.
