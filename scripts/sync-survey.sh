@@ -7,9 +7,9 @@ set -euo pipefail
 
 # Paths (MSYS2 format for Git Bash on Windows)
 CLAUDE_DIR="$HOME/.claude"
-CONFIG_REPO="D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/claude-code-config"
-HOME_REPO="D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaudin_home"
-PROJECT_DIR="D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1"
+CONFIG_REPO="C:/ClaudeProjects/claude-code-config"
+HOME_REPO="C:/ClaudeProjects/CJClaudin_home"
+PROJECT_DIR="C:/ClaudeProjects/CJClaude_1"
 
 json_escape() {
     printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n'

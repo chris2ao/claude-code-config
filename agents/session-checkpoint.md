@@ -49,11 +49,11 @@ Run in project repositories:
 
 ```bash
 # CJClaude_1
-cd D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1
+cd C:/ClaudeProjects/CJClaude_1
 git log -10 --oneline --all
 
 # cryptoflexllc (if relevant)
-cd D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc
+cd C:/ClaudeProjects/cryptoflexllc
 git log -10 --oneline --all
 
 # claude-code-config (if relevant)
@@ -127,7 +127,7 @@ NO write operations. NO file modifications. NO git commits.
 ```
 Session summary: "Writing wrap-up-orchestrator and session-checkpoint agent definitions. Testing YAML frontmatter format."
 
-Project path: D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1
+Project path: C:/ClaudeProjects/CJClaude_1
 ```
 
 **Actions:**
@@ -173,7 +173,7 @@ No special PATH requirements (read-only operations only).
 
 Use forward slashes for Windows paths in Git Bash:
 ```bash
-cd D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1
+cd C:/ClaudeProjects/CJClaude_1
 ```
 
 ## Error Handling

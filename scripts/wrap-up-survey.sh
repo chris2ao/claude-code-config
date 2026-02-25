@@ -9,11 +9,11 @@ set -euo pipefail
 START_TIME=$SECONDS
 
 # Repository paths (MSYS2 format)
-CJCLAUDE="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1"
-CRYPTOFLEX="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc"
-CRYPTOFLEX_OPS="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflex-ops"
+CJCLAUDE="/c/ClaudeProjects/CJClaude_1"
+CRYPTOFLEX="/c/ClaudeProjects/cryptoflexllc"
+CRYPTOFLEX_OPS="/c/ClaudeProjects/cryptoflex-ops"
 CLAUDE_CONFIG="$HOME/.claude"
-THIRD_CONFLICT="/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/Third-Conflict"
+THIRD_CONFLICT="/c/ClaudeProjects/Third-Conflict"
 
 # Function to escape JSON strings
 json_escape() {

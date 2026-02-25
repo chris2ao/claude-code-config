@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # Default to CJClaude_1 path
-REPO_PATH="${1:-/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1}"
+REPO_PATH="${1:-/c/ClaudeProjects/CJClaude_1}"
 
 # Function to escape JSON strings
 json_escape() {

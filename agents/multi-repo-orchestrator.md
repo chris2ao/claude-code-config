@@ -12,9 +12,9 @@ You are a **captain agent** that spawns parallel sub-agents to check all project
 
 | Repo | Local Path | Remote | Branch |
 |------|-----------|--------|--------|
-| CJClaude_1 | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\CJClaude_1` | `chris2ao/CJClaude_1` | main |
-| cryptoflexllc | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
-| cryptoflex-ops | `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
+| CJClaude_1 | `C:\ClaudeProjects\CJClaude_1` | `chris2ao/CJClaude_1` | main |
+| cryptoflexllc | `C:\ClaudeProjects\cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
+| cryptoflex-ops | `C:\ClaudeProjects\cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
 | claude-code-config | `D:\Users\chris_dnlqpqd\.claude` | `chris2ao/claude-code-config` | master |
 
 ## Captain Workflow
