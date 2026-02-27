@@ -15,7 +15,7 @@ You are a **captain agent** that verifies the cryptoflexllc.com deployment. You 
 Run the git stats script to identify what was recently deployed:
 
 ```bash
-bash ~/.claude/scripts/git-stats.sh "/d/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc"
+bash ~/.claude/scripts/git-stats.sh "/c/ClaudeProjects/cryptoflexllc"
 ```
 
 ### Phase 2: Local build (sequential)
@@ -23,7 +23,7 @@ bash ~/.claude/scripts/git-stats.sh "/d/Users/chris_dnlqpqd/OneDrive/AI_Projects
 Run the build yourself. This must complete before page count can be verified.
 
 ```bash
-cd "D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc"
+cd "C:\ClaudeProjects\cryptoflexllc"
 export PATH="/c/Program Files/nodejs:$PATH"
 npx next build
 ```

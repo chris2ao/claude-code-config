@@ -20,13 +20,13 @@ export PATH="/c/Program Files/nodejs:$PATH"
 | Source | Path | Artifacts |
 |--------|------|-----------|
 | Global config | `~/.claude/` | rules, agents, skills, scripts, commands, homunculus |
-| CJClaude_1 | `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaude_1/.claude/hooks/` | Hook scripts |
-| cryptoflexllc | `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/.claude/` | Project-level config |
-| cryptoflex-ops | `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflex-ops/.claude/` | Project-level config |
+| CJClaude_1 | `C:/ClaudeProjects/CJClaude_1/.claude/hooks/` | Hook scripts |
+| cryptoflexllc | `C:/ClaudeProjects/cryptoflexllc/.claude/` | Project-level config |
+| cryptoflex-ops | `C:/ClaudeProjects/cryptoflex-ops/.claude/` | Project-level config |
 
 ## Destination
 
-`D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaudin_home/`
+`C:/ClaudeProjects/CJClaudin_home/`
 
 ## Artifact Mapping
 
@@ -85,7 +85,7 @@ TOTAL: 97 files | 2 new | 1 modified | 94 unchanged
 If there were changes:
 
 ```bash
-cd "D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/CJClaudin_home"
+cd "C:/ClaudeProjects/CJClaudin_home"
 git add -A
 git commit -m "chore: sync config updates (N new, M modified)"
 git push

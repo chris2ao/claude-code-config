@@ -49,9 +49,9 @@ Read `src/content/blog/*.mdx` filenames and parse the frontmatter (first 10 line
 Do NOT maintain a hardcoded post list. Always discover at runtime.
 
 ### Repository paths
-- cryptoflexllc: `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc`
-- CJClaude_1: `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\CJClaude_1`
-- cryptoflex-ops: `D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflex-ops`
+- cryptoflexllc: `C:\ClaudeProjects\cryptoflexllc`
+- CJClaude_1: `C:\ClaudeProjects\CJClaude_1`
+- cryptoflex-ops: `C:\ClaudeProjects\cryptoflex-ops`
 - claude-code-config: `D:\Users\chris_dnlqpqd\.claude`
 
 ### Research by topic type
@@ -122,7 +122,7 @@ Launch a code-reviewer agent (subagent_type: "everything-claude-code:code-review
 
 ### Build Verification
 ```bash
-cd "D:\Users\chris_dnlqpqd\OneDrive\AI_Projects\Claude\cryptoflexllc" && export PATH="/c/Program Files/nodejs:$PATH" && npx next build
+cd "C:\ClaudeProjects\cryptoflexllc" && export PATH="/c/Program Files/nodejs:$PATH" && npx next build
 ```
 
 ### User Review

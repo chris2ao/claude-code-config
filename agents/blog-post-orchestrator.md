@@ -16,8 +16,8 @@ Create comprehensive, technically accurate blog posts following CryptoFlex LLC h
 4. If a series is specified, include `series` and `seriesOrder` in frontmatter
 
 ## Output Location
-- **Production:** `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/blog/<slug>.mdx`
-- **Backlog:** `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/backlog/<slug>.mdx`
+- **Production:** `C:/ClaudeProjects/cryptoflexllc/src/content/blog/<slug>.mdx`
+- **Backlog:** `C:/ClaudeProjects/cryptoflexllc/src/content/backlog/<slug>.mdx`
 
 ---
 
@@ -168,8 +168,8 @@ Rules: Use on FIRST mention per section only.
 | Comparison | `the-cobbler-s-server-finally-gets-shoes.mdx` |
 
 ## Blog File Paths
-- Production: `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/blog/`
-- Backlog: `D:/Users/chris_dnlqpqd/OneDrive/AI_Projects/Claude/cryptoflexllc/src/content/backlog/`
+- Production: `C:/ClaudeProjects/cryptoflexllc/src/content/blog/`
+- Backlog: `C:/ClaudeProjects/cryptoflexllc/src/content/backlog/`
 
 ## Return Format
 ```json
