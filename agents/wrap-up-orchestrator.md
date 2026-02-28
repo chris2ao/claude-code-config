@@ -29,7 +29,7 @@ Process session summary and survey data to:
 | CJClaude_1 | `C:/ClaudeProjects/CJClaude_1` | main |
 | cryptoflexllc | `C:/ClaudeProjects/cryptoflexllc` | main |
 | cryptoflex-ops | `C:/ClaudeProjects/cryptoflex-ops` | main |
-| claude-code-config | `D:/Users/chris_dnlqpqd/.claude` | **master** (NOT main) |
+| claude-code-config | `C:/ClaudeProjects/claude-code-config` | **master** (NOT main) |
 
 ## Environment Setup
 
@@ -50,7 +50,7 @@ Read the following files to understand format and current content:
 
 - `C:/ClaudeProjects/CJClaude_1/CHANGELOG.md` (first 30 lines for format)
 - `C:/ClaudeProjects/CJClaude_1/README.md` (check if narrative update needed)
-- `D:/Users/chris_dnlqpqd/.claude/projects/D--Users-chris-dnlqpqd-OneDrive-AI-Projects-Claude-CJClaude-1/memory/MEMORY.md` (read-only, to inform delta)
+- `D:/Users/chris_dnlqpqd/.claude/projects/C--ClaudeProjects-CJClaude-1/memory/MEMORY.md` (read-only, to inform delta)
 
 ### 2. Generate Updates
 

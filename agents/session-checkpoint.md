@@ -35,7 +35,7 @@ Invoke when:
 
 Read from:
 ```
-D:/Users/chris_dnlqpqd/.claude/projects/D--Users-chris-dnlqpqd-OneDrive-AI-Projects-Claude-CJClaude-1/memory/MEMORY.md
+D:/Users/chris_dnlqpqd/.claude/projects/C--ClaudeProjects-CJClaude-1/memory/MEMORY.md
 ```
 
 Focus on:
@@ -57,7 +57,7 @@ cd C:/ClaudeProjects/cryptoflexllc
 git log -10 --oneline --all
 
 # claude-code-config (if relevant)
-cd D:/Users/chris_dnlqpqd/.claude
+cd C:/ClaudeProjects/claude-code-config
 git log -10 --oneline --all
 ```
 

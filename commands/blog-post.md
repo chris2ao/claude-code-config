@@ -52,7 +52,7 @@ Do NOT maintain a hardcoded post list. Always discover at runtime.
 - cryptoflexllc: `C:\ClaudeProjects\cryptoflexllc`
 - CJClaude_1: `C:\ClaudeProjects\CJClaude_1`
 - cryptoflex-ops: `C:\ClaudeProjects\cryptoflex-ops`
-- claude-code-config: `D:\Users\chris_dnlqpqd\.claude`
+- claude-code-config: `C:\ClaudeProjects\claude-code-config`
 
 ### Research by topic type
 Launch parallel Explore agents (model: haiku) based on the selected topic:
@@ -75,8 +75,8 @@ Also read 2-3 recent blog posts to calibrate tone.
 **ALWAYS delegate writing to a Sonnet subagent** via Task tool (subagent_type: "general-purpose", model: "sonnet").
 
 Read these reference files and include their content in the subagent prompt:
-- `D:\Users\chris_dnlqpqd\.claude\skills\blog-style-guide.md` (writing rules, tone, examples)
-- `D:\Users\chris_dnlqpqd\.claude\skills\blog-mdx-reference.md` (MDX components, callouts, diagrams)
+- `C:\ClaudeProjects\claude-code-config\skills\blog-style-guide.md` (writing rules, tone, examples)
+- `C:\ClaudeProjects\claude-code-config\skills\blog-mdx-reference.md` (MDX components, callouts, diagrams)
 
 Provide the subagent with:
 1. All research findings from Phase 1
