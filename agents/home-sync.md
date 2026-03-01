@@ -10,23 +10,20 @@ Scans all repositories and ~/.claude/ for Claude Code configuration artifacts (a
 
 ## Environment Setup
 
-```bash
-export PATH="$PATH:/c/Program Files/GitHub CLI"
-export PATH="/c/Program Files/nodejs:$PATH"
-```
+Ensure `gh` and `node` are on PATH (typically via Homebrew on macOS).
 
 ## Source Locations
 
 | Source | Path | Artifacts |
 |--------|------|-----------|
 | Global config | `~/.claude/` | rules, agents, skills, scripts, commands, homunculus |
-| CJClaude_1 | `C:/ClaudeProjects/CJClaude_1/.claude/hooks/` | Hook scripts |
-| cryptoflexllc | `C:/ClaudeProjects/cryptoflexllc/.claude/` | Project-level config |
-| cryptoflex-ops | `C:/ClaudeProjects/cryptoflex-ops/.claude/` | Project-level config |
+| CJClaude_1 | `~/GitProjects/CJClaude_1/.claude/hooks/` | Hook scripts |
+| cryptoflexllc | `~/GitProjects/cryptoflexllc/.claude/` | Project-level config |
+| cryptoflex-ops | `~/GitProjects/cryptoflex-ops/.claude/` | Project-level config |
 
 ## Destination
 
-`C:/ClaudeProjects/CJClaudin_home/`
+`~/GitProjects/CJClaudin_home/`
 
 ## Artifact Mapping
 
@@ -85,7 +82,7 @@ TOTAL: 97 files | 2 new | 1 modified | 94 unchanged
 If there were changes:
 
 ```bash
-cd "C:/ClaudeProjects/CJClaudin_home"
+cd ~/GitProjects/CJClaudin_home
 git add -A
 git commit -m "chore: sync config updates (N new, M modified)"
 git push

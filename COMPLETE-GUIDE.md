@@ -757,13 +757,19 @@ No user prompt needed:
 
 | Agent | Purpose | Model |
 |-------|---------|-------|
+| blog-post-orchestrator | Blog post writing orchestration | sonnet |
 | changelog-writer | Auto-generate CHANGELOG entries | haiku |
-| multi-repo-orchestrator | Parallel cross-repo operations | haiku |
-| session-analyzer | Extract patterns from archives | sonnet |
-| deploy-verifier | Post-deploy verification | haiku |
 | config-sync | Sync config to git repo | haiku |
 | context-health | Monitor context window | haiku |
+| deploy-verifier | Post-deploy verification | haiku |
+| home-sync | CJClaudin_home repo sync | haiku |
+| multi-repo-orchestrator | Parallel cross-repo operations | haiku |
+| pre-commit-checker | Pre-commit security and quality checks | haiku |
+| session-analyzer | Extract patterns from archives | sonnet |
+| session-checkpoint | Session context save/restore | sonnet |
 | skill-extractor | Extract instincts from transcripts (Homunculus v2) | sonnet |
+| sync-orchestrator | Multi-repo config sync orchestration | haiku |
+| wrap-up-orchestrator | End-of-session wrap-up orchestration | sonnet |
 ```
 
 **What are custom agents?** Beyond the plugin's agents, you can define your own. Custom agents are markdown files in `~/.claude/agents/` with YAML frontmatter specifying the model and available tools. Claude Code's Task tool spawns them as specialized subprocesses with their own context windows.
@@ -841,17 +847,23 @@ Each agent file has YAML frontmatter specifying:
 - `model` — Which Claude model to use (haiku, sonnet, opus)
 - `tools` — Which tools the agent can access
 
-**Current agents (7 total):**
+**Current agents (13 total):**
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
+| **blog-post-orchestrator** | sonnet | Orchestrates blog post writing with research and MDX generation |
 | **changelog-writer** | haiku | Generates CHANGELOG.md entries from git diffs and session context |
-| **multi-repo-orchestrator** | haiku | Runs parallel git operations across all project repos |
-| **session-analyzer** | sonnet | Reads session archive transcripts and extracts actionable patterns |
-| **deploy-verifier** | haiku | Verifies builds and live site after deployment |
 | **config-sync** | haiku | Compares local `~/.claude/` config against the git repo for drift |
 | **context-health** | haiku | Monitors context window usage and suggests compaction points |
+| **deploy-verifier** | haiku | Verifies builds and live site after deployment |
+| **home-sync** | haiku | Syncs CJClaudin_home repo with current config state |
+| **multi-repo-orchestrator** | haiku | Runs parallel git operations across all project repos |
+| **pre-commit-checker** | haiku | Pre-commit security and quality validation |
+| **session-analyzer** | sonnet | Reads session archive transcripts and extracts actionable patterns |
+| **session-checkpoint** | sonnet | Saves and restores session context across compactions |
 | **skill-extractor** | sonnet | Extracts instincts from session transcripts for Homunculus v2 learning system |
+| **sync-orchestrator** | haiku | Orchestrates config sync across multiple repos |
+| **wrap-up-orchestrator** | sonnet | End-of-session wrap-up with docs, commits, and pushes |
 
 **How to create your own agent:**
 

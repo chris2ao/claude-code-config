@@ -26,21 +26,14 @@ Process session summary and survey data to:
 
 | Repo | Path | Branch |
 |------|------|--------|
-| CJClaude_1 | `C:/ClaudeProjects/CJClaude_1` | main |
-| cryptoflexllc | `C:/ClaudeProjects/cryptoflexllc` | main |
-| cryptoflex-ops | `C:/ClaudeProjects/cryptoflex-ops` | main |
-| claude-code-config | `C:/ClaudeProjects/claude-code-config` | **master** (NOT main) |
+| CJClaude_1 | `~/GitProjects/CJClaude_1` | main |
+| cryptoflexllc | `~/GitProjects/cryptoflexllc` | main |
+| cryptoflex-ops | `~/GitProjects/cryptoflex-ops` | main |
+| claude-code-config | `~/.claude` | **master** (NOT main) |
 
 ## Environment Setup
 
-Always set these PATH variables before git operations:
-
-```bash
-export PATH="$PATH:/c/Program Files/GitHub CLI"
-export PATH="/c/Program Files/nodejs:$PATH"
-```
-
-Use forward slashes and MSYS2 format for Windows paths in Git Bash.
+Ensure `gh` and `node` are on PATH (typically via Homebrew on macOS).
 
 ## Workflow
 
@@ -48,9 +41,9 @@ Use forward slashes and MSYS2 format for Windows paths in Git Bash.
 
 Read the following files to understand format and current content:
 
-- `C:/ClaudeProjects/CJClaude_1/CHANGELOG.md` (first 30 lines for format)
-- `C:/ClaudeProjects/CJClaude_1/README.md` (check if narrative update needed)
-- `D:/Users/chris_dnlqpqd/.claude/projects/C--ClaudeProjects-CJClaude-1/memory/MEMORY.md` (read-only, to inform delta)
+- `~/GitProjects/CJClaude_1/CHANGELOG.md` (first 30 lines for format)
+- `~/GitProjects/CJClaude_1/README.md` (check if narrative update needed)
+- `~/.claude/projects/*/memory/MEMORY.md` (read-only, to inform delta)
 
 ### 2. Generate Updates
 
@@ -172,9 +165,8 @@ Agent cannot write to `~/.claude/projects/*/memory/MEMORY.md` due to Claude Code
 
 Before each git operation:
 
-1. Export PATH for GitHub CLI and Node.js
-2. Use forward slashes in paths
-3. Check current branch matches expected
+1. Ensure `gh` and `node` are on PATH
+2. Check current branch matches expected
 4. Use HEREDOC for commit messages with proper quoting
 5. Verify push succeeded before marking as complete
 

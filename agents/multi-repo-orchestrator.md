@@ -12,10 +12,10 @@ You are a **captain agent** that spawns parallel sub-agents to check all project
 
 | Repo | Local Path | Remote | Branch |
 |------|-----------|--------|--------|
-| CJClaude_1 | `C:\ClaudeProjects\CJClaude_1` | `chris2ao/CJClaude_1` | main |
-| cryptoflexllc | `C:\ClaudeProjects\cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
-| cryptoflex-ops | `C:\ClaudeProjects\cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
-| claude-code-config | `C:\ClaudeProjects\claude-code-config` | `chris2ao/claude-code-config` | master |
+| CJClaude_1 | `~/GitProjects/CJClaude_1` | `chris2ao/CJClaude_1` | main |
+| cryptoflexllc | `~/GitProjects/cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
+| cryptoflex-ops | `~/GitProjects/cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
+| claude-code-config | `~/.claude` | `chris2ao/claude-code-config` | master |
 
 ## Captain Workflow
 
@@ -29,7 +29,7 @@ For each repo, provide this prompt (substituting the repo-specific values):
 Check the git status of {REPO_NAME} at path {LOCAL_PATH} on branch {BRANCH}.
 
 Run these commands in sequence:
-1. export PATH="$PATH:/c/Program Files/GitHub CLI"
+1. export PATH="$PATH:/opt/homebrew/bin"
 2. git -C "{LOCAL_PATH}" fetch origin {BRANCH} 2>/dev/null
 3. git -C "{LOCAL_PATH}" status --porcelain
 4. git -C "{LOCAL_PATH}" log -1 --oneline
@@ -80,6 +80,5 @@ For push operations, confirm with the user BEFORE spawning push agents.
 
 ## Platform Notes
 
-- Always `export PATH="$PATH:/c/Program Files/GitHub CLI"` before git push
 - claude-code-config uses `master` branch, not `main`
-- All repos are in `C:\ClaudeProjects\`. Always quote paths in git commands.
+- Always quote paths in git commands.
