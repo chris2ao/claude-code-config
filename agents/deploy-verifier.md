@@ -15,7 +15,7 @@ You are a **captain agent** that verifies the cryptoflexllc.com deployment. You 
 Run the git stats script to identify what was recently deployed:
 
 ```bash
-bash ~/.claude/scripts/git-stats.sh "/c/ClaudeProjects/cryptoflexllc"
+bash ~/.claude/scripts/git-stats.sh ~/GitProjects/cryptoflexllc
 ```
 
 ### Phase 2: Local build (sequential)
@@ -23,8 +23,7 @@ bash ~/.claude/scripts/git-stats.sh "/c/ClaudeProjects/cryptoflexllc"
 Run the build yourself. This must complete before page count can be verified.
 
 ```bash
-cd "C:\ClaudeProjects\cryptoflexllc"
-export PATH="/c/Program Files/nodejs:$PATH"
+cd ~/GitProjects/cryptoflexllc
 npx next build
 ```
 
@@ -125,5 +124,4 @@ Collect all results and produce a unified verification report:
 
 ## Platform Notes
 
-- Always set Node.js PATH before build: `export PATH="/c/Program Files/nodejs:$PATH"`
-- OneDrive may lock `.next` cache. If build fails with EPERM, run `rm -rf .next` first.
+- Ensure `node` and `npx` are on PATH (typically via Homebrew on macOS).

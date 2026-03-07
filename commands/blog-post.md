@@ -49,10 +49,10 @@ Read `src/content/blog/*.mdx` filenames and parse the frontmatter (first 10 line
 Do NOT maintain a hardcoded post list. Always discover at runtime.
 
 ### Repository paths
-- cryptoflexllc: `C:\ClaudeProjects\cryptoflexllc`
-- CJClaude_1: `C:\ClaudeProjects\CJClaude_1`
-- cryptoflex-ops: `C:\ClaudeProjects\cryptoflex-ops`
-- claude-code-config: `C:\ClaudeProjects\claude-code-config`
+- cryptoflexllc: `~/GitProjects/cryptoflexllc`
+- CJClaude_1: `~/GitProjects/CJClaude_1`
+- cryptoflex-ops: `~/GitProjects/cryptoflex-ops`
+- claude-code-config: `~/.claude`
 
 ### Research by topic type
 Launch parallel Explore agents (model: haiku) based on the selected topic:
@@ -75,8 +75,8 @@ Also read 2-3 recent blog posts to calibrate tone.
 **ALWAYS delegate writing to a Sonnet subagent** via Task tool (subagent_type: "general-purpose", model: "sonnet").
 
 Read these reference files and include their content in the subagent prompt:
-- `C:\ClaudeProjects\claude-code-config\skills\blog-style-guide.md` (writing rules, tone, examples)
-- `C:\ClaudeProjects\claude-code-config\skills\blog-mdx-reference.md` (MDX components, callouts, diagrams)
+- `~/.claude/skills/blog-style-guide.md` (writing rules, tone, examples)
+- `~/.claude/skills/blog-mdx-reference.md` (MDX components, callouts, diagrams)
 
 Provide the subagent with:
 1. All research findings from Phase 1
@@ -122,7 +122,7 @@ Launch a code-reviewer agent (subagent_type: "everything-claude-code:code-review
 
 ### Build Verification
 ```bash
-cd "C:\ClaudeProjects\cryptoflexllc" && export PATH="/c/Program Files/nodejs:$PATH" && npx next build
+cd ~/GitProjects/cryptoflexllc && npx next build
 ```
 
 ### User Review
@@ -148,7 +148,7 @@ feat: add blog post - [post title]
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
 )"
-export PATH="$PATH:/c/Program Files/GitHub CLI" && git push
+git push
 ```
 Report the live URL: `https://cryptoflexllc.com/blog/[slug]`
 
@@ -163,7 +163,7 @@ chore: add backlog draft - [post title]
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
 )"
-export PATH="$PATH:/c/Program Files/GitHub CLI" && git push
+git push
 ```
 Report: "Draft saved to backlog. Publish later via /backlog admin page."
 

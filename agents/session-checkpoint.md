@@ -35,7 +35,7 @@ Invoke when:
 
 Read from:
 ```
-D:/Users/chris_dnlqpqd/.claude/projects/C--ClaudeProjects-CJClaude-1/memory/MEMORY.md
+~/.claude/projects/*/memory/MEMORY.md
 ```
 
 Focus on:
@@ -49,15 +49,15 @@ Run in project repositories:
 
 ```bash
 # CJClaude_1
-cd C:/ClaudeProjects/CJClaude_1
+cd ~/GitProjects/CJClaude_1
 git log -10 --oneline --all
 
 # cryptoflexllc (if relevant)
-cd C:/ClaudeProjects/cryptoflexllc
+cd ~/GitProjects/cryptoflexllc
 git log -10 --oneline --all
 
 # claude-code-config (if relevant)
-cd C:/ClaudeProjects/claude-code-config
+cd ~/.claude
 git log -10 --oneline --all
 ```
 
@@ -100,7 +100,7 @@ Return JSON:
 
 ```json
 {
-  "memory_delta": "## Session Checkpoint (2026-02-14 15:30)\n- **In progress:** wrap-up-orchestrator agent definition\n- **Recent changes:** D:/Users/.../agent-assessment/output/agents/wrap-up-orchestrator.md, session-checkpoint.md\n- **Decisions:** Agents cannot write to ~/.claude/projects/*/memory/ due to sandbox, must return memory_delta\n- **Next steps:** Test wrap-up workflow, validate multi-repo commits",
+  "memory_delta": "## Session Checkpoint (2026-02-14 15:30)\n- **In progress:** wrap-up-orchestrator agent definition\n- **Recent changes:** agents/wrap-up-orchestrator.md, session-checkpoint.md\n- **Decisions:** Agents cannot write to ~/.claude/projects/*/memory/ due to sandbox, must return memory_delta\n- **Next steps:** Test wrap-up workflow, validate multi-repo commits",
   "summary": "Checkpoint captured: 2 agent files written, sandbox limitation documented, ready to resume multi-repo workflow testing"
 }
 ```
@@ -127,7 +127,7 @@ NO write operations. NO file modifications. NO git commits.
 ```
 Session summary: "Writing wrap-up-orchestrator and session-checkpoint agent definitions. Testing YAML frontmatter format."
 
-Project path: C:/ClaudeProjects/CJClaude_1
+Project path: ~/GitProjects/CJClaude_1
 ```
 
 **Actions:**
@@ -171,9 +171,9 @@ If invoked after context compaction already happened:
 
 No special PATH requirements (read-only operations only).
 
-Use forward slashes for Windows paths in Git Bash:
+Use standard Unix paths:
 ```bash
-cd C:/ClaudeProjects/CJClaude_1
+cd ~/GitProjects/CJClaude_1
 ```
 
 ## Error Handling

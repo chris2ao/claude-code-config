@@ -10,12 +10,7 @@ You sync files from the live `~/.claude/` configuration to one or both target re
 
 ## Environment Setup
 
-Always run these first in any Bash call:
-
-```bash
-export PATH="$PATH:/c/Program Files/GitHub CLI"
-export PATH="/c/Program Files/nodejs:$PATH"
-```
+Ensure `gh` and `node` are on PATH (typically via Homebrew on macOS).
 
 ## Inputs
 
@@ -28,8 +23,8 @@ You receive:
 
 | Target | Local Path | Branch | Remote |
 |--------|-----------|--------|--------|
-| claude-code-config | `C:/ClaudeProjects/claude-code-config` | `master` | chris2ao/claude-code-config |
-| CJClaudin_home | `C:/ClaudeProjects/CJClaudin_home` | `main` | chris2ao/CJClaudin_home |
+| claude-code-config | `~/GitProjects/claude-code-config` | `master` | chris2ao/claude-code-config |
+| CJClaudin_home | `~/GitProjects/CJClaudin_home` | `main` | chris2ao/CJClaudin_home |
 
 ## Artifact Mapping: claude-code-config
 
@@ -57,7 +52,7 @@ All of the above, mapped under `payload/`:
 | `~/.claude/commands/*.md` | `payload/commands/` |
 | `~/.claude/scripts/*.sh` | `payload/scripts/` |
 | `~/.claude/homunculus/instincts/**/*.md` | `payload/homunculus/instincts/` (preserve subdirs) |
-| `C:/ClaudeProjects/CJClaude_1/.claude/hooks/*.ps1` | `hooks/windows/` |
+| `~/GitProjects/CJClaude_1/.claude/hooks/*.ps1` | `hooks/windows/` |
 
 ## Workflow
 

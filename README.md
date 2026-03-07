@@ -46,19 +46,25 @@ rules/
 
 Total context cost across all 10 files: ~250 lines.
 
-### 7 Custom Agents
+### 13 Custom Agents
 
 Agents in `agents/` are specialized agent definitions that Claude Code's Task tool can spawn. Each has a focused purpose and optimal model assignment:
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
+| **blog-post-orchestrator** | sonnet | Orchestrate blog post writing with research and MDX generation |
 | **changelog-writer** | haiku | Auto-generate CHANGELOG.md entries from git diffs |
-| **multi-repo-orchestrator** | haiku | Parallel git operations across all project repos |
-| **session-analyzer** | sonnet | Extract patterns from session archive transcripts |
-| **deploy-verifier** | haiku | Post-deploy verification for cryptoflexllc.com |
 | **config-sync** | haiku | Compare local config against this git repo |
 | **context-health** | haiku | Monitor context window, suggest compaction points |
+| **deploy-verifier** | haiku | Post-deploy verification for cryptoflexllc.com |
+| **home-sync** | haiku | Sync CJClaudin_home repo with current config state |
+| **multi-repo-orchestrator** | haiku | Parallel git operations across all project repos |
+| **pre-commit-checker** | haiku | Pre-commit security and quality validation |
+| **session-analyzer** | sonnet | Extract patterns from session archive transcripts |
+| **session-checkpoint** | sonnet | Save and restore session context across compactions |
 | **skill-extractor** | sonnet | Extract instincts from session transcripts (Homunculus v2) |
+| **sync-orchestrator** | haiku | Orchestrate config sync across multiple repos |
+| **wrap-up-orchestrator** | sonnet | End-of-session wrap-up with docs, commits, and pushes |
 
 ### 18 Learned Skills
 
@@ -87,7 +93,7 @@ Skills in `skills/learned/` are reusable patterns extracted from real debugging 
 
 Organized into 6 categories via `INDEX.md`: Platform (3), Security (4), Claude Code (5), API (1), Testing (1), Next.js (4).
 
-### 4 Custom Skills
+### 5 Custom Skills
 
 Skills in `skills/` (with `SKILL.md` files) are user-invocable workflows:
 
@@ -97,6 +103,7 @@ Skills in `skills/` (with `SKILL.md` files) are user-invocable workflows:
 | **`/blog-post`** | Interactive blog writing agent. Asks topic/angle, writes MDX post, delegates to Sonnet for content generation. |
 | **`/multi-repo-status`** | Quick dashboard: git status across all 4 project repos in parallel. |
 | **`/skill-catalog`** | Full inventory of all agents, skills, commands, and hooks with descriptions. |
+| **`/sync`** | Configuration sync across repos, mirrors local ~/.claude/ state to git backups. |
 
 ### 2 Custom Commands
 
@@ -171,19 +178,26 @@ rules/
     windows-platform.md                   — Windows/PowerShell/OneDrive quirks
 
 agents/
+  blog-post-orchestrator.md               — Blog post writing orchestration
   changelog-writer.md                     — CHANGELOG generation from diffs
-  multi-repo-orchestrator.md              — Parallel cross-repo git operations
-  session-analyzer.md                     — Pattern extraction from transcripts
-  deploy-verifier.md                      — Post-deploy site verification
   config-sync.md                          — Config drift detection
   context-health.md                       — Context window monitoring
+  deploy-verifier.md                      — Post-deploy site verification
+  home-sync.md                            — CJClaudin_home repo sync
+  multi-repo-orchestrator.md              — Parallel cross-repo git operations
+  pre-commit-checker.md                   — Pre-commit security and quality checks
+  session-analyzer.md                     — Pattern extraction from transcripts
+  session-checkpoint.md                   — Session context save/restore
   skill-extractor.md                      — Instinct extraction from sessions (Homunculus v2)
+  sync-orchestrator.md                    — Multi-repo config sync orchestration
+  wrap-up-orchestrator.md                 — End-of-session wrap-up orchestration
 
 skills/
   wrap-up/SKILL.md                        — End-of-session documentation
   blog-post/SKILL.md                      — Blog post writing agent
   multi-repo-status/SKILL.md              — Multi-repo git dashboard
   skill-catalog/SKILL.md                  — Full capability inventory
+  sync/SKILL.md                           — Configuration sync across repos
   learned/
     INDEX.md                              — Organized index (18 skills, 6 categories)
     powershell-stdin-hooks.md
