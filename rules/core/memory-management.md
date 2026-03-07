@@ -1,0 +1,80 @@
+# Memory Management
+
+## Five Memory Systems, One Rule
+
+Claude Code has multiple memory systems. Each serves a different purpose. Do not duplicate information across them.
+
+### System Boundaries
+
+**Auto memory** (`MEMORY.md` files, built-in):
+- Scope: per-project, loaded automatically (first 200 lines)
+- Use for: stable facts that apply every session in this project
+- Examples: build commands, deploy scripts, file structure conventions, tool preferences
+- Keep it short and factual. If it changes often, it does not belong here.
+
+**Vector memory** (MCP `vector-memory`):
+- Scope: global, queried on demand via `memory_store` and `memory_search`
+- Use for: detailed context that is relevant when a topic comes up
+- Examples: bug resolutions (root cause, fix), architectural decisions (reasoning, tradeoffs), workarounds (what failed, what worked), error patterns (message, cause, solution)
+- Always include project name as a tag for filtering.
+
+**Knowledge graph** (MCP `memory`):
+- Scope: global, queried on demand via `create_entities`, `search_nodes`
+- Use for: explicit relationships between named entities
+- Examples: service dependencies, data flow between systems, team/role structures
+- Only use when you need to model connections, not for general facts.
+
+**Homunculus** (`observations.jsonl` + instincts):
+- Scope: global, captured automatically by hooks
+- Use for: behavioral pattern extraction (handled by observer agent, not by you)
+- Do not write to this system directly. Hooks capture it.
+
+**Session archive** (`.claude/session_archive/`):
+- Scope: per-project, saved on clean exit
+- Use for: full transcript backup for later analysis
+- Do not write to this system directly. The SessionEnd hook handles it.
+
+## When to Save to Vector Memory (Triggers)
+
+Save to vector-memory after ANY of these events:
+
+1. Completing a significant task (feature, bug fix, refactor, config change)
+2. Making an architectural decision (choosing a library, pattern, or approach)
+3. Discovering a gotcha or workaround (something that took effort to figure out)
+4. Resolving a bug (root cause, fix, and how it was found)
+5. Encountering an error and fixing it (error message, cause, solution)
+
+Do NOT save to vector memory:
+- Project conventions that belong in auto memory (MEMORY.md)
+- Simple facts like file paths or build commands (auto memory)
+- Raw tool usage observations (hooks handle this)
+
+## When to Save to Auto Memory (MEMORY.md)
+
+Update MEMORY.md only for stable, project-specific facts:
+- Build and deploy commands
+- Key file paths and project structure
+- Naming conventions and patterns unique to this project
+- Tool and framework versions
+- Preferences confirmed across multiple sessions
+
+## How to Save to Vector Memory
+
+Include these fields in every memory:
+
+- What: concise description of what happened
+- Why: the reasoning or root cause
+- Tags: relevant keywords (project name, technology, pattern type)
+
+Use 3-5 tags per memory. Always include the project name as a tag.
+
+## Session Start
+
+At the beginning of each session, if the user describes a task related to previous work:
+- Query vector-memory with relevant keywords to retrieve prior context
+- Use retrieved memories to avoid re-learning or re-investigating
+- Check MEMORY.md for project conventions (loaded automatically)
+
+## Save During, Not After
+
+Save memories continuously throughout the session as events occur. Do not wait until session end, as hard kills skip exit hooks and lose unsaved context.
