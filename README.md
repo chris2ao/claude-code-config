@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 12 rules, 13 agents, 5 skills, 23 learned skills, 9 scripts, 6 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 11 rules, 13 agents, 5 skills, 23 learned skills, 8 scripts, 6 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -36,7 +36,7 @@ cp -r skills/ ~/.claude/skills/
 
 ## Component Inventory
 
-### Rules (12 files)
+### Rules (11 files)
 
 Rules in `rules/` are loaded automatically into every Claude Code session. They shape how Claude writes code, handles security, manages git, and routes work to agents.
 
@@ -47,12 +47,10 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `core/coding-style.md` | Immutability, file organization, error handling, no em dashes |
 | `core/memory-management.md` | Five memory systems with clear boundaries and save triggers |
 | `core/security.md` | Pre-commit security checklist, secret management protocol |
-| `content/blog-content.md` | Blog content rules (no private repo links) |
 | `development/git-workflow.md` | Conventional commits, PR workflow, feature implementation |
 | `development/patterns.md` | Repository pattern, API response envelopes, skeleton projects |
 | `development/testing.md` | TDD workflow, 80% minimum coverage |
 | `operations/hooks.md` | Hook types, file protection, context preservation |
-| `operations/macos-platform.md` | macOS/zsh specifics, Homebrew paths, osascript notifications |
 | `operations/performance.md` | Model selection (Haiku/Sonnet/Opus), cost optimization |
 | `operations/windows-platform.md` | PowerShell stdin, Git Bash path mangling, OneDrive locks |
 
@@ -101,13 +99,12 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (9 files)
+### Scripts (8 files)
 
 Automation scripts in `scripts/` for common operations:
 
 | Script | Purpose |
 |--------|---------|
-| `env.sh` | Shared environment variables (repo paths, tool paths) |
 | `wrap-up-survey.sh` | Multi-repo wrap-up data collection |
 | `sync-survey.sh` | Config sync status survey |
 | `config-diff.sh` | Compare local config against git repo |
@@ -228,11 +225,11 @@ This configuration supports both **macOS** and **Windows**:
 
 ```
 claude-code-config/
-  rules/                         # 12 global rule files (4 subdirectories)
+  rules/                         # 11 global rule files (3 subdirectories)
   agents/                        # 13 custom agent definitions
   skills/                        # 5 invocable skills + 23 learned skills
-  commands/                      # 2 legacy commands (backward compat)
-  scripts/                       # 9 automation scripts
+  commands/                      # 3 legacy commands (backward compat)
+  scripts/                       # 8 automation scripts
   hooks/                         # 6 lifecycle hooks + settings template
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates

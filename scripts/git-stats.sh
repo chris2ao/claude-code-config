@@ -6,14 +6,8 @@
 
 set -euo pipefail
 
-# Source environment variables
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -f "$SCRIPT_DIR/env.sh" ]]; then
-    source "$SCRIPT_DIR/env.sh"
-fi
-
 # Default to CJClaude_1 path
-REPO_PATH="${1:-${REPO_CJCLAUDE:-$HOME/GitProjects/CJClaude_1}}"
+REPO_PATH="${1:-/c/ClaudeProjects/CJClaude_1}"
 
 # Function to escape JSON strings
 json_escape() {

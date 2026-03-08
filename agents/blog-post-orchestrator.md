@@ -59,7 +59,6 @@ Show the thing -> Explain what's happening -> Explain why it matters
 - Marketing language
 - Vague statements without specifics
 - Em dashes (NEVER, use commas, periods, colons, or parentheses instead)
-- Links to private GitHub repositories (readers cannot access them). Only link to public repos. Known public repos: `chris2ao/cryptoflexllc`, `chris2ao/claude-code-config`. All other `chris2ao/*` repos are private. When referencing private repos, use the repo name as plain text without a link, or describe the content without linking.
 
 ## Post Length Guidelines
 | Post Type | Word Count | Reading Time |

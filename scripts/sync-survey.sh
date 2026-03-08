@@ -5,17 +5,11 @@
 
 set -euo pipefail
 
-# Source environment variables
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -f "$SCRIPT_DIR/env.sh" ]]; then
-    source "$SCRIPT_DIR/env.sh"
-fi
-
-# Paths (using env.sh variables with fallbacks)
-CLAUDE_DIR="${CLAUDE_HOME:-$HOME/.claude}"
-CONFIG_REPO="${PROJECTS_DIR:-$HOME/GitProjects}/claude-code-config"
-HOME_REPO="${PROJECTS_DIR:-$HOME/GitProjects}/CJClaudin_home"
-PROJECT_DIR="${REPO_CJCLAUDE:-$HOME/GitProjects/CJClaude_1}"
+# Paths (MSYS2 format for Git Bash on Windows)
+CLAUDE_DIR="$HOME/.claude"
+CONFIG_REPO="C:/ClaudeProjects/claude-code-config"
+HOME_REPO="C:/ClaudeProjects/CJClaudin_home"
+PROJECT_DIR="C:/ClaudeProjects/CJClaude_1"
 
 json_escape() {
     printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n'

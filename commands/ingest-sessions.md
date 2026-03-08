@@ -13,11 +13,10 @@ Process session archive transcripts to extract valuable context and store it in 
 Scan for session archives across all projects:
 
 ```bash
-# Check all known project locations (macOS paths)
+# Check all known project locations
 for dir in \
-  "$HOME/GitProjects/*/." \
-  "$HOME/GitProjects/*/.claude/session_archive" \
-  "$HOME/.claude/session_archive" \
+  /c/ClaudeProjects/*/. \
+  /c/ClaudeProjects/*/.claude/session_archive \
   ; do
   if [ -d "$dir" ]; then
     echo "$dir"
