@@ -62,6 +62,7 @@ what would happen without it, how does this connect to the bigger picture.
 - Apologizing or hedging ("I'm not an expert, but..." just explain the thing)
 - Lists of links without context (every link should earn its place with explanation)
 - Em dashes (NEVER, use commas, periods, colons, or parentheses instead)
+- Links to private GitHub repositories (readers cannot access them). Only link to public repos: `chris2ao/cryptoflexllc` and `chris2ao/claude-code-config`. All other `chris2ao/*` repos are private. Use repo names as plain text without links when referencing private repos.
 
 ## Example Opening Paragraphs (match the style, DO NOT copy)
 

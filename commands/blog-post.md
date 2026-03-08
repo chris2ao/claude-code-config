@@ -49,10 +49,10 @@ Read `src/content/blog/*.mdx` filenames and parse the frontmatter (first 10 line
 Do NOT maintain a hardcoded post list. Always discover at runtime.
 
 ### Repository paths
-- cryptoflexllc: `~/GitProjects/cryptoflexllc`
-- CJClaude_1: `~/GitProjects/CJClaude_1`
-- cryptoflex-ops: `~/GitProjects/cryptoflex-ops`
-- claude-code-config: `~/.claude`
+- cryptoflexllc: `/Users/chris2ao/GitProjects/cryptoflexllc`
+- CJClaude_1: `/Users/chris2ao/GitProjects/CJClaude_1`
+- cryptoflex-ops: `/Users/chris2ao/GitProjects/cryptoflex-ops`
+- claude-code-config: `/Users/chris2ao/.claude`
 
 ### Research by topic type
 Launch parallel Explore agents (model: haiku) based on the selected topic:
@@ -122,7 +122,7 @@ Launch a code-reviewer agent (subagent_type: "everything-claude-code:code-review
 
 ### Build Verification
 ```bash
-cd ~/GitProjects/cryptoflexllc && npx next build
+cd "/Users/chris2ao/GitProjects/cryptoflexllc" && npx next build
 ```
 
 ### User Review
@@ -143,7 +143,7 @@ git add src/content/blog/[new-post].mdx src/content/blog/[previous-post].mdx
 git commit -m "$(cat <<'EOF'
 feat: add blog post - [post title]
 
-[Hulk Hogan persona body explaining what the post covers]
+[Factual body explaining what the post covers]
 
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
@@ -158,7 +158,7 @@ git add src/content/backlog/[new-post].mdx
 git commit -m "$(cat <<'EOF'
 chore: add backlog draft - [post title]
 
-[Hulk Hogan persona body explaining what the post covers]
+[Factual body explaining what the post covers]
 
 Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 EOF
@@ -171,6 +171,5 @@ Report: "Draft saved to backlog. Publish later via /backlog admin page."
 
 - **Never fabricate.** Only write about things that actually happened. Ask the user if unclear.
 - **Code examples must be real.** Read actual files and quote from them.
-- **PowerShell from Git Bash:** Write temp `.ps1` files for commands with `$` variables.
 - **Blog directory:** `src/content/blog/` (production) or `src/content/backlog/` (drafts) in the cryptoflexllc repo.
 - **Filename convention:** kebab-case slug, e.g., `my-post-title.mdx` becomes `/blog/my-post-title`.

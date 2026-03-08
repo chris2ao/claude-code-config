@@ -1,239 +1,248 @@
-# Claude Code Config
+# Claude Code Configuration
 
-A real-world Claude Code configuration built through hands-on exploration, not theory. This repo captures the rules, agents, skills, and hard-won knowledge from pushing Claude Code to its limits over multiple intensive sessions.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 12 rules, 13 agents, 5 skills, 23 learned skills, 9 scripts, 6 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
-If you've just installed Claude Code and wondered "what can this thing really do?" you're in the right place.
+## What This Is
 
-## Prerequisites
+This repo contains a complete, portable Claude Code setup that turns a single AI assistant into a team of specialized agents with persistent memory, automated hooks, and hard-won debugging knowledge. Copy what you need, adapt it to your workflow, and skip the trial-and-error we already went through.
 
-The **rules** in this repo work standalone. Copy `rules/` into `~/.claude/` and they're active immediately. No plugin or external dependency needed.
+For a detailed walkthrough aimed at beginners, see [COMPLETE-GUIDE.md](./COMPLETE-GUIDE.md).
 
-The **plugin agents** (`agents.md`) require the [everything-claude-code](https://github.com/affaan-m/everything-claude-code) plugin by Affaan Mustafa. Without it, plugin agent references like "use the planner agent" won't do anything. Install it with:
+## Quick Start
 
 ```bash
+# 1. Copy rules (works standalone, no dependencies)
+cp -r rules/ ~/.claude/rules/
+
+# 2. Add MCP servers (requires Node.js)
+claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
+
+# 3. Copy custom agents
+cp -r agents/ ~/.claude/agents/
+
+# 4. Install hooks (copy scripts, then configure)
+cp -r hooks/ ~/.claude/hooks/
+# Edit hooks/settings.local.json.template and copy to your project's .claude/settings.local.json
+
+# 5. Copy skills
+cp -r skills/ ~/.claude/skills/
+
+# 6. (Optional) Install the everything-claude-code plugin for plugin agents
+# Inside a Claude Code session:
 /plugin marketplace add affaan-m/everything-claude-code
 /plugin install everything-claude-code@everything-claude-code
 ```
 
-The **custom agents** (`agents/`) work standalone with Claude Code's built-in Task tool. No plugin needed.
+## Component Inventory
 
-The **MCP servers** we recommend (memory, context7) require [Node.js](https://nodejs.org/) installed. They auto-install via `npx` on first use.
+### Rules (12 files)
 
-## What You'll Find Here
+Rules in `rules/` are loaded automatically into every Claude Code session. They shape how Claude writes code, handles security, manages git, and routes work to agents.
 
-This isn't a toy config. It's a production-ready setup that turns Claude Code from a smart autocomplete into something closer to a full engineering team. Here's what's inside:
+| File | Purpose |
+|------|---------|
+| `agents.md` | Agent orchestration framework (plugin + custom agents) |
+| `core/agentic-workflow.md` | Mandatory parallel task decomposition with model routing |
+| `core/coding-style.md` | Immutability, file organization, error handling, no em dashes |
+| `core/memory-management.md` | Five memory systems with clear boundaries and save triggers |
+| `core/security.md` | Pre-commit security checklist, secret management protocol |
+| `content/blog-content.md` | Blog content rules (no private repo links) |
+| `development/git-workflow.md` | Conventional commits, PR workflow, feature implementation |
+| `development/patterns.md` | Repository pattern, API response envelopes, skeleton projects |
+| `development/testing.md` | TDD workflow, 80% minimum coverage |
+| `operations/hooks.md` | Hook types, file protection, context preservation |
+| `operations/macos-platform.md` | macOS/zsh specifics, Homebrew paths, osascript notifications |
+| `operations/performance.md` | Model selection (Haiku/Sonnet/Opus), cost optimization |
+| `operations/windows-platform.md` | PowerShell stdin, Git Bash path mangling, OneDrive locks |
 
-### 10 Global Rule Files (3 subdirectories)
+### Agents (13 files)
 
-Rules in `rules/` are loaded automatically into every Claude Code session across all your projects. They act as persistent instructions that shape how Claude works.
-
-```
-rules/
-  agents.md              — Agent orchestration (plugin + custom agents)
-  core/
-    agentic-workflow.md   — Mandatory task decomposition, parallel agent patterns
-    coding-style.md       — Immutability, file organization, em-dash prohibition
-    security.md           — Pre-commit security checklist, secret management
-  development/
-    git-workflow.md       — Conventional commits (Hulk Hogan body), PRs, TDD workflow
-    patterns.md           — Repository pattern, API response envelopes
-    testing.md            — 80% coverage, TDD: RED-GREEN-REFACTOR
-  operations/
-    hooks.md              — Hook types, file protection, context preservation
-    performance.md        — Model routing (Haiku/Sonnet/Opus), cost optimization
-    windows-platform.md   — PowerShell stdin, path mangling, OneDrive workarounds
-```
-
-Total context cost across all 10 files: ~250 lines.
-
-### 13 Custom Agents
-
-Agents in `agents/` are specialized agent definitions that Claude Code's Task tool can spawn. Each has a focused purpose and optimal model assignment:
+Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| **blog-post-orchestrator** | sonnet | Orchestrate blog post writing with research and MDX generation |
-| **changelog-writer** | haiku | Auto-generate CHANGELOG.md entries from git diffs |
-| **config-sync** | haiku | Compare local config against this git repo |
-| **context-health** | haiku | Monitor context window, suggest compaction points |
-| **deploy-verifier** | haiku | Post-deploy verification for cryptoflexllc.com |
-| **home-sync** | haiku | Sync CJClaudin_home repo with current config state |
-| **multi-repo-orchestrator** | haiku | Parallel git operations across all project repos |
-| **pre-commit-checker** | haiku | Pre-commit security and quality validation |
-| **session-analyzer** | sonnet | Extract patterns from session archive transcripts |
-| **session-checkpoint** | sonnet | Save and restore session context across compactions |
-| **skill-extractor** | sonnet | Extract instincts from session transcripts (Homunculus v2) |
-| **sync-orchestrator** | haiku | Orchestrate config sync across multiple repos |
-| **wrap-up-orchestrator** | sonnet | End-of-session wrap-up with docs, commits, and pushes |
+| `blog-post-orchestrator` | sonnet | Orchestrate blog post writing with research and MDX generation |
+| `changelog-writer` | haiku | Auto-generate CHANGELOG entries from git diffs |
+| `config-sync` | haiku | Detect config drift between local and git repo |
+| `context-health` | haiku | Monitor context window usage, suggest compaction points |
+| `deploy-verifier` | haiku | Post-deploy verification (build check, live site) |
+| `home-sync` | haiku | Harvest and sync config to backup repo |
+| `multi-repo-orchestrator` | haiku | Parallel git operations across all project repos |
+| `pre-commit-checker` | haiku | Pre-commit security and quality gate |
+| `session-analyzer` | sonnet | Extract actionable patterns from session transcripts |
+| `session-checkpoint` | sonnet | Save and restore session context across compactions |
+| `skill-extractor` | sonnet | Extract instincts from transcripts (Homunculus v2) |
+| `sync-orchestrator` | haiku | Multi-repo config sync orchestration |
+| `wrap-up-orchestrator` | haiku | End-of-session wrap-up with docs, commits, pushes |
 
-### 18 Learned Skills
+### Skills (5 invocable + 23 learned)
 
-Skills in `skills/learned/` are reusable patterns extracted from real debugging sessions. Each one documents a problem that wastes hours if you don't know about it:
-
-| # | Skill | The Gotcha |
-|---|-------|-----------|
-| 1 | **powershell-stdin-hooks** | PowerShell's `$input` silently returns nothing when hooks are invoked via `-File`. You need `[Console]::In.ReadToEnd()` + dot-sourcing. |
-| 2 | **mcp-config-location** | `~/.claude/mcp-servers.json` is for Claude Desktop, not Claude Code. Claude Code reads `~/.claude.json`. |
-| 3 | **command-yaml-frontmatter** | Custom slash commands are silently ignored without YAML frontmatter. |
-| 4 | **git-bash-npm-path-mangling** | Git Bash rewrites Windows paths, breaking npm module resolution. |
-| 5 | **nextjs-client-component-metadata** | Can't export `metadata` from a `"use client"` component. Fix: wrapper `layout.tsx`. |
-| 6 | **mdx-same-date-sort-order** | Blog posts with identical date strings sort non-deterministically. Fix: use ISO timestamps. |
-| 7 | **slug-path-traversal-guard** | URL slug parameters in `path.join()` allow path traversal attacks. |
-| 8 | **git-bash-powershell-variable-stripping** | Git Bash strips `$` from inline PowerShell commands. Fix: temp `.ps1` file. |
-| 9 | **claude-code-debug-diagnostics** | `claude doctor` requires interactive TTY. Fix: `--debug --debug-file`. |
-| 10 | **token-secret-safety** | Reading config files with plaintext API keys exposes them in transcripts. |
-| 11 | **heredoc-permission-pollution** | HEREDOC commit bodies with parentheses pollute auto-approved permissions. |
-| 12 | **cookie-auth-over-query-strings** | httpOnly cookies with HMAC-derived tokens, not `?secret=X` in URLs. |
-| 13 | **ssrf-prevention-ip-validation** | Validate IPs against private ranges before external API calls. |
-| 14 | **shallow-fetch-force-push** | `git fetch --depth=1` then `git push --force` fails. Fix: full fetch. |
-| 15 | **mdx-blog-design-system** | MDX callout components and product badges for blog posts. |
-| 16 | **vercel-json-waf-syntax** | vercel.json uses `routes` with `mitigate`, not `rules`. |
-| 17 | **anthropic-model-id-format** | Haiku requires exact date suffix (`-20251001`), not `-latest`. |
-| 18 | **vitest-class-mock-constructor** | Arrow functions can't be `new`'d. Use `class` in `vi.mock` factories. |
-
-Organized into 6 categories via `INDEX.md`: Platform (3), Security (4), Claude Code (5), API (1), Testing (1), Next.js (4).
-
-### 5 Custom Skills
-
-Skills in `skills/` (with `SKILL.md` files) are user-invocable workflows:
+**Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
 | Skill | What It Does |
 |-------|-------------|
-| **`/wrap-up`** | 12-step end-of-session agent: pulls repos, updates CHANGELOG/README/MEMORY, extracts skills, cleans state, commits, pushes. |
-| **`/blog-post`** | Interactive blog writing agent. Asks topic/angle, writes MDX post, delegates to Sonnet for content generation. |
-| **`/multi-repo-status`** | Quick dashboard: git status across all 4 project repos in parallel. |
-| **`/skill-catalog`** | Full inventory of all agents, skills, commands, and hooks with descriptions. |
-| **`/sync`** | Configuration sync across repos, mirrors local ~/.claude/ state to git backups. |
+| `/wrap-up` | 12-step end-of-session agent: pulls repos, updates docs, extracts skills, commits, pushes |
+| `/blog-post` | Interactive blog writing agent with research and MDX generation |
+| `/multi-repo-status` | Git status dashboard across all project repos in parallel |
+| `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks |
+| `/sync` | Configuration sync across repos, mirrors local state to git backups |
 
-### 2 Custom Commands
+**Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 23 unique skills organized into 6 categories:
 
-Commands in `commands/` are backward-compatible versions of the `/wrap-up` and `/blog-post` skills. Skills take priority when both exist.
+| Category | Count | Examples |
+|----------|-------|---------|
+| Claude Code | 8 | MCP config location, HEREDOC permission pollution, context compaction |
+| Security | 4 | SSRF prevention, path traversal guards, cookie auth |
+| Next.js | 4 | Client component metadata, MDX sort order, Vercel WAF syntax |
+| Platform | 3 | PowerShell stdin hooks, Git Bash path mangling |
+| Workflow | 2 | Blog post pipeline, parallel agent decomposition |
+| API / Testing | 2 | Anthropic model ID format, Vitest class mock constructor |
 
-### The Complete Guide
+See `skills/learned/INDEX.md` for the full list with descriptions.
 
-**[COMPLETE-GUIDE.md](./COMPLETE-GUIDE.md)** is a ~750-line walkthrough of this entire configuration, written for beginners. It covers every config file, every setting, every rule, and every MCP server with plain-English explanations.
+### Scripts (9 files)
 
-## Recommended MCP Servers
+Automation scripts in `scripts/` for common operations:
 
-We started with 5 MCP servers and trimmed to 2 that provide genuinely unique capabilities not already built into Claude Code:
+| Script | Purpose |
+|--------|---------|
+| `env.sh` | Shared environment variables (repo paths, tool paths) |
+| `wrap-up-survey.sh` | Multi-repo wrap-up data collection |
+| `sync-survey.sh` | Config sync status survey |
+| `config-diff.sh` | Compare local config against git repo |
+| `context-health.sh` | Context window health check |
+| `blog-inventory.sh` | Blog post inventory and metadata |
+| `cleanup-session.sh` | Clean up session artifacts |
+| `git-stats.sh` | Git statistics across repos |
+| `validate-mdx.sh` | Validate MDX blog post files |
 
-| Server | Package | Why It's Worth It |
-|--------|---------|------------------|
-| **memory** | `@modelcontextprotocol/server-memory` | Persistent knowledge graph across sessions. Claude Code has no built-in cross-session memory. |
-| **context7** | `@upstash/context7-mcp` | Live documentation lookup for any library. Gets current docs instead of relying on training data. |
+## MCP Servers (7 configured)
 
-**Servers we dropped** (and why):
-- **filesystem** — Claude Code's built-in Read, Write, Edit, Glob, and Grep tools already handle file operations.
-- **sequential-thinking** — Claude Code's built-in extended thinking (up to 31,999 tokens) covers this.
-- **github** — The `gh` CLI via Bash covers most GitHub operations. Optional if you do heavy GitHub work.
+MCP (Model Context Protocol) servers extend Claude Code with capabilities it does not have built in.
 
-Install the recommended servers:
+| Server | Package | Purpose |
+|--------|---------|---------|
+| **memory** | `@modelcontextprotocol/server-memory` | Knowledge graph for entity relationships |
+| **context7** | `@upstash/context7-mcp` | Live library documentation lookup |
+| **sequential-thinking** | `@modelcontextprotocol/server-sequential-thinking` | Structured multi-step reasoning |
+| **github** | `@modelcontextprotocol/server-github` | GitHub API (issues, PRs, code search) |
+| **project-tools** | Custom (local Node.js) | Repo status, blog tools, session artifacts |
+| **vector-memory** | `mcp-memory-service` (Python) | Hybrid vector + keyword search for long-term memory |
+| **obsidian** | Obsidian MCP plugin | Read/write Obsidian vault files |
+
+### Install Commands
+
 ```bash
+# Core servers (recommended for all users)
 claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory
-claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
+
+# Extended reasoning
+claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
+
+# GitHub API access (requires personal access token)
+claude mcp add-json --scope user github '{
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-github"],
+  "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_TOKEN_HERE" }
+}'
+
+# Project tools (custom, requires local setup)
+# See mcp-servers/README.md for configuration details
+cd mcp-servers/project-tools && npm install
+
+# Vector memory (requires Python 3.11+ and Ollama)
+# pip install mcp-memory-service
+# ollama pull nomic-embed-text
+# See mcp-servers/README.md for full setup
+
+# Obsidian (requires Obsidian MCP Tools community plugin)
+# See mcp-servers/README.md for binary path and API key setup
 ```
 
-## Why This Setup is Worth Stealing
+See [mcp-servers/README.md](./mcp-servers/README.md) for detailed configuration, JSON snippets, and troubleshooting.
 
-Out of the box, Claude Code is impressive. But with the right configuration, it becomes something else entirely:
+## Hooks (6 lifecycle hooks)
 
-- **Specialized agents** automatically activate for different tasks. A planner breaks down features, a security reviewer catches vulnerabilities, a TDD guide enforces test-first development. You don't invoke them manually; Claude knows when to use them based on context.
-- **Custom agents** extend beyond the plugin with project-specific automation: changelog generation, multi-repo orchestration, deploy verification, config drift detection, and skill extraction.
-- **MCP servers** give Claude persistent memory across sessions and live documentation lookup for any library.
-- **The hooks system** turns Claude Code into an observable system. Every tool operation is logged with timestamps. Every session transcript is archived automatically.
-- **Learned skills** mean Claude gets smarter over time. Debugging a nasty issue once means you never debug it again.
+Hooks in `hooks/` are shell scripts that fire automatically at different points in the Claude Code lifecycle. Configure them in your project's `.claude/settings.local.json` using the template at `hooks/settings.local.json.template`.
 
-## What Advanced Features Should You Try?
+| Hook | Event | Purpose |
+|------|-------|---------|
+| `file-guard.sh` | PreToolUse | Block Edit/Write on sensitive files (.env, .pem, credentials) |
+| `log-activity.sh` | PostToolUse | Log every tool execution with timestamps to activity log |
+| `memory-nudge.sh` | PostToolUse | Remind Claude to save important context to vector memory |
+| `observe-homunculus.sh` | PostToolUse | Capture behavioral observations for the Homunculus learning system |
+| `prompt-notify.sh` | Stop | Play notification sound when Claude finishes a response |
+| `save-session.sh` | SessionEnd | Archive full conversation transcript on session close |
 
-If you're just getting started with Claude Code, here's the progression that worked for us:
+**Setup:**
+1. Copy `hooks/` to `~/.claude/hooks/` (or your project's `.claude/hooks/`)
+2. Make scripts executable: `chmod +x hooks/*.sh`
+3. Copy `hooks/settings.local.json.template` to `.claude/settings.local.json`
+4. Replace the `HOOK_COMMAND_*` placeholders with actual paths to your hook scripts
 
-1. **Start with rules.** Copy `rules/` into `~/.claude/` and immediately get better code quality, security checks, and TDD enforcement.
+## Homunculus (Continuous Learning System)
 
-2. **Add MCP servers.** The memory server and context7 (live docs) are game-changers. See install commands above.
+The `homunculus/` directory contains the continuous learning system that extracts behavioral patterns from session transcripts and encodes them as instincts.
 
-3. **Install the everything-claude-code plugin.** One install gives you `/plan`, `/verify`, `/learn`, `/tdd`, and 30+ more commands. The agents start activating automatically.
+```
+homunculus/
+  identity.json.template    # User identity profile template
+  instincts/
+    personal/                # 30 learned instincts (auto-extracted)
+    inherited/.gitkeep       # Instincts shared from other users
+  evolved/
+    agents/.gitkeep          # Agents evolved from instinct clusters
+    commands/.gitkeep        # Commands evolved from patterns
+    skills/.gitkeep          # Skills evolved from patterns
+```
 
-4. **Copy the custom agents.** Drop `agents/` into `~/.claude/` for project-specific automation.
+**How it works:**
+1. The `observe-homunculus.sh` hook captures tool usage observations during sessions
+2. The `skill-extractor` agent processes session transcripts and extracts atomic instincts
+3. Instincts start at 0.4 confidence and increase with repeated evidence
+4. When 3+ instincts cluster in a domain, they can be graduated into learned skills
 
-5. **Use `/learn` after hard debugging sessions.** Extract the patterns that took you hours to figure out. Your future self will thank you.
+Currently contains 30 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
 
-6. **Explore orchestrated workflows.** Multi-agent pipelines like planner -> tdd-guide -> code-reviewer -> security-reviewer run automatically for complex features. This is where Claude Code starts feeling like a team, not a tool.
+## Templates
+
+The `templates/` directory contains starter configuration files. Copy them and fill in your values:
+
+| Template | Target Location | Purpose |
+|----------|----------------|---------|
+| `claude.json.template` | `~/.claude.json` | MCP server configuration |
+| `settings.json.template` | `~/.claude/settings.json` | Claude Code settings (model, plugins, permissions) |
+| `env.sh.template` | `~/.claude/scripts/env.sh` | Shared environment variables for scripts |
+| `gitignore.template` | `~/.claude/.gitignore` | Git ignore rules for backing up your config |
+
+## Cross-Platform Support
+
+This configuration supports both **macOS** and **Windows**:
+
+- **macOS**: Hooks use `.sh` scripts, tools available via Homebrew, no PATH manipulation needed. See `rules/operations/macos-platform.md`.
+- **Windows**: Hooks use `.ps1` scripts with `[Console]::In.ReadToEnd()` for stdin, `cmd /c npx` for MCP servers, OneDrive lock workarounds. See `rules/operations/windows-platform.md`.
 
 ## Directory Structure
 
 ```
-rules/
-  agents.md                              — Agent orchestration (plugin + custom)
-  core/
-    agentic-workflow.md                   — Parallel task decomposition rules
-    coding-style.md                       — Code quality + writing style
-    security.md                           — Security checklist + secret management
-  development/
-    git-workflow.md                       — Commits, PRs, feature workflow
-    patterns.md                           — Repository pattern, API envelopes
-    testing.md                            — TDD, 80% coverage
-  operations/
-    hooks.md                              — Hook types, file protection
-    performance.md                        — Model routing, cost optimization
-    windows-platform.md                   — Windows/PowerShell/OneDrive quirks
-
-agents/
-  blog-post-orchestrator.md               — Blog post writing orchestration
-  changelog-writer.md                     — CHANGELOG generation from diffs
-  config-sync.md                          — Config drift detection
-  context-health.md                       — Context window monitoring
-  deploy-verifier.md                      — Post-deploy site verification
-  home-sync.md                            — CJClaudin_home repo sync
-  multi-repo-orchestrator.md              — Parallel cross-repo git operations
-  pre-commit-checker.md                   — Pre-commit security and quality checks
-  session-analyzer.md                     — Pattern extraction from transcripts
-  session-checkpoint.md                   — Session context save/restore
-  skill-extractor.md                      — Instinct extraction from sessions (Homunculus v2)
-  sync-orchestrator.md                    — Multi-repo config sync orchestration
-  wrap-up-orchestrator.md                 — End-of-session wrap-up orchestration
-
-skills/
-  wrap-up/SKILL.md                        — End-of-session documentation
-  blog-post/SKILL.md                      — Blog post writing agent
-  multi-repo-status/SKILL.md              — Multi-repo git dashboard
-  skill-catalog/SKILL.md                  — Full capability inventory
-  sync/SKILL.md                           — Configuration sync across repos
-  learned/
-    INDEX.md                              — Organized index (18 skills, 6 categories)
-    powershell-stdin-hooks.md
-    mcp-config-location.md
-    command-yaml-frontmatter.md
-    git-bash-npm-path-mangling.md
-    nextjs-client-component-metadata.md
-    mdx-same-date-sort-order.md
-    slug-path-traversal-guard.md
-    git-bash-powershell-variable-stripping.md
-    claude-code-debug-diagnostics.md
-    token-secret-safety.md
-    heredoc-permission-pollution.md
-    cookie-auth-over-query-strings.md
-    ssrf-prevention-ip-validation.md
-    shallow-fetch-force-push.md
-    mdx-blog-design-system.md
-    vercel-json-waf-syntax.md
-    anthropic-model-id-format.md
-    vitest-class-mock-constructor.md
-
-commands/
-  wrap-up.md                              — /wrap-up (backward compat)
-  blog-post.md                            — /blog-post (backward compat)
+claude-code-config/
+  rules/                         # 12 global rule files (4 subdirectories)
+  agents/                        # 13 custom agent definitions
+  skills/                        # 5 invocable skills + 23 learned skills
+  commands/                      # 2 legacy commands (backward compat)
+  scripts/                       # 9 automation scripts
+  hooks/                         # 6 lifecycle hooks + settings template
+  mcp-servers/                   # MCP server docs + custom project-tools server
+  templates/                     # Configuration file templates
+  homunculus/                    # Continuous learning system (30 instincts)
+  COMPLETE-GUIDE.md              # Comprehensive beginner walkthrough
 ```
-
-## Setup
-
-These files belong in `~/.claude/` (your user home). Claude Code automatically loads them for every project.
-
-To replicate this config on a new machine:
-1. Clone this repo into `~/.claude/`
-2. Follow the setup steps in [COMPLETE-GUIDE.md](./COMPLETE-GUIDE.md#how-to-set-this-up-from-scratch)
 
 ## Credits
 
-The rules, agents, and many of the skills in this config are built on top of [**everything-claude-code**](https://github.com/affaan-m/everything-claude-code) by [Affaan Mustafa](https://github.com/affaan-m), an incredible open-source collection of Claude Code configurations developed over 10+ months of intensive daily use. It provides 13 specialized agents, 30+ slash commands, 30+ skills, and a plugin system. MIT licensed, 41K+ stars, and well-deserved.
-
-We installed everything-claude-code as a plugin and adapted the rule files for our workflow. The learned skills are original, extracted from our own debugging sessions. If you're looking for the most comprehensive Claude Code configuration available, everything-claude-code is the gold standard.
+- **[everything-claude-code](https://github.com/affaan-m/everything-claude-code)** by [Affaan Mustafa](https://github.com/affaan-m): The foundation for the agent orchestration framework and plugin agents. 13 specialized agents, 30+ slash commands, and a plugin system. MIT licensed.
+- **[Claude Code](https://docs.claude.com/en/docs/claude-code)** by [Anthropic](https://www.anthropic.com/): The CLI tool this configuration extends.
+- **[Model Context Protocol](https://github.com/modelcontextprotocol)** community: The MCP server ecosystem.
+- Configuration developed and documented by Chris with Claude.

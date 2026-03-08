@@ -26,6 +26,26 @@
 !scripts/
 !scripts/*.sh
 
+# Hooks (PreToolUse, PostToolUse, Stop, SessionEnd)
+!hooks/
+!hooks/**
+
+# MCP server configurations and custom servers
+!mcp-servers/
+!mcp-servers/**
+
+# Templates (config file templates for new machine setup)
+!templates/
+!templates/**
+
+# Documentation
+!docs/
+!docs/**
+
+# Homunculus (instincts, evolved artifacts, identity template)
+!homunculus/
+!homunculus/**
+
 # ===== NEVER TRACK (even if whitelisted above) =====
 cache/
 plugins/cache/
@@ -42,4 +62,6 @@ downloads/
 debug/
 ide/
 session-env/
+node_modules/
 *.backup
+observations.jsonl

@@ -5,7 +5,13 @@
 
 set -euo pipefail
 
-BLOG_ROOT="/c/ClaudeProjects/cryptoflexllc/src/content/blog"
+# Source environment variables
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$SCRIPT_DIR/env.sh" ]]; then
+    source "$SCRIPT_DIR/env.sh"
+fi
+
+BLOG_ROOT="${REPO_CRYPTOFLEX:-$HOME/GitProjects/cryptoflexllc}/src/content/blog"
 MINIMAL=false
 
 if [[ "${1:-}" == "--minimal" ]]; then

@@ -1,0 +1,71 @@
+# .gitignore template for ~/.claude/
+# Tracks portable configuration, ignores machine-specific state
+# Uses whitelist approach: ignore everything, then explicitly track what matters
+
+# ===== IGNORE EVERYTHING BY DEFAULT =====
+*
+
+# ===== TRACK THESE PORTABLE FILES =====
+!.gitignore
+!README.md
+
+# Rules (organized in subdirectories: core/, development/, operations/)
+!rules/
+!rules/**
+
+# Custom agents (agent definitions that extend Claude Code)
+!agents/
+!agents/*.md
+
+# Skills (custom SKILL.md files + learned patterns/instincts)
+!skills/
+!skills/**
+
+# Custom commands (shortcut commands for common workflows)
+!commands/
+!commands/*.md
+
+# Scripts (automation, cleanup, setup utilities)
+!scripts/
+!scripts/*.sh
+!scripts/*.ps1
+
+# Hooks (PreToolUse, PostToolUse, Stop, SessionEnd)
+!hooks/
+!hooks/**
+
+# ===== NEVER TRACK (even if whitelisted above) =====
+# Machine-specific state and caches
+cache/
+plugins/cache/
+sessions/
+history.jsonl
+settings.json
+projects/
+file-history/
+shell-snapshots/
+todos/
+tasks/
+plans/
+downloads/
+debug/
+ide/
+session-env/
+
+# Backup files
+*.backup
+
+# Secrets (should never be committed)
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+*.secret
+
+# Node modules (if any scripts install dependencies)
+node_modules/
+
+# OS-specific
+.DS_Store
+Thumbs.db

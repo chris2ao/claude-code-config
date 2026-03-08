@@ -1,0 +1,99 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(ls:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node -e:*)",
+      "Bash(echo:*)",
+      "Bash(export PATH:*)",
+      "Bash(rm:*)",
+      "Bash(wc:*)",
+      "Bash(head:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(du:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(grep:*)",
+      "Bash(sort:*)",
+      "Bash(mv:*)",
+      "Bash(cat:*)",
+      "Bash(xargs:*)",
+      "Bash(bash -n:*)",
+      "Bash(bash -x:*)",
+      "Bash(bash ~/.claude/scripts/*)",
+      "WebSearch",
+      "WebFetch(domain:docs.claude.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "mcp__memory__add_observations",
+      "mcp__memory__create_entities",
+      "mcp__github__get_file_contents",
+      "mcp__github__search_repositories",
+      "mcp__github__list_commits"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_COMMAND_FILE_GUARD"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_COMMAND_SAVE_SESSION"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_COMMAND_LOG_ACTIVITY",
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_COMMAND_OBSERVE_HOMUNCULUS",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_COMMAND_PROMPT_NOTIFY"
+          }
+        ]
+      }
+    ]
+  }
+}
