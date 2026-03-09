@@ -124,6 +124,46 @@ The server launches automatically when Claude Code starts and stays running for 
 
 The database lives at `~/Library/Application Support/mcp-memory/sqlite_vec.db` on macOS. All data stays local. Nothing leaves your machine. No API keys, no cloud services, no per-query charges.
 
+### Capabilities
+
+The memory service is more than a key-value store. It is a full knowledge management system with search, quality analysis, and self-maintenance built in.
+
+**Embedding and Search**
+- 384-dimensional vectors via the `all-MiniLM-L6-v2` sentence transformer, running in-process with PyTorch (no external API, no Ollama dependency)
+- Hybrid search combining semantic similarity (70% weight) and full-text keyword matching (30% weight) for both conceptual and precise retrieval
+- Maximal Marginal Relevance (MMR) with lambda 0.7 to suppress redundant results when multiple memories cover the same topic
+- Temporal decay with a 30-day half-life so recent memories rank higher than stale ones
+- Quality-aware reranking using a separate cross-encoder model (`ms-marco-MiniLM-L-6-v2`) to boost high-relevance results
+
+**Storage and Integrity**
+- SQLite with the sqlite-vec extension for vector indexing, stored at `~/Library/Application Support/mcp-memory/sqlite_vec.db`
+- No content size limits (large content is auto-split into overlapping chunks of 1000 characters with 200-character overlap)
+- Hash-based and semantic deduplication to prevent both exact and conceptually redundant entries
+- Automated daily backups with 7-day retention (10 backups max)
+- Integrity checks every 30 minutes to detect database corruption early
+- WAL mode for safe concurrent reads during writes
+
+**Knowledge Graph**
+- Dual-write mode: memories are stored as both flat records and graph nodes with typed edges
+- Association discovery links related memories automatically based on similarity thresholds
+- Graph exploration via `memory_graph` to visualize how memories connect
+
+**Quality System**
+- AI-powered quality scoring classifies memories into retention tiers: critical (365 days), reference (180 days), standard (30-90 days), temporary (7 days)
+- Quality distribution analysis via `memory_quality` to identify low-value memories for cleanup
+- Consolidation engine with DBSCAN clustering to merge related memories, compress summaries, and archive originals
+
+**Multi-Backend Support**
+- Local-only via sqlite-vec (default, zero dependencies beyond Python)
+- Cloudflare backend (D1 + Vectorize + R2) for cloud-hosted memory
+- Hybrid mode syncing local and cloud for multi-machine setups
+- Transport options: stdio (default for Claude Code), SSE, and HTTP REST API
+- mDNS service discovery for LAN access
+
+**Document Ingestion**
+- Batch import from PDF (via LlamaParse), Markdown, and plain text files
+- Chunking with configurable size and overlap preserves context boundaries
+
 ### The 12 Tools
 
 The MCP server exposes 12 tools to Claude:
