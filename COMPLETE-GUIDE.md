@@ -293,7 +293,7 @@ All servers should show as "connected." If any show "failed," see the [Troublesh
 
 Rules are persistent instructions that Claude follows in every session, in every project. They are loaded automatically at session start. Each rule is a Markdown file.
 
-This repo contains 12 rule files organized by domain:
+This repo contains 14 rule files organized by domain:
 
 ```
 rules/
@@ -310,6 +310,7 @@ rules/
     patterns.md              # Repository pattern, API envelopes, skeleton projects
     testing.md               # TDD workflow, 80% minimum coverage
   operations/
+    context-preservation.md  # Session context preservation across compactions
     hooks.md                 # Hook types, file protection, context preservation
     macos-platform.md        # macOS/zsh, Homebrew, osascript notifications
     performance.md           # Model selection (Haiku/Sonnet/Opus), cost optimization
@@ -465,12 +466,13 @@ See `skills/learned/INDEX.md` for the full index.
 
 Custom skills are user-invocable workflows triggered by slash commands. Each lives in its own subdirectory with a `SKILL.md` file containing YAML frontmatter and detailed instructions. Skills take priority over commands when both exist for the same name.
 
-This repo includes 5 skills:
+This repo includes 6 skills:
 
 | Skill | What It Does |
 |-------|-------------|
 | `/wrap-up` | 12-step end-of-session agent: pull repos, review session, update CHANGELOG/README/MEMORY, extract skills, clean state, commit, push |
 | `/blog-post` | Interactive blog writing agent: asks topic, gathers source material, writes formatted MDX post |
+| `/gws` | Google Workspace CLI for Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, People, and Forms. Teaches on-demand API discovery via `gws schema` with a 4-tier safety system (read, create, modify, delete). |
 | `/multi-repo-status` | Git status dashboard across all project repos in parallel |
 | `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks with descriptions |
 | `/sync` | Configuration sync across repos, mirrors local `~/.claude/` state to git backups |
@@ -487,9 +489,11 @@ Additional supporting files in `skills/`:
 
 Custom commands are slash commands that encode multi-step workflows into a single invocation. They are the predecessor to skills. When a skill and command share the same name, the skill takes priority.
 
-This repo includes 2 commands:
+This repo includes 4 commands:
 - `blog-post.md`: Blog post writing (superseded by `/blog-post` skill)
 - `ingest-sessions.md`: Session transcript ingestion for Homunculus learning
+- `kb-article.md`: KB Article authoring
+- `smart-compact.md`: Pre-compact context preservation
 
 Each command file requires YAML frontmatter with a `description` field. Without it, Claude Code silently ignores the command.
 

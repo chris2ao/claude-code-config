@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 11 rules, 13 agents, 5 skills, 23 learned skills, 8 scripts, 6 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 14 rules, 13 agents, 6 invocable skills, 23 learned skills, 10 scripts, 4 commands, 6 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -36,7 +36,7 @@ cp -r skills/ ~/.claude/skills/
 
 ## Component Inventory
 
-### Rules (11 files)
+### Rules (14 files)
 
 Rules in `rules/` are loaded automatically into every Claude Code session. They shape how Claude writes code, handles security, manages git, and routes work to agents.
 
@@ -53,6 +53,9 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/hooks.md` | Hook types, file protection, context preservation |
 | `operations/performance.md` | Model selection (Haiku/Sonnet/Opus), cost optimization |
 | `operations/windows-platform.md` | PowerShell stdin, Git Bash path mangling, OneDrive locks |
+| `content/blog-content.md` | Blog writing rules (no private repo links) |
+| `operations/context-preservation.md` | Session context preservation across compactions |
+| `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
 ### Agents (13 files)
 
@@ -74,7 +77,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `sync-orchestrator` | haiku | Multi-repo config sync orchestration |
 | `wrap-up-orchestrator` | haiku | End-of-session wrap-up with docs, commits, pushes |
 
-### Skills (5 invocable + 23 learned)
+### Skills (6 invocable + 23 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -85,6 +88,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `/multi-repo-status` | Git status dashboard across all project repos in parallel |
 | `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks |
 | `/sync` | Configuration sync across repos, mirrors local state to git backups |
+| `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
 
 **Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 23 unique skills organized into 6 categories:
 
@@ -99,7 +103,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (8 files)
+### Scripts (10 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -113,6 +117,8 @@ Automation scripts in `scripts/` for common operations:
 | `cleanup-session.sh` | Clean up session artifacts |
 | `git-stats.sh` | Git statistics across repos |
 | `validate-mdx.sh` | Validate MDX blog post files |
+| `env.sh` | Shared environment variables for repo paths and tool paths |
+| `memory-maintenance.py` | Memory database maintenance and cleanup |
 
 ## MCP Servers (7 configured)
 
@@ -225,11 +231,11 @@ This configuration supports both **macOS** and **Windows**:
 
 ```
 claude-code-config/
-  rules/                         # 11 global rule files (3 subdirectories)
+  rules/                         # 14 global rule files (4 subdirectories)
   agents/                        # 13 custom agent definitions
-  skills/                        # 5 invocable skills + 23 learned skills
-  commands/                      # 3 legacy commands (backward compat)
-  scripts/                       # 8 automation scripts
+  skills/                        # 6 invocable skills + 23 learned skills
+  commands/                      # 4 commands
+  scripts/                       # 10 automation scripts
   hooks/                         # 6 lifecycle hooks + settings template
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
