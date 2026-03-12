@@ -1,4 +1,5 @@
 #!/bin/bash
+# platform: macos
 
 # context-health.sh - Quick context window health check
 # Counts transcripts, sizes, estimates tokens

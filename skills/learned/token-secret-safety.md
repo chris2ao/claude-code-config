@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Token and Secret Safety in AI Assistant Output
 
 **Extracted:** 2026-02-08

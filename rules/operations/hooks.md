@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Hooks System
 
 ## Hook Types

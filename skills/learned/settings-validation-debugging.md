@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Settings Validation Debugging
 
 **Extracted:** 2026-02-13

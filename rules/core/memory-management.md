@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Memory Management
 
 ## Five Memory Systems, One Rule

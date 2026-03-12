@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "List all available agents, skills, commands, and hooks with descriptions"
 ---
 

@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Learned Skills Index
 
 23 skills organized by domain. Original files remain at `learned/` root for backward compatibility.

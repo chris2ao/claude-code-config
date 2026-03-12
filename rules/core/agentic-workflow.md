@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Agentic-First Workflow
 
 CRITICAL: Every non-trivial task MUST be decomposed into parallel agents.

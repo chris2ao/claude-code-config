@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Blog post research, drafting, and MDX generation for CryptoFlex LLC"
 model: sonnet
 tools: [Read, Write, Grep, Glob]
@@ -16,8 +17,8 @@ Create comprehensive, technically accurate blog posts following CryptoFlex LLC h
 4. If a series is specified, include `series` and `seriesOrder` in frontmatter
 
 ## Output Location
-- **Production:** `~/GitProjects/cryptoflexllc/src/content/blog/<slug>.mdx`
-- **Backlog:** `~/GitProjects/cryptoflexllc/src/content/backlog/<slug>.mdx`
+- **Production:** `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/blog/<slug>.mdx`
+- **Backlog:** `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/backlog/<slug>.mdx`
 
 ---
 
@@ -168,8 +169,8 @@ Rules: Use on FIRST mention per section only.
 | Comparison | `the-cobbler-s-server-finally-gets-shoes.mdx` |
 
 ## Blog File Paths
-- Production: `~/GitProjects/cryptoflexllc/src/content/blog/`
-- Backlog: `~/GitProjects/cryptoflexllc/src/content/backlog/`
+- Production: `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/blog/`
+- Backlog: `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/backlog/`
 
 ## Return Format
 ```json

@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Agent Orchestration
 
 ## Plugin Agents (everything-claude-code)

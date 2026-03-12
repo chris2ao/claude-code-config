@@ -1,4 +1,5 @@
 #!/bin/bash
+# platform: macos
 
 # validate-mdx.sh - Validate a single MDX blog post file
 # Usage: bash validate-mdx.sh <path-to-file.mdx>

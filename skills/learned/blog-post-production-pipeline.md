@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Blog Post Production Pipeline
 
 **Extracted:** 2026-02-13

@@ -1,4 +1,5 @@
 #!/bin/bash
+# platform: macos
 # wrap-up-survey.sh - Pre-compute git state of all repos + session artifacts before wrap-up
 # Outputs valid JSON to stdout, errors to stderr
 # No external dependencies (no jq, no python)
@@ -8,12 +9,23 @@ set -euo pipefail
 # Start timing
 START_TIME=$SECONDS
 
-# Repository paths (MSYS2 format)
-CJCLAUDE="/c/ClaudeProjects/CJClaude_1"
-CRYPTOFLEX="/c/ClaudeProjects/cryptoflexllc"
-CRYPTOFLEX_OPS="/c/ClaudeProjects/cryptoflex-ops"
-CLAUDE_CONFIG="$HOME/.claude"
-THIRD_CONFLICT="/c/ClaudeProjects/Third-Conflict"
+# Source environment variables
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$SCRIPT_DIR/env.sh" ]]; then
+    source "$SCRIPT_DIR/env.sh"
+fi
+
+# Repository paths (using env.sh variables with fallbacks)
+CJCLAUDE="${REPO_CJCLAUDE:-$HOME/GitProjects/CJClaude_1}"
+CJCLAUDIN_MAC="${REPO_CJCLAUDIN_MAC:-$HOME/GitProjects/CJClaudin_Mac}"
+CJCLAUDIN_HOME="${REPO_CJCLAUDIN_HOME:-$HOME/GitProjects/CJClaudin_home}"
+CRYPTOFLEX="${REPO_CRYPTOFLEX:-$HOME/GitProjects/cryptoflexllc}"
+CRYPTOFLEX_OPS="${REPO_OPS:-$HOME/GitProjects/cryptoflex-ops}"
+CLAUDE_CONFIG="${REPO_CONFIG:-$HOME/GitProjects/claude-code-config}"
+MISSION_CONTROL="${REPO_MISSION_CONTROL:-$HOME/GitProjects/Openclaw_MissionControl}"
+JCLAW_CONFIG="${REPO_JCLAW_CONFIG:-$HOME/GitProjects/JClaw_Config}"
+THIRD_CONFLICT="${REPO_THIRD_CONFLICT:-$HOME/GitProjects/Third-Conflict}"
+CANN_CANN="${REPO_CANN_CANN:-$HOME/GitProjects/Cann-Cann}"
 
 # Function to escape JSON strings
 json_escape() {
@@ -75,27 +87,31 @@ get_repo_info() {
     # Build modified_files JSON array
     local modified_json="["
     local first=true
-    for f in "${modified_files[@]}"; do
-        if [[ "$first" == true ]]; then
-            first=false
-        else
-            modified_json+=","
-        fi
-        modified_json+="\"$(json_escape "$f")\""
-    done
+    if [[ ${#modified_files[@]} -gt 0 ]]; then
+        for f in "${modified_files[@]}"; do
+            if [[ "$first" == true ]]; then
+                first=false
+            else
+                modified_json+=","
+            fi
+            modified_json+="\"$(json_escape "$f")\""
+        done
+    fi
     modified_json+="]"
 
     # Build untracked_files JSON array
     local untracked_json="["
     first=true
-    for f in "${untracked_files[@]}"; do
-        if [[ "$first" == true ]]; then
-            first=false
-        else
-            untracked_json+=","
-        fi
-        untracked_json+="\"$(json_escape "$f")\""
-    done
+    if [[ ${#untracked_files[@]} -gt 0 ]]; then
+        for f in "${untracked_files[@]}"; do
+            if [[ "$first" == true ]]; then
+                first=false
+            else
+                untracked_json+=","
+            fi
+            untracked_json+="\"$(json_escape "$f")\""
+        done
+    fi
     untracked_json+="]"
 
     # Output JSON object
@@ -127,7 +143,7 @@ printf '  "timestamp":"%s",\n' "$TIMESTAMP"
 
 # Collect repo info into temp files so we can also track health
 REPO_OUTPUT=""
-for repo_pair in "CJClaude_1|$CJCLAUDE" "cryptoflexllc|$CRYPTOFLEX" "cryptoflex-ops|$CRYPTOFLEX_OPS" "Third-Conflict|$THIRD_CONFLICT" "claude-code-config|$CLAUDE_CONFIG"; do
+for repo_pair in "CJClaude_1|$CJCLAUDE" "CJClaudin_Mac|$CJCLAUDIN_MAC" "CJClaudin_home|$CJCLAUDIN_HOME" "cryptoflexllc|$CRYPTOFLEX" "cryptoflex-ops|$CRYPTOFLEX_OPS" "claude-code-config|$CLAUDE_CONFIG" "Openclaw_MissionControl|$MISSION_CONTROL" "JClaw_Config|$JCLAW_CONFIG" "Third-Conflict|$THIRD_CONFLICT" "Cann-Cann|$CANN_CANN"; do
     name="${repo_pair%%|*}"
     path="${repo_pair#*|}"
 

@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Performance Optimization
 
 ## Model Selection Strategy

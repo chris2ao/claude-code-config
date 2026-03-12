@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Anthropic Model ID Format
 
 ## Pattern

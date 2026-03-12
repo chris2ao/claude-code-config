@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Coding Style
 
 ## Immutability (CRITICAL)

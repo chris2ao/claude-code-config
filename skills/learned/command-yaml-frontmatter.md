@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Claude Code Command Registration Requires YAML Frontmatter
 
 **Extracted:** 2026-02-07

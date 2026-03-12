@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Compare local Claude Code config against claude-code-config repo"
 model: haiku
 tools: [Read, Glob, Grep, Bash]
@@ -28,7 +29,7 @@ This provides a structured JSON report of all modified, new, and deleted files w
 ## Process
 
 1. List all tracked files locally via Glob
-2. Run `git status` in `D:\Users\chris_dnlqpqd\.claude` to find uncommitted changes
+2. Run `git status` in `/Users/chris2ao/.claude` to find uncommitted changes
 3. Run `git diff` to see what changed
 4. Report:
    - Files modified but not committed

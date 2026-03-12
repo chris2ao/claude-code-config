@@ -1,4 +1,5 @@
 #!/bin/bash
+# platform: macos
 # config-diff.sh - Compare local ~/.claude/ against git (master branch)
 # Outputs valid JSON to stdout, errors to stderr
 # No external dependencies (no jq, no python)
@@ -11,7 +12,7 @@ if [[ "${1:-}" == "--summary-only" ]]; then
     SUMMARY_ONLY=true
 fi
 
-# Repository path (MSYS2 format)
+# Configuration path
 CLAUDE_CONFIG="$HOME/.claude"
 
 # Function to escape JSON strings

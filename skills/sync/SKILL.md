@@ -1,58 +1,68 @@
 ---
-description: "Sync Claude Code config to claude-code-config and CJClaudin_home repos"
+platform: portable
+description: "Bidirectional config sync across repos"
 ---
 
-# /sync - Config Sync
+# /sync - Bidirectional Config Sync
 
-Compares your live `~/.claude/` configuration against two target repos and syncs any drift:
-- **claude-code-config** (public, `master`): Reference config for other Claude Code users
-- **CJClaudin_home** (private, `main`): Portable config package with install.sh
+Compares your live `~/.claude/` configuration against three repos and syncs drift in either direction:
+- **CJClaudin_Mac** (private, `main`): macOS config with install.sh
+- **CJClaude_1** (private, `main`): Primary config documentation repo
+- **claude-code-config** (public, `master`): Reference config (union of both platforms)
 
-## Pre-Survey
+## Step 1: Run Bidirectional Inventory
 
 !`bash ~/.claude/scripts/sync-survey.sh`
 
-## Present Drift Summary
+## Step 2: Present Drift Summary
 
-Show the user a concise drift summary from the survey JSON:
+Parse the survey JSON and show the user a concise drift summary:
 
 ```
-Config Repo:  N new, M modified, D deleted (or "clean")
-Home Repo:    N new, M modified, D deleted (or "clean")
+Live vs CJClaudin_Mac:      N new in live, M new in mac, D diverged
+Live vs CJClaude_1:         N new in live, M new in cj1, D diverged
+Live vs claude-code-config: N new in live, M new in config, D diverged
 ```
 
-If both are clean, say so and stop. No need to proceed further.
+If all are clean, say so and stop.
 
-## User Questions
+## Step 3: Ask User
 
-Ask the user (use AskUserQuestion):
+Use AskUserQuestion for each:
 
-1. **Sync target:** Which repo(s) should we sync?
-   - Both (Recommended)
+1. **Sync direction:**
+   - Bidirectional (recommended): push new items from live, pull new items from repos
+   - Push only: live -> repos
+   - Pull only: repos -> live
+
+2. **Target repos:**
+   - All three (recommended)
+   - CJClaudin_Mac only
+   - CJClaude_1 only
    - claude-code-config only
-   - CJClaudin_home only
 
-2. **Action:** What should we do after copying files?
-   - Commit and push (Recommended)
+3. **Action after sync:**
+   - Commit and push (recommended)
    - Review diff first
-   - Just copy files, no git operations
+   - Just copy files, no git
 
-## Orchestration
+## Step 4: Orchestrate
 
-After getting user answers, spawn a Task agent:
+Spawn a Task agent:
 - **subagent_type:** general-purpose
-- **model:** haiku
 - **name:** sync-orchestrator
 
 Pass to the agent:
-1. The survey JSON output from above
-2. The user's target choice and action choice
-3. Instruction: "You are a sync orchestrator agent. Follow the instructions in ~/.claude/agents/sync-orchestrator.md"
+1. The survey JSON output
+2. The user's direction, target, and action choices
+3. Instruction: "Follow the instructions in ~/.claude/agents/sync-orchestrator.md"
 
-## After Agent Returns
+## Step 5: Display Results
 
-The agent returns JSON with `config_result`, `home_result`, and `summary`.
+The agent returns JSON with classified files, actions taken, and git status.
 
-1. Display the summary to the user (files copied, commits created, push status)
-2. If any errors occurred, alert the user with details
-3. If the user chose "Review diff first", show the diff output and ask whether to proceed with commit/push
+1. Show summary: files synced, security blocks, platform skips
+2. If any files were flagged for capability review, show details and ask if the user wants to accept them
+3. If any files were blocked by security scan, list them with the reason
+4. If the user chose "Review diff first", show the diff and ask whether to proceed with commit/push
+5. Report final commit SHAs and push status per repo

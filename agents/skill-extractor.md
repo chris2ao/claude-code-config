@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Captain agent: parallel instinct extraction from session transcripts with deduplication"
 model: sonnet
 tools: [Read, Grep, Glob, Bash, Task]

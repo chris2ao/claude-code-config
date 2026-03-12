@@ -1,29 +1,26 @@
 ---
-description: "Harvest and sync config artifacts from all repos into CJClaudin_home"
+platform: portable
+description: "Harvest and sync config artifacts from all repos into CJClaudin_Mac"
 model: haiku
 tools: [Read, Glob, Grep, Bash, Write]
 ---
 
 # Home Sync Agent (Config Harvester)
 
-Scans all repositories and ~/.claude/ for Claude Code configuration artifacts (agents, skills, commands, hooks, rules, scripts) and syncs them into the CJClaudin_home portable package. Run manually when you want to update the portable config (e.g. monthly).
-
-## Environment Setup
-
-Ensure `gh` and `node` are on PATH (typically via Homebrew on macOS).
+Scans all repositories and ~/.claude/ for Claude Code configuration artifacts (agents, skills, commands, hooks, rules, scripts) and syncs them into the CJClaudin_Mac portable package. Run manually when you want to update the portable config (e.g. monthly).
 
 ## Source Locations
 
 | Source | Path | Artifacts |
 |--------|------|-----------|
 | Global config | `~/.claude/` | rules, agents, skills, scripts, commands, homunculus |
-| CJClaude_1 | `~/GitProjects/CJClaude_1/.claude/hooks/` | Hook scripts |
-| cryptoflexllc | `~/GitProjects/cryptoflexllc/.claude/` | Project-level config |
-| cryptoflex-ops | `~/GitProjects/cryptoflex-ops/.claude/` | Project-level config |
+| CJClaude_1 | `/Users/chris2ao/GitProjects/CJClaude_1/.claude/hooks/` | Hook scripts |
+| cryptoflexllc | `/Users/chris2ao/GitProjects/cryptoflexllc/.claude/` | Project-level config |
+| cryptoflex-ops | `/Users/chris2ao/GitProjects/cryptoflex-ops/.claude/` | Project-level config |
 
 ## Destination
 
-`~/GitProjects/CJClaudin_home/`
+`/Users/chris2ao/GitProjects/CJClaudin_Mac/`
 
 ## Artifact Mapping
 
@@ -36,7 +33,6 @@ Ensure `gh` and `node` are on PATH (typically via Homebrew on macOS).
 | Support Skills | `~/.claude/skills/*.md` (root only) | `payload/skills/` |
 | Commands | `~/.claude/commands/*.md` | `payload/commands/` |
 | Scripts | `~/.claude/scripts/*.sh` | `payload/scripts/` |
-| Windows Hooks | `<any-repo>/.claude/hooks/*.ps1` | `hooks/windows/` |
 | Unix Hooks | `<any-repo>/.claude/hooks/*.sh` | `hooks/unix/` |
 | Instincts | `~/.claude/homunculus/instincts/**/*.md` | `payload/homunculus/instincts/` (preserve subdirs) |
 
@@ -54,7 +50,7 @@ For each discovered file, check if it exists at the destination:
 
 ### 3. Sync
 
-Copy NEW and MODIFIED files to CJClaudin_home. Create directories as needed.
+Copy NEW and MODIFIED files to CJClaudin_Mac. Create directories as needed.
 
 **Security check before copying**: Skip any file that contains what looks like a real API key, token, or secret (patterns: `gho_`, `ghp_`, `sk-ant-`, `Bearer <actual-token>`).
 
@@ -63,7 +59,7 @@ Copy NEW and MODIFIED files to CJClaudin_home. Create directories as needed.
 Print a summary:
 
 ```
-=== CJClaudin_home Sync Report (YYYY-MM-DD) ===
+=== CJClaudin_Mac Sync Report (YYYY-MM-DD) ===
 
 NEW:
   + payload/agents/new-agent.md
@@ -82,7 +78,7 @@ TOTAL: 97 files | 2 new | 1 modified | 94 unchanged
 If there were changes:
 
 ```bash
-cd ~/GitProjects/CJClaudin_home
+cd "/Users/chris2ao/GitProjects/CJClaudin_Mac"
 git add -A
 git commit -m "chore: sync config updates (N new, M modified)"
 git push

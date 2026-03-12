@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Security Guidelines
 
 ## Mandatory Security Checks

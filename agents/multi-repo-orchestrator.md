@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Captain agent: parallel git operations across all project repos using sub-agents"
 model: haiku
 tools: [Bash, Read, Task]
@@ -12,16 +13,17 @@ You are a **captain agent** that spawns parallel sub-agents to check all project
 
 | Repo | Local Path | Remote | Branch |
 |------|-----------|--------|--------|
-| CJClaude_1 | `~/GitProjects/CJClaude_1` | `chris2ao/CJClaude_1` | main |
-| cryptoflexllc | `~/GitProjects/cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
-| cryptoflex-ops | `~/GitProjects/cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
-| claude-code-config | `~/.claude` | `chris2ao/claude-code-config` | master |
+| CJClaude_1 | `/Users/chris2ao/GitProjects/CJClaude_1` | `chris2ao/CJClaude_1` | main |
+| cryptoflexllc | `/Users/chris2ao/GitProjects/cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
+| cryptoflex-ops | `/Users/chris2ao/GitProjects/cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
+| claude-code-config | `/Users/chris2ao/.claude` | `chris2ao/claude-code-config` | master |
+| CJClaudin_Mac | `/Users/chris2ao/GitProjects/CJClaudin_Mac` | `chris2ao/CJClaudin_Mac` | main |
 
 ## Captain Workflow
 
 ### Step 1: Spawn parallel repo agents
 
-Launch **4 Task agents in a single message** (one per repo). Each agent is `subagent_type: "Bash"` with `model: "haiku"`.
+Launch **5 Task agents in a single message** (one per repo). Each agent is `subagent_type: "Bash"` with `model: "haiku"`.
 
 For each repo, provide this prompt (substituting the repo-specific values):
 
@@ -29,11 +31,10 @@ For each repo, provide this prompt (substituting the repo-specific values):
 Check the git status of {REPO_NAME} at path {LOCAL_PATH} on branch {BRANCH}.
 
 Run these commands in sequence:
-1. export PATH="$PATH:/opt/homebrew/bin"
-2. git -C "{LOCAL_PATH}" fetch origin {BRANCH} 2>/dev/null
-3. git -C "{LOCAL_PATH}" status --porcelain
-4. git -C "{LOCAL_PATH}" log -1 --oneline
-5. git -C "{LOCAL_PATH}" rev-list --left-right --count origin/{BRANCH}...{BRANCH} 2>/dev/null
+1. git -C "{LOCAL_PATH}" fetch origin {BRANCH} 2>/dev/null
+2. git -C "{LOCAL_PATH}" status --porcelain
+3. git -C "{LOCAL_PATH}" log -1 --oneline
+4. git -C "{LOCAL_PATH}" rev-list --left-right --count origin/{BRANCH}...{BRANCH} 2>/dev/null
 
 Return a plain-text summary with these fields:
 - repo: {REPO_NAME}
@@ -47,7 +48,7 @@ Return a plain-text summary with these fields:
 
 ### Step 2: Collect results
 
-After all 4 agents return, parse their summaries.
+After all 5 agents return, parse their summaries.
 
 If any agent fails or times out, report that repo as "ERROR: {reason}" and continue with the others.
 
@@ -81,4 +82,4 @@ For push operations, confirm with the user BEFORE spawning push agents.
 ## Platform Notes
 
 - claude-code-config uses `master` branch, not `main`
-- Always quote paths in git commands.
+- All tools (git, gh, node, npm) are available via Homebrew on macOS

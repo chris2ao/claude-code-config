@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Parallel Agent Decomposition Pattern
 
 **Extracted:** 2026-02-13

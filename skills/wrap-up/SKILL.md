@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "End-of-session wrap-up: update docs, clean up, commit and push all repos"
 ---
 

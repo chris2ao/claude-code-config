@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Blog MDX Component Reference - cryptoflexllc.com
 
 All components are pre-registered in the blog renderer. Use them directly in MDX.

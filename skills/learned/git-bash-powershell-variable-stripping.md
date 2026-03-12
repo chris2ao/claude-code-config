@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Git Bash Strips PowerShell Variables in Inline Commands
 
 **Extracted:** 2026-02-08

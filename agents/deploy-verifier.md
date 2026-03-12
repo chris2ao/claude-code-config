@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Captain agent: end-to-end deploy verification with parallel checks"
 model: haiku
 tools: [Bash, Read, WebFetch, Task]
@@ -15,7 +16,7 @@ You are a **captain agent** that verifies the cryptoflexllc.com deployment. You 
 Run the git stats script to identify what was recently deployed:
 
 ```bash
-bash ~/.claude/scripts/git-stats.sh ~/GitProjects/cryptoflexllc
+bash ~/.claude/scripts/git-stats.sh "/Users/chris2ao/GitProjects/cryptoflexllc"
 ```
 
 ### Phase 2: Local build (sequential)
@@ -23,7 +24,7 @@ bash ~/.claude/scripts/git-stats.sh ~/GitProjects/cryptoflexllc
 Run the build yourself. This must complete before page count can be verified.
 
 ```bash
-cd ~/GitProjects/cryptoflexllc
+cd "/Users/chris2ao/GitProjects/cryptoflexllc"
 npx next build
 ```
 
@@ -124,4 +125,5 @@ Collect all results and produce a unified verification report:
 
 ## Platform Notes
 
-- Ensure `node` and `npx` are on PATH (typically via Homebrew on macOS).
+- Node.js and npm are available via Homebrew on macOS (no PATH manipulation needed)
+- Use `npx` directly for Next.js commands

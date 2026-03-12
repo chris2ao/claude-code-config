@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Ingest Session Archives
 
 Process session archive transcripts to extract valuable context and store it in vector memory and Homunculus instincts. This command handles the full pipeline: discovery, analysis, deduplication, and storage.
@@ -13,10 +17,11 @@ Process session archive transcripts to extract valuable context and store it in 
 Scan for session archives across all projects:
 
 ```bash
-# Check all known project locations
+# Check all known project locations (macOS paths)
 for dir in \
-  /c/ClaudeProjects/*/. \
-  /c/ClaudeProjects/*/.claude/session_archive \
+  "$HOME/GitProjects/*/." \
+  "$HOME/GitProjects/*/.claude/session_archive" \
+  "$HOME/.claude/session_archive" \
   ; do
   if [ -d "$dir" ]; then
     echo "$dir"

@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Write a new blog post for cryptoflexllc.com in the established series tone and style"
 ---
 
@@ -52,5 +53,5 @@ The agent returns JSON with `filename`, `title`, `description`, `word_count`, `t
 
 1. Display the post details to the user
 2. Update MEMORY.md blog post list with the new entry
-3. Offer to verify the build: `export PATH="/c/Program Files/nodejs:$PATH" && cd "C:/ClaudeProjects/cryptoflexllc" && npx next build`
+3. Offer to verify the build: `cd "/Users/chris2ao/GitProjects/cryptoflexllc" && npx next build`
 4. Ask if user wants to commit and push

@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Git Workflow
 
 ## Commit Message Format

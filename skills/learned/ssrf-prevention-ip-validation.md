@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # SSRF Prevention: IP Input Validation
 
 ## Problem

@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Blog Style Guide - cryptoflexllc.com
 
 **Author:** Chris Johnson

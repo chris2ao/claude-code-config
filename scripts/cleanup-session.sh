@@ -1,4 +1,5 @@
 #!/bin/bash
+# platform: macos
 # cleanup-session.sh - Delete accumulated Claude Code session artifacts
 # Called by /wrap-up Phase 3. Safe to run anytime.
 

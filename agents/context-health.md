@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Monitor context window usage and suggest compaction points"
 model: haiku
 tools: [Read, Bash]

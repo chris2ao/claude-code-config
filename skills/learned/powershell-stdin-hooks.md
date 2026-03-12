@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # PowerShell Stdin in Claude Code Hooks (Windows)
 
 **Extracted:** 2026-02-07

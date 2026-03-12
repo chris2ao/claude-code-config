@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Unified pre-commit security and code quality gate"
 model: inherit
 tools: [Read, Grep, Bash]

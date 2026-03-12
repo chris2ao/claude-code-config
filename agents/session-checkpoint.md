@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Lightweight mid-session state preservation before context compaction"
 model: haiku
 tools: [Read, Bash]
@@ -35,7 +36,7 @@ Invoke when:
 
 Read from:
 ```
-~/.claude/projects/*/memory/MEMORY.md
+/Users/chris2ao/.claude/projects/-Users-chris2ao-GitProjects-CJClaude-1/memory/MEMORY.md
 ```
 
 Focus on:
@@ -49,15 +50,15 @@ Run in project repositories:
 
 ```bash
 # CJClaude_1
-cd ~/GitProjects/CJClaude_1
+cd /Users/chris2ao/GitProjects/CJClaude_1
 git log -10 --oneline --all
 
 # cryptoflexllc (if relevant)
-cd ~/GitProjects/cryptoflexllc
+cd /Users/chris2ao/GitProjects/cryptoflexllc
 git log -10 --oneline --all
 
 # claude-code-config (if relevant)
-cd ~/.claude
+cd /Users/chris2ao/.claude
 git log -10 --oneline --all
 ```
 
@@ -100,7 +101,7 @@ Return JSON:
 
 ```json
 {
-  "memory_delta": "## Session Checkpoint (2026-02-14 15:30)\n- **In progress:** wrap-up-orchestrator agent definition\n- **Recent changes:** agents/wrap-up-orchestrator.md, session-checkpoint.md\n- **Decisions:** Agents cannot write to ~/.claude/projects/*/memory/ due to sandbox, must return memory_delta\n- **Next steps:** Test wrap-up workflow, validate multi-repo commits",
+  "memory_delta": "## Session Checkpoint (2026-02-14 15:30)\n- **In progress:** wrap-up-orchestrator agent definition\n- **Recent changes:** agent-assessment/output/agents/wrap-up-orchestrator.md, session-checkpoint.md\n- **Decisions:** Agents cannot write to ~/.claude/projects/*/memory/ due to sandbox, must return memory_delta\n- **Next steps:** Test wrap-up workflow, validate multi-repo commits",
   "summary": "Checkpoint captured: 2 agent files written, sandbox limitation documented, ready to resume multi-repo workflow testing"
 }
 ```
@@ -127,7 +128,7 @@ NO write operations. NO file modifications. NO git commits.
 ```
 Session summary: "Writing wrap-up-orchestrator and session-checkpoint agent definitions. Testing YAML frontmatter format."
 
-Project path: ~/GitProjects/CJClaude_1
+Project path: /Users/chris2ao/GitProjects/CJClaude_1
 ```
 
 **Actions:**
@@ -166,15 +167,6 @@ If invoked after context compaction already happened:
 3. Cross-reference with MEMORY.md to avoid duplication
 4. Generate delta focusing on what's NOT already in MEMORY.md
 5. Return delta with note: "Generated from compaction summary"
-
-## Environment Setup
-
-No special PATH requirements (read-only operations only).
-
-Use standard Unix paths:
-```bash
-cd ~/GitProjects/CJClaude_1
-```
 
 ## Error Handling
 

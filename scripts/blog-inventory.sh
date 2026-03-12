@@ -1,11 +1,12 @@
 #!/bin/bash
+# platform: macos
 
 # blog-inventory.sh - Pre-compute blog post metadata from all MDX files
 # Usage: bash blog-inventory.sh [--minimal]
 
 set -euo pipefail
 
-BLOG_ROOT="/c/ClaudeProjects/cryptoflexllc/src/content/blog"
+BLOG_ROOT="/Users/chris2ao/GitProjects/cryptoflexllc/src/content/blog"
 MINIMAL=false
 
 if [[ "${1:-}" == "--minimal" ]]; then

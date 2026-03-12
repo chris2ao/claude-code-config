@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Quick dashboard showing git status across all project repos"
 ---
 

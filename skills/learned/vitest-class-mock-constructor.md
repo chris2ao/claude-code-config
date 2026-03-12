@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Vitest Class-Based Factory Mock for SDK Constructors
 
 ## Pattern

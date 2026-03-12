@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Captain agent: parallel session transcript analysis with synthesized report"
 model: sonnet
 tools: [Read, Grep, Glob, Bash, Task]

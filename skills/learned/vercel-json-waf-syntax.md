@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Vercel.json WAF Deny Rule Syntax
 
 **Extracted:** 2026-02-10

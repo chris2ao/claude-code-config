@@ -1,4 +1,5 @@
 ---
+platform: portable
 description: "Auto-generate CHANGELOG.md entries from git diffs and session context"
 model: haiku
 tools: [Read, Grep, Glob, Bash]
