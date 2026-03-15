@@ -14,7 +14,7 @@ A comprehensive walkthrough of this configuration repository. Whether you have n
    - [Rules: `~/.claude/rules/`](#rules)
    - [Custom Agents: `~/.claude/agents/`](#custom-agents)
    - [Learned Skills: `~/.claude/skills/learned/`](#learned-skills)
-   - [Custom Skills: `~/.claude/skills/*/SKILL.md`](#custom-skills)
+   - [Custom Skills: `~/.claude/skills/*/skill.md`](#custom-skills)
    - [Custom Commands: `~/.claude/commands/`](#custom-commands)
    - [Hooks: `~/.claude/hooks/`](#hooks)
    - [Homunculus: Continuous Learning](#homunculus-continuous-learning)
@@ -376,7 +376,7 @@ Each agent file uses YAML frontmatter to specify:
 - `model`: which Claude model to use (haiku, sonnet, opus, inherit)
 - `tools`: which tools the agent can access
 
-**This repo includes 13 agents:**
+**This repo includes 14 agents:**
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -385,6 +385,7 @@ Each agent file uses YAML frontmatter to specify:
 | `config-sync` | haiku | Compare local config against git repo for drift |
 | `context-health` | haiku | Monitor context window usage, suggest compaction |
 | `deploy-verifier` | haiku | Post-deploy verification (build, live site) |
+| `gmail-assistant` | sonnet | Daily Gmail inbox cleanup: trash old promotions, social, and newsletters; classify primary inbox (KEEP/ARCHIVE/TRASH/FLAG); create a draft summary report. Multi-account support via GWS CLI. |
 | `home-sync` | haiku | Sync config to backup repository |
 | `multi-repo-orchestrator` | haiku | Parallel git operations across repos |
 | `pre-commit-checker` | haiku | Pre-commit security and quality checks |
@@ -462,9 +463,9 @@ See `skills/learned/INDEX.md` for the full index.
 
 ### Custom Skills
 
-**Location:** `~/.claude/skills/*/SKILL.md`
+**Location:** `~/.claude/skills/*/skill.md`
 
-Custom skills are user-invocable workflows triggered by slash commands. Each lives in its own subdirectory with a `SKILL.md` file containing YAML frontmatter and detailed instructions. Skills take priority over commands when both exist for the same name.
+Custom skills are user-invocable workflows triggered by slash commands. Each lives in its own subdirectory with a `skill.md` file (lowercase) containing YAML frontmatter and detailed instructions. The lowercase filename ensures cross-platform compatibility when syncing via Syncthing between macOS and Windows. Skills take priority over commands when both exist for the same name.
 
 This repo includes 6 skills:
 
@@ -522,13 +523,14 @@ Hooks are scripts that run automatically when Claude Code performs certain actio
 | **Stop** | When Claude finishes a response | Play notification sound |
 | **SessionEnd** | When the session closes | Archive the transcript |
 
-This repo includes 6 hook scripts:
+This repo includes 7 hook scripts:
 
 | Script | Hook Type | What It Does |
 |--------|-----------|-------------|
 | `file-guard.sh` | PreToolUse | Checks if the target file is sensitive (.env, .pem, credentials). If so, exits non-zero to block the edit. |
 | `log-activity.sh` | PostToolUse | Appends a timestamped log entry for each tool use (Bash, Edit, Write, NotebookEdit). Runs async so it does not block Claude. |
-| `memory-nudge.sh` | PostToolUse | Analyzes tool output and reminds Claude to save significant findings to vector memory. |
+| `memory-nudge.sh` | PostToolUse | Analyzes tool output and reminds Claude to save significant findings to vector memory (macOS/Linux). |
+| `memory-nudge.ps1` | PostToolUse | PowerShell port of `memory-nudge.sh` for Windows. Tracks significant work units (Edit, Write, Bash, Agent tool calls) and reminds Claude to save to vector memory after 5+ units without a `memory_store` call. Configured in `settings.json` under the `Edit\|Write\|Bash\|Agent` PostToolUse matcher. |
 | `observe-homunculus.sh` | PostToolUse | Captures behavioral observations and appends them to `observations.jsonl` for later instinct extraction. |
 | `prompt-notify.sh` | Stop | Plays a system notification sound (macOS: `osascript`, Windows: `[console]::beep`) when Claude finishes responding. |
 | `save-session.sh` | SessionEnd | Reads session metadata from stdin (JSON with `transcript_path` and `session_id`), copies the transcript to a dated archive directory. |

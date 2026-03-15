@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 14 rules, 13 agents, 6 invocable skills, 23 learned skills, 10 scripts, 4 commands, 6 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 14 rules, 14 agents, 6 invocable skills, 23 learned skills, 12 scripts, 4 commands, 7 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -57,7 +57,7 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (13 files)
+### Agents (14 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
@@ -68,6 +68,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `config-sync` | haiku | Detect config drift between local and git repo |
 | `context-health` | haiku | Monitor context window usage, suggest compaction points |
 | `deploy-verifier` | haiku | Post-deploy verification (build check, live site) |
+| `gmail-assistant` | sonnet | Daily Gmail inbox cleanup: trash old promotions/social/newsletters, classify primary inbox (KEEP/ARCHIVE/TRASH/FLAG), and create a draft summary report. Supports multiple accounts via GWS CLI. |
 | `home-sync` | haiku | Harvest and sync config to backup repo |
 | `multi-repo-orchestrator` | haiku | Parallel git operations across all project repos |
 | `pre-commit-checker` | haiku | Pre-commit security and quality gate |
@@ -79,7 +80,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 
 ### Skills (6 invocable + 23 learned)
 
-**Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
+**Invocable skills** (in `skills/*/skill.md`) are slash commands for complex workflows. Skill files use lowercase `skill.md` for cross-platform Syncthing compatibility (previously `SKILL.md`):
 
 | Skill | What It Does |
 |-------|-------------|
@@ -103,7 +104,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (10 files)
+### Scripts (12 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -119,6 +120,8 @@ Automation scripts in `scripts/` for common operations:
 | `validate-mdx.sh` | Validate MDX blog post files |
 | `env.sh` | Shared environment variables for repo paths and tool paths |
 | `memory-maintenance.py` | Memory database maintenance and cleanup |
+| `sync-status.sh` | Syncthing sync validation: checks folder status, active connections, and conflicts |
+| `memory-toggle.ps1` | Windows script to switch vector-memory between SSE (Mac LAN server) and local stdio fallback |
 
 ## MCP Servers (7 configured)
 
@@ -166,7 +169,7 @@ cd mcp-servers/project-tools && npm install
 
 See [mcp-servers/README.md](./mcp-servers/README.md) for detailed configuration, JSON snippets, and troubleshooting.
 
-## Hooks (6 lifecycle hooks)
+## Hooks (7 lifecycle hooks)
 
 Hooks in `hooks/` are shell scripts that fire automatically at different points in the Claude Code lifecycle. Configure them in your project's `.claude/settings.local.json` using the template at `hooks/settings.local.json.template`.
 
@@ -174,7 +177,8 @@ Hooks in `hooks/` are shell scripts that fire automatically at different points 
 |------|-------|---------|
 | `file-guard.sh` | PreToolUse | Block Edit/Write on sensitive files (.env, .pem, credentials) |
 | `log-activity.sh` | PostToolUse | Log every tool execution with timestamps to activity log |
-| `memory-nudge.sh` | PostToolUse | Remind Claude to save important context to vector memory |
+| `memory-nudge.sh` | PostToolUse | Remind Claude to save important context to vector memory (macOS/Linux) |
+| `memory-nudge.ps1` | PostToolUse | PowerShell port of memory-nudge.sh for Windows. Tracks significant work units and reminds to save to vector memory after 5+ units without a memory_store call. |
 | `observe-homunculus.sh` | PostToolUse | Capture behavioral observations for the Homunculus learning system |
 | `prompt-notify.sh` | Stop | Play notification sound when Claude finishes a response |
 | `save-session.sh` | SessionEnd | Archive full conversation transcript on session close |
@@ -232,11 +236,11 @@ This configuration supports both **macOS** and **Windows**:
 ```
 claude-code-config/
   rules/                         # 14 global rule files (4 subdirectories)
-  agents/                        # 13 custom agent definitions
+  agents/                        # 14 custom agent definitions
   skills/                        # 6 invocable skills + 23 learned skills
   commands/                      # 4 commands
-  scripts/                       # 10 automation scripts
-  hooks/                         # 6 lifecycle hooks + settings template
+  scripts/                       # 12 automation scripts
+  hooks/                         # 7 lifecycle hooks + settings template
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
   homunculus/                    # Continuous learning system (30 instincts)
