@@ -29,7 +29,7 @@ This provides a structured JSON report of all modified, new, and deleted files w
 ## Process
 
 1. List all tracked files locally via Glob
-2. Run `git status` in `/Users/chris2ao/.claude` to find uncommitted changes
+2. Run `git status` in `~/.claude` to find uncommitted changes
 3. Run `git diff` to see what changed
 4. Report:
    - Files modified but not committed

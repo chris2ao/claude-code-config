@@ -27,16 +27,16 @@ Process session summary and survey data to:
 
 | Repo | Path | Branch |
 |------|------|--------|
-| CJClaude_1 | `/Users/chris2ao/GitProjects/CJClaude_1` | main |
-| CJClaudin_Mac | `/Users/chris2ao/GitProjects/CJClaudin_Mac` | main |
-| CJClaudin_home | `/Users/chris2ao/GitProjects/CJClaudin_home` | main |
-| cryptoflexllc | `/Users/chris2ao/GitProjects/cryptoflexllc` | main |
-| cryptoflex-ops | `/Users/chris2ao/GitProjects/cryptoflex-ops` | main |
-| claude-code-config | `/Users/chris2ao/GitProjects/claude-code-config` | **master** (NOT main) |
-| Openclaw_MissionControl | `/Users/chris2ao/GitProjects/Openclaw_MissionControl` | main |
-| JClaw_Config | `/Users/chris2ao/GitProjects/JClaw_Config` | main |
-| Third-Conflict | `/Users/chris2ao/GitProjects/Third-Conflict` | main |
-| Cann-Cann | `/Users/chris2ao/GitProjects/Cann-Cann` | main |
+| CJClaude_1 | `$HOME/GitProjects/CJClaude_1` | main |
+| CJClaudin_Mac | `$HOME/GitProjects/CJClaudin_Mac` | main |
+| CJClaudin_home | `$HOME/GitProjects/CJClaudin_home` | main |
+| cryptoflexllc | `$HOME/GitProjects/cryptoflexllc` | main |
+| cryptoflex-ops | `$HOME/GitProjects/cryptoflex-ops` | main |
+| claude-code-config | `$HOME/GitProjects/claude-code-config` | **master** (NOT main) |
+| Openclaw_MissionControl | `$HOME/GitProjects/Openclaw_MissionControl` | main |
+| JClaw_Config | `$HOME/GitProjects/JClaw_Config` | main |
+| Third-Conflict | `$HOME/GitProjects/Third-Conflict` | main |
+| Cann-Cann | `$HOME/GitProjects/Cann-Cann` | main |
 
 ## Workflow
 
@@ -44,9 +44,9 @@ Process session summary and survey data to:
 
 Read the following files to understand format and current content:
 
-- `/Users/chris2ao/GitProjects/CJClaude_1/CHANGELOG.md` (first 30 lines for format)
-- `/Users/chris2ao/GitProjects/CJClaude_1/README.md` (check if narrative update needed)
-- `/Users/chris2ao/.claude/projects/-Users-chris2ao-GitProjects-CJClaude-1/memory/MEMORY.md` (read-only, to inform delta)
+- `$HOME/GitProjects/CJClaude_1/CHANGELOG.md` (first 30 lines for format)
+- `$HOME/GitProjects/CJClaude_1/README.md` (check if narrative update needed)
+- `~/.claude/projects/-Users-chris2ao-GitProjects-CJClaude-1/memory/MEMORY.md` (read-only, to inform delta)
 
 ### 2. Generate Updates
 

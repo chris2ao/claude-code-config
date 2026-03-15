@@ -8,7 +8,7 @@
 set -euo pipefail
 
 # Default to CJClaude_1 path
-REPO_PATH="${1:-/Users/chris2ao/GitProjects/CJClaude_1}"
+REPO_PATH="${1:-$HOME/GitProjects/CJClaude_1}"
 
 # Function to escape JSON strings
 json_escape() {

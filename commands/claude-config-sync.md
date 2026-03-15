@@ -8,10 +8,10 @@ You sync the live `~/.claude/` configuration to `C:/ClaudeProjects/claude-code-c
 
 ## Phase 0: Drift Detection
 
-Run the survey script with Windows path override:
+Run the survey script:
 
 ```bash
-PROJECTS_DIR=/c/ClaudeProjects bash ~/.claude/scripts/sync-survey.sh
+bash ~/.claude/scripts/sync-survey.sh
 ```
 
 Parse the JSON output. Extract only the `config_repo` section.
@@ -28,7 +28,11 @@ List the file names grouped by status (new, modified, deleted).
 
 ## Phase 1: Parallel Sync
 
-Launch up to 3 parallel Task agents (model: haiku, subagent_type: general-purpose). Skip any agent whose work list is empty.
+Launch up to 3 parallel Task agents (subagent_type: general-purpose). Skip any agent whose work list is empty.
+
+- **Agent 1 (File Copier):** model: haiku
+- **Agent 2 (Deletion Handler):** model: haiku
+- **Agent 3 (Doc Updater):** model: sonnet
 
 ### Agent 1: File Copier
 
@@ -149,5 +153,4 @@ If any files were skipped due to security checks, list them with the reason.
 - Always use HEREDOC for commit messages
 - Never copy files containing real secrets (API keys, tokens)
 - Never copy `.backup` files or machine-specific settings
-- The survey script needs `PROJECTS_DIR=/c/ClaudeProjects` on Windows
 - If git push fails (e.g., network), report the error. The local commit is preserved.

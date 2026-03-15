@@ -17,8 +17,8 @@ Create comprehensive, technically accurate blog posts following CryptoFlex LLC h
 4. If a series is specified, include `series` and `seriesOrder` in frontmatter
 
 ## Output Location
-- **Production:** `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/blog/<slug>.mdx`
-- **Backlog:** `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/backlog/<slug>.mdx`
+- **Production:** `$HOME/GitProjects/cryptoflexllc/src/content/blog/<slug>.mdx`
+- **Backlog:** `$HOME/GitProjects/cryptoflexllc/src/content/backlog/<slug>.mdx`
 
 ---
 
@@ -169,8 +169,8 @@ Rules: Use on FIRST mention per section only.
 | Comparison | `the-cobbler-s-server-finally-gets-shoes.mdx` |
 
 ## Blog File Paths
-- Production: `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/blog/`
-- Backlog: `/Users/chris2ao/GitProjects/cryptoflexllc/src/content/backlog/`
+- Production: `$HOME/GitProjects/cryptoflexllc/src/content/blog/`
+- Backlog: `$HOME/GitProjects/cryptoflexllc/src/content/backlog/`
 
 ## Return Format
 ```json

@@ -50,10 +50,10 @@ Read `src/content/blog/*.mdx` filenames and parse the frontmatter (first 10 line
 Do NOT maintain a hardcoded post list. Always discover at runtime.
 
 ### Repository paths
-- cryptoflexllc: `/Users/chris2ao/GitProjects/cryptoflexllc`
-- CJClaude_1: `/Users/chris2ao/GitProjects/CJClaude_1`
-- cryptoflex-ops: `/Users/chris2ao/GitProjects/cryptoflex-ops`
-- claude-code-config: `/Users/chris2ao/.claude`
+- cryptoflexllc: `$HOME/GitProjects/cryptoflexllc`
+- CJClaude_1: `$HOME/GitProjects/CJClaude_1`
+- cryptoflex-ops: `$HOME/GitProjects/cryptoflex-ops`
+- claude-code-config: `~/.claude`
 
 ### Research by topic type
 Launch parallel Explore agents (model: haiku) based on the selected topic:
@@ -123,7 +123,7 @@ Launch a code-reviewer agent (subagent_type: "everything-claude-code:code-review
 
 ### Build Verification
 ```bash
-cd "/Users/chris2ao/GitProjects/cryptoflexllc" && npx next build
+cd "$HOME/GitProjects/cryptoflexllc" && npx next build
 ```
 
 ### User Review

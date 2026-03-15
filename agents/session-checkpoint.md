@@ -36,7 +36,7 @@ Invoke when:
 
 Read from:
 ```
-/Users/chris2ao/.claude/projects/-Users-chris2ao-GitProjects-CJClaude-1/memory/MEMORY.md
+~/.claude/projects/-Users-chris2ao-GitProjects-CJClaude-1/memory/MEMORY.md
 ```
 
 Focus on:
@@ -50,15 +50,15 @@ Run in project repositories:
 
 ```bash
 # CJClaude_1
-cd /Users/chris2ao/GitProjects/CJClaude_1
+cd $HOME/GitProjects/CJClaude_1
 git log -10 --oneline --all
 
 # cryptoflexllc (if relevant)
-cd /Users/chris2ao/GitProjects/cryptoflexllc
+cd $HOME/GitProjects/cryptoflexllc
 git log -10 --oneline --all
 
 # claude-code-config (if relevant)
-cd /Users/chris2ao/.claude
+cd ~/.claude
 git log -10 --oneline --all
 ```
 
@@ -128,7 +128,7 @@ NO write operations. NO file modifications. NO git commits.
 ```
 Session summary: "Writing wrap-up-orchestrator and session-checkpoint agent definitions. Testing YAML frontmatter format."
 
-Project path: /Users/chris2ao/GitProjects/CJClaude_1
+Project path: $HOME/GitProjects/CJClaude_1
 ```
 
 **Actions:**

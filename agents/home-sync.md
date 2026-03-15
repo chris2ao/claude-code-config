@@ -14,13 +14,13 @@ Scans all repositories and ~/.claude/ for Claude Code configuration artifacts (a
 | Source | Path | Artifacts |
 |--------|------|-----------|
 | Global config | `~/.claude/` | rules, agents, skills, scripts, commands, homunculus |
-| CJClaude_1 | `/Users/chris2ao/GitProjects/CJClaude_1/.claude/hooks/` | Hook scripts |
-| cryptoflexllc | `/Users/chris2ao/GitProjects/cryptoflexllc/.claude/` | Project-level config |
-| cryptoflex-ops | `/Users/chris2ao/GitProjects/cryptoflex-ops/.claude/` | Project-level config |
+| CJClaude_1 | `$HOME/GitProjects/CJClaude_1/.claude/hooks/` | Hook scripts |
+| cryptoflexllc | `$HOME/GitProjects/cryptoflexllc/.claude/` | Project-level config |
+| cryptoflex-ops | `$HOME/GitProjects/cryptoflex-ops/.claude/` | Project-level config |
 
 ## Destination
 
-`/Users/chris2ao/GitProjects/CJClaudin_Mac/`
+`$HOME/GitProjects/CJClaudin_Mac/`
 
 ## Artifact Mapping
 
@@ -78,7 +78,7 @@ TOTAL: 97 files | 2 new | 1 modified | 94 unchanged
 If there were changes:
 
 ```bash
-cd "/Users/chris2ao/GitProjects/CJClaudin_Mac"
+cd "$HOME/GitProjects/CJClaudin_Mac"
 git add -A
 git commit -m "chore: sync config updates (N new, M modified)"
 git push

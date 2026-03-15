@@ -14,40 +14,82 @@ Process session archive transcripts to extract valuable context and store it in 
 
 ### Phase 1: Discover Archives
 
-Scan for session archives across all projects:
+Dynamically find all session archive directories. Do NOT use hardcoded paths.
+
+**Step 1: Detect platform and project root.**
 
 ```bash
-# Check all known project locations (macOS paths)
-for dir in \
-  "$HOME/GitProjects/*/." \
-  "$HOME/GitProjects/*/.claude/session_archive" \
+# Detect platform and set project root
+if [[ "$OSTYPE" == darwin* ]]; then
+  PROJECT_ROOT="$HOME/GitProjects"
+elif [[ -d "/c/ClaudeProjects" ]]; then
+  PROJECT_ROOT="/c/ClaudeProjects"
+else
+  PROJECT_ROOT="$HOME/projects"
+fi
+echo "Platform: $OSTYPE | Project root: $PROJECT_ROOT"
+```
+
+**Step 2: Dynamically find all session_archive directories.**
+
+Search the project root AND the global `~/.claude/` for any directory named `session_archive` containing `.jsonl` files. Also check the current working directory.
+
+```bash
+echo "=== Session Archive Locations ==="
+# Dynamic discovery: find all session_archive dirs under project root and ~/.claude
+for archive_dir in \
+  $(find "$PROJECT_ROOT" -maxdepth 4 -type d -name "session_archive" 2>/dev/null) \
   "$HOME/.claude/session_archive" \
+  "$(pwd)/.claude/session_archive" \
   ; do
-  if [ -d "$dir" ]; then
-    echo "$dir"
-    ls "$dir"/*.jsonl 2>/dev/null | wc -l
+  if [ -d "$archive_dir" ]; then
+    count=$(ls "$archive_dir"/*.jsonl 2>/dev/null | wc -l)
+    if [ "$count" -gt 0 ]; then
+      echo "$archive_dir: $count files"
+    fi
   fi
 done
 ```
 
-Also check the Homunculus observation log:
+**Step 3: Check Homunculus observation log.**
 
 ```bash
-wc -l ~/.claude/homunculus/observations.jsonl 2>/dev/null
-ls ~/.claude/homunculus/observations.archive/*.jsonl 2>/dev/null
+wc -l ~/.claude/homunculus/observations.jsonl 2>/dev/null || echo "No observations.jsonl"
+ls ~/.claude/homunculus/observations.archive/*.jsonl 2>/dev/null || echo "No archived observations"
 ```
 
-Report the total number of archive files and observation lines found.
+Report the total number of archive locations, files, and observation lines found.
+
+If `$ARGUMENTS` is a specific path, use only that path instead of scanning.
+
+### Phase 1b: Deduplicate Archive Snapshots
+
+Session archives often contain multiple incremental snapshots of the same session (same UUID, different timestamps). Before processing, deduplicate to keep only the **largest file per session UUID** (largest = most complete).
+
+Archive filenames follow the pattern: `YYYY-MM-DD_HH-MM-SS_<UUID>.jsonl`
+
+```bash
+# Extract UUID from filename, keep only the largest file per UUID
+# Output: one line per unique session with date, UUID, size, and path
+ls -la <archive_dir>/*.jsonl | awk '{
+  path=$NF; n=split(path,p,"/"); fn=p[n]
+  uuid=substr(fn,21); sub(/\.jsonl$/,"",uuid)
+  size=$5+0
+  if (size > max[uuid]) { max[uuid]=size; best[uuid]=path; date[uuid]=substr(fn,1,10) }
+} END { for (u in best) print date[u], u, max[u], best[u] }' | sort
+```
+
+Skip files smaller than 5KB (likely empty or trivially short sessions).
 
 ### Phase 2: Check What Has Already Been Ingested
 
 Before processing, check vector memory for previously ingested sessions to avoid duplicates:
 
-Use `memory_search` with query "session ingestion" and tags ["ingestion-log"] to find records of prior runs. Track session IDs that have already been processed.
+Use `memory_search` with query "session ingestion" and tags ["ingestion-log"] to find records of prior runs. Compare the ingestion log date against archive file dates. Only process sessions newer than the last ingestion date.
 
 ### Phase 3: Extract Insights (Parallel Agents)
 
-Launch parallel Explore agents (haiku model) to read the archives. Split files across 2-4 agents depending on volume.
+Launch parallel Explore agents (haiku model) to read the deduplicated archives. Split files across 2-4 agents depending on volume. For files over 1MB, instruct agents to use `head -500` and `tail -200` to sample the beginning and end.
 
 Each reader agent should extract:
 

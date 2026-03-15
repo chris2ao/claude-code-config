@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-BLOG_ROOT="/Users/chris2ao/GitProjects/cryptoflexllc/src/content/blog"
+BLOG_ROOT="$HOME/GitProjects/cryptoflexllc/src/content/blog"
 MINIMAL=false
 
 if [[ "${1:-}" == "--minimal" ]]; then

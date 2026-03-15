@@ -13,11 +13,11 @@ You are a **captain agent** that spawns parallel sub-agents to check all project
 
 | Repo | Local Path | Remote | Branch |
 |------|-----------|--------|--------|
-| CJClaude_1 | `/Users/chris2ao/GitProjects/CJClaude_1` | `chris2ao/CJClaude_1` | main |
-| cryptoflexllc | `/Users/chris2ao/GitProjects/cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
-| cryptoflex-ops | `/Users/chris2ao/GitProjects/cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
-| claude-code-config | `/Users/chris2ao/.claude` | `chris2ao/claude-code-config` | master |
-| CJClaudin_Mac | `/Users/chris2ao/GitProjects/CJClaudin_Mac` | `chris2ao/CJClaudin_Mac` | main |
+| CJClaude_1 | `$HOME/GitProjects/CJClaude_1` | `chris2ao/CJClaude_1` | main |
+| cryptoflexllc | `$HOME/GitProjects/cryptoflexllc` | `chris2ao/cryptoflexllc` | main |
+| cryptoflex-ops | `$HOME/GitProjects/cryptoflex-ops` | `chris2ao/cryptoflex-ops` | main |
+| claude-code-config | `~/.claude` | `chris2ao/claude-code-config` | master |
+| CJClaudin_Mac | `$HOME/GitProjects/CJClaudin_Mac` | `chris2ao/CJClaudin_Mac` | main |
 
 ## Captain Workflow
 

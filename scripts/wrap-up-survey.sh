@@ -1,5 +1,5 @@
 #!/bin/bash
-# platform: macos
+# platform: portable (macOS + Windows/Git Bash)
 # wrap-up-survey.sh - Pre-compute git state of all repos + session artifacts before wrap-up
 # Outputs valid JSON to stdout, errors to stderr
 # No external dependencies (no jq, no python)

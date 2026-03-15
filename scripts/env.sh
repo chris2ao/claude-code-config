@@ -1,10 +1,15 @@
 #!/bin/bash
 # Environment variables for CJClaudin_home scripts
-# Generated for macOS environment
+# Platform-aware: detects macOS vs Windows (Git Bash)
 
 # ===== BASE DIRECTORIES =====
 export CLAUDE_HOME="$HOME/.claude"
-export PROJECTS_DIR="$HOME/GitProjects"
+
+if [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == mingw* ]] || [[ "$OSTYPE" == cygwin* ]]; then
+    export PROJECTS_DIR="/c/ClaudeProjects"
+else
+    export PROJECTS_DIR="$HOME/GitProjects"
+fi
 
 # ===== REPOSITORY PATHS =====
 export REPO_CJCLAUDE="$PROJECTS_DIR/CJClaude_1"
@@ -18,9 +23,11 @@ export REPO_JCLAW_CONFIG="$PROJECTS_DIR/JClaw_Config"
 export REPO_THIRD_CONFLICT="$PROJECTS_DIR/Third-Conflict"
 export REPO_CANN_CANN="$PROJECTS_DIR/Cann-Cann"
 
-# ===== TOOL PATHS (macOS/Homebrew) =====
-export GH_PATH="/opt/homebrew/bin"
-export NODE_PATH="/opt/homebrew/bin"
-
-# ===== PATH AUGMENTATION =====
-export PATH="$GH_PATH:$NODE_PATH:$PATH"
+# ===== TOOL PATHS (platform-conditional) =====
+if [[ "$OSTYPE" == darwin* ]]; then
+    export GH_PATH="/opt/homebrew/bin"
+    export NODE_PATH="/opt/homebrew/bin"
+    export PATH="$GH_PATH:$NODE_PATH:$PATH"
+elif [[ "$OSTYPE" == msys* ]] || [[ "$OSTYPE" == mingw* ]]; then
+    export PATH="/c/Program Files/GitHub CLI:/c/Program Files/nodejs:$PATH"
+fi
