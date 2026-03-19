@@ -81,7 +81,9 @@ For each result, modify labels (add TRASH, remove INBOX). Skip starred/important
 
 Count how many. Record as `newsletters_trashed`.
 
-### Step 4: Classify Primary Inbox
+### Step 4: Classify Primary Inbox (all unread, no age limit)
+
+**NOTE:** Unlike Steps 1-3, there is NO 7-day age restriction here. Process ALL unread primary inbox messages up to the current time.
 
 Search: `in:inbox category:primary is:unread`
 

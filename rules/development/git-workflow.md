@@ -10,8 +10,6 @@ platform: portable
 <type>: <description>
 
 <body>
-
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
 ```
 
 Types: feat, fix, refactor, docs, test, chore, perf, ci
