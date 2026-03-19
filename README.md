@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 14 rules, 14 agents, 6 invocable skills, 23 learned skills, 12 scripts, 4 commands, 7 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 20 agents, 8 invocable skills, 23 learned skills, 12 scripts, 4 commands, 7 hooks, 7 MCP servers, and 30 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -36,7 +36,7 @@ cp -r skills/ ~/.claude/skills/
 
 ## Component Inventory
 
-### Rules (14 files)
+### Rules (15 files)
 
 Rules in `rules/` are loaded automatically into every Claude Code session. They shape how Claude writes code, handles security, manages git, and routes work to agents.
 
@@ -49,6 +49,7 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `core/security.md` | Pre-commit security checklist, secret management protocol |
 | `development/git-workflow.md` | Conventional commits, PR workflow, feature implementation |
 | `development/patterns.md` | Repository pattern, API response envelopes, skeleton projects |
+| `development/plan-docs.md` | Plan output location and format standards |
 | `development/testing.md` | TDD workflow, 80% minimum coverage |
 | `operations/hooks.md` | Hook types, file protection, context preservation |
 | `operations/performance.md` | Model selection (Haiku/Sonnet/Opus), cost optimization |
@@ -57,9 +58,11 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (14 files)
+### Agents (20 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
+
+**Core Agents** (14):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -78,7 +81,18 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `sync-orchestrator` | haiku | Multi-repo config sync orchestration |
 | `wrap-up-orchestrator` | haiku | End-of-session wrap-up with docs, commits, pushes |
 
-### Skills (6 invocable + 23 learned)
+**Game Development Team** (6):
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `game-artist` | sonnet | Asset creation and art direction for game projects |
+| `game-designer` | sonnet | Game mechanics, level design, and gameplay systems |
+| `game-developer` | sonnet | Game implementation, engine code, and technical execution |
+| `game-director` | sonnet | Creative leadership and game vision coordination |
+| `game-ux` | sonnet | Player experience, UI/UX, and interface design |
+| `game-writer` | sonnet | Narrative, dialogue, and story scripting |
+
+### Skills (8 invocable + 23 learned)
 
 **Invocable skills** (in `skills/*/skill.md`) are slash commands for complex workflows. Skill files use lowercase `skill.md` for cross-platform Syncthing compatibility (previously `SKILL.md`):
 
@@ -86,6 +100,8 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 |-------|-------------|
 | `/wrap-up` | 12-step end-of-session agent: pulls repos, updates docs, extracts skills, commits, pushes |
 | `/blog-post` | Interactive blog writing agent with research and MDX generation |
+| `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
+| `/game-dev` | Game development team orchestration and project automation |
 | `/multi-repo-status` | Git status dashboard across all project repos in parallel |
 | `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks |
 | `/sync` | Configuration sync across repos, mirrors local state to git backups |
@@ -235,9 +251,9 @@ This configuration supports both **macOS** and **Windows**:
 
 ```
 claude-code-config/
-  rules/                         # 14 global rule files (4 subdirectories)
-  agents/                        # 14 custom agent definitions
-  skills/                        # 6 invocable skills + 23 learned skills
+  rules/                         # 15 global rule files (4 subdirectories)
+  agents/                        # 20 custom agent definitions
+  skills/                        # 8 invocable skills + 23 learned skills
   commands/                      # 4 commands
   scripts/                       # 12 automation scripts
   hooks/                         # 7 lifecycle hooks + settings template

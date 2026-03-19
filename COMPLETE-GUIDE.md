@@ -293,7 +293,7 @@ All servers should show as "connected." If any show "failed," see the [Troublesh
 
 Rules are persistent instructions that Claude follows in every session, in every project. They are loaded automatically at session start. Each rule is a Markdown file.
 
-This repo contains 14 rule files organized by domain:
+This repo contains 15 rule files organized by domain:
 
 ```
 rules/
@@ -308,6 +308,7 @@ rules/
   development/
     git-workflow.md          # Conventional commits, PR workflow, TDD
     patterns.md              # Repository pattern, API envelopes, skeleton projects
+    plan-docs.md             # Plan output location and format standards
     testing.md               # TDD workflow, 80% minimum coverage
   operations/
     context-preservation.md  # Session context preservation across compactions
@@ -376,7 +377,9 @@ Each agent file uses YAML frontmatter to specify:
 - `model`: which Claude model to use (haiku, sonnet, opus, inherit)
 - `tools`: which tools the agent can access
 
-**This repo includes 14 agents:**
+**This repo includes 20 agents:**
+
+**Core Agents** (14):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -394,6 +397,17 @@ Each agent file uses YAML frontmatter to specify:
 | `skill-extractor` | sonnet | Extract instincts from transcripts (Homunculus v2) |
 | `sync-orchestrator` | haiku | Multi-repo config sync orchestration |
 | `wrap-up-orchestrator` | haiku | End-of-session wrap-up (docs, commits, pushes) |
+
+**Game Development Team** (6):
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `game-artist` | sonnet | Asset creation and art direction for game projects |
+| `game-designer` | sonnet | Game mechanics, level design, and gameplay systems |
+| `game-developer` | sonnet | Game implementation, engine code, and technical execution |
+| `game-director` | sonnet | Creative leadership and game vision coordination |
+| `game-ux` | sonnet | Player experience, UI/UX, and interface design |
+| `game-writer` | sonnet | Narrative, dialogue, and story scripting |
 
 **How to create your own agent:**
 
@@ -467,12 +481,14 @@ See `skills/learned/INDEX.md` for the full index.
 
 Custom skills are user-invocable workflows triggered by slash commands. Each lives in its own subdirectory with a `skill.md` file (lowercase) containing YAML frontmatter and detailed instructions. The lowercase filename ensures cross-platform compatibility when syncing via Syncthing between macOS and Windows. Skills take priority over commands when both exist for the same name.
 
-This repo includes 6 skills:
+This repo includes 8 skills:
 
 | Skill | What It Does |
 |-------|-------------|
 | `/wrap-up` | 12-step end-of-session agent: pull repos, review session, update CHANGELOG/README/MEMORY, extract skills, clean state, commit, push |
 | `/blog-post` | Interactive blog writing agent: asks topic, gathers source material, writes formatted MDX post |
+| `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
+| `/game-dev` | Game development team orchestration and project automation |
 | `/gws` | Google Workspace CLI for Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, People, and Forms. Teaches on-demand API discovery via `gws schema` with a 4-tier safety system (read, create, modify, delete). |
 | `/multi-repo-status` | Git status dashboard across all project repos in parallel |
 | `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks with descriptions |
