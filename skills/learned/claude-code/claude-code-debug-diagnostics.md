@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Claude Code Startup Diagnostics via Debug Mode
 
 **Extracted:** 2026-02-08

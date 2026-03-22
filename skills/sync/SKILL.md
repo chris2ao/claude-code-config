@@ -66,3 +66,16 @@ The agent returns JSON with classified files, actions taken, and git status.
 3. If any files were blocked by security scan, list them with the reason
 4. If the user chose "Review diff first", show the diff and ask whether to proceed with commit/push
 5. Report final commit SHAs and push status per repo
+
+## Step 6: Update claude-code-config Documentation
+
+If claude-code-config was a sync target and files were added or changed, spawn a doc-updater agent:
+- **subagent_type:** general-purpose
+- **model:** haiku
+- **name:** config-doc-updater
+
+Pass to the agent:
+1. The list of new, changed, and removed files in claude-code-config
+2. Instruction: "Read README.md and COMPLETE-GUIDE.md in ~/GitProjects/claude-code-config/. Update both to reflect the synced changes: add new agents/hooks/scripts/skills to the relevant tables, update counts, remove entries for deleted items. Keep edits minimal and match existing style. Never use em dashes. Commit and push to master with message: docs: update README and COMPLETE-GUIDE for synced changes"
+
+After the agent returns, report which sections were updated.

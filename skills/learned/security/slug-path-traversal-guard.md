@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Slug Path Traversal Guard for File-Based Routing
 
 **Extracted:** 2026-02-07

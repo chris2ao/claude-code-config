@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # HEREDOC Commit Messages Can Pollute Auto-Approved Permissions
 
 **Extracted:** 2026-02-09

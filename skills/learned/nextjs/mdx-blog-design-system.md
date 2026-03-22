@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # MDX Blog Design System for cryptoflexllc.com
 
 **Extracted:** 2026-02-10

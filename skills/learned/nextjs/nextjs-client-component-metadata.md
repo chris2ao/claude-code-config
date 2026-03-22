@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Next.js Client Component Metadata Workaround
 
 **Extracted:** 2026-02-07

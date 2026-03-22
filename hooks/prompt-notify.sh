@@ -23,6 +23,9 @@ elif command -v speaker-test &> /dev/null; then
     speaker-test -t sine -f 800 -l 1 -P 1 2>/dev/null &
     sleep 0.2
     pkill speaker-test 2>/dev/null
+elif command -v powershell.exe &> /dev/null; then
+    # Windows (Git Bash): Use PowerShell to play system sound
+    powershell.exe -NoProfile -Command "[System.Media.SystemSounds]::Beep.Play()" 2>/dev/null
 else
     # Ultimate fallback: Terminal bell (BEL character)
     printf '\a'

@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Git Bash npm Path Mangling on Windows
 
 **Extracted:** 2026-02-07

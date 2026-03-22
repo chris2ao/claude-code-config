@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # MCP Server Config: Claude Code vs Claude Desktop
 
 **Extracted:** 2026-02-07

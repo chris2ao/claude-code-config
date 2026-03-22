@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Context Compaction Pre-Flight Pattern
 
 **Extracted:** 2026-02-13

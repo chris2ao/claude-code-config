@@ -60,4 +60,7 @@ summary_path="$archive_dir/${archive_name}_summary.txt"
 index_path="$archive_dir/index.txt"
 echo "$timestamp | $session_id | $dest_path" >> "$index_path"
 
+# Clean up session scratchpad on clean exit
+rm -f "$HOME/.claude/session-state/${session_id}.md" 2>/dev/null
+
 exit 0

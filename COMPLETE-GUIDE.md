@@ -1,28 +1,26 @@
-# The Complete Guide to Configuring Claude Code
+# The Complete Guide to Configuring Claude Code Like a Pro
 
-A comprehensive walkthrough of this configuration repository. Whether you have never used a CLI before or you are an experienced developer looking to optimize your AI-assisted workflow, this guide explains every component, every setting, and every decision.
+A line-by-line walkthrough of a real-world Claude Code configuration. Whether you've never touched a command line before or you're an experienced developer looking to level up your AI-assisted workflow, this guide explains every file, every setting, and every decision.
 
 ---
 
 ## Table of Contents
 
 1. [What Is Claude Code?](#what-is-claude-code)
-2. [How Configuration Works](#how-configuration-works)
-3. [User-Level Configuration](#user-level-configuration)
+2. [The Big Picture: How Configuration Works](#the-big-picture-how-configuration-works)
+3. [User-Level Configuration (Applies to ALL Projects)](#user-level-configuration)
    - [Settings: `~/.claude/settings.json`](#settings-file)
    - [MCP Servers: `~/.claude.json`](#mcp-servers)
-   - [Rules: `~/.claude/rules/`](#rules)
+   - [Rules: `~/.claude/rules/**/*.md`](#rules)
    - [Custom Agents: `~/.claude/agents/`](#custom-agents)
    - [Learned Skills: `~/.claude/skills/learned/`](#learned-skills)
-   - [Custom Skills: `~/.claude/skills/*/skill.md`](#custom-skills)
+   - [Custom Skills: `~/.claude/skills/*/SKILL.md`](#custom-skills)
    - [Custom Commands: `~/.claude/commands/`](#custom-commands)
-   - [Hooks: `~/.claude/hooks/`](#hooks)
-   - [Homunculus: Continuous Learning](#homunculus-continuous-learning)
-   - [Templates](#templates)
-   - [Backup Strategy](#backup-strategy)
-4. [Project-Level Configuration](#project-level-configuration)
+   - [Backup: `~/.claude/.gitignore`](#backup-strategy)
+4. [Project-Level Configuration (One Project Only)](#project-level-configuration)
    - [Project Instructions: `CLAUDE.md`](#project-instructions-claudemd)
    - [Project Settings: `.claude/settings.local.json`](#project-settings)
+   - [Hooks: `.claude/hooks/*.ps1`](#hooks)
 5. [How to Set This Up From Scratch](#how-to-set-this-up-from-scratch)
 6. [Key Concepts Explained](#key-concepts-explained)
 7. [Troubleshooting](#troubleshooting)
@@ -34,31 +32,31 @@ A comprehensive walkthrough of this configuration repository. Whether you have n
 Claude Code is a command-line tool (CLI) made by Anthropic that lets you have conversations with Claude AI directly in your terminal. Unlike the web chat at claude.ai, Claude Code can:
 
 - **Read and edit files** on your computer
-- **Run terminal commands** (build software, run tests, manage git)
+- **Run terminal commands** (like building software or running tests)
 - **Search your codebase** to understand existing code
 - **Create commits and pull requests** on GitHub
-- **Use external tools** through MCP servers and plugins
+- **Use external tools** through plugins and MCP servers
 
-Think of it as an AI assistant that lives inside your terminal and can directly interact with your files, tools, and development environment.
+Think of it as having an AI assistant sitting inside your terminal who can not only talk to you, but also directly interact with your files and tools.
 
-**Install it:**
+**How to install it:**
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
-**Start it:**
+**How to start it:**
 ```bash
 cd your-project-folder
 claude
 ```
 
-That is all you need. You are now in a conversation with Claude inside your project.
+That's it. You're now in a conversation with Claude inside your project.
 
 ---
 
-## How Configuration Works
+## The Big Picture: How Configuration Works
 
-Claude Code reads configuration from **two levels**:
+Claude Code reads configuration from **two levels**. Understanding this is the single most important concept in this guide:
 
 ```
 USER-LEVEL (~/.claude/)              PROJECT-LEVEL (your-project/.claude/)
@@ -67,24 +65,21 @@ Lives in your home directory         Lives inside the project folder
 Not shared with collaborators        Can be shared via git
 ```
 
+Here's what lives where:
+
 | File | Level | Purpose |
 |------|-------|---------|
-| `~/.claude/settings.json` | User | Plugins, model, update preferences |
+| `~/.claude/settings.json` | User | Plugins, update preferences |
 | `~/.claude.json` | User | MCP servers (external tools) |
-| `~/.claude/rules/**/*.md` | User | Coding standards Claude follows everywhere |
-| `~/.claude/agents/*.md` | User | Custom agent definitions |
-| `~/.claude/skills/` | User | Invocable workflows and learned patterns |
-| `~/.claude/hooks/` | User | Lifecycle automation scripts |
-| `~/.claude/homunculus/` | User | Continuous learning instincts |
+| `~/.claude/rules/*.md` | User | Coding standards Claude follows everywhere |
+| `~/.claude/skills/learned/` | User | Patterns Claude has learned from past sessions |
 | `your-project/CLAUDE.md` | Project | Instructions specific to this project |
 | `your-project/.claude/settings.local.json` | Project | Permissions, hooks, project-specific config |
+| `your-project/.claude/hooks/*.ps1` | Project | Automation scripts that run on events |
 
-When you open a project with Claude Code, it loads **both** levels automatically and merges them together. User-level settings apply everywhere. Project-level settings add or override for that specific project.
+**Why two levels?** Because some things are personal preferences (your coding style, your GitHub token, your plugins) and should follow you everywhere. Other things are project-specific (this project uses React, this project needs special hooks) and should stay with the project.
 
-> **Where is `~`?**
-> - **macOS:** `/Users/YourName/`
-> - **Linux:** `/home/YourName/`
-> - **Windows:** `C:\Users\YourName\`
+When you open a project with Claude Code, it loads **both** levels automatically. You don't need to do anything — it just merges them together.
 
 ---
 
@@ -92,277 +87,752 @@ When you open a project with Claude Code, it loads **both** levels automatically
 
 These files live in your home directory under `~/.claude/` and apply to every project you open with Claude Code.
 
+> **Where is `~`?**
+> - **Windows:** `C:\Users\YourName\` (or wherever your user profile is)
+> - **Mac:** `/Users/YourName/`
+> - **Linux:** `/home/YourName/`
+
 ---
 
 ### Settings File
 
 **File:** `~/.claude/settings.json`
 
-This is Claude Code's main settings file. Here is the configuration from this repo's template (`templates/settings.json.template`):
+This is Claude Code's main settings file. Here's the configuration with every line explained:
 
 ```json
 {
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  "autoUpdatesChannel": "latest",
+  "extraKnownMarketplaces": {
+    "everything-claude-code": {
+      "source": { "source": "github", "repo": "affaan-m/everything-claude-code" }
+    }
   },
-  "permissions": {
-    "allow": []
-  },
-  "model": "YOUR_PREFERRED_MODEL",
   "enabledPlugins": {
     "everything-claude-code@everything-claude-code": true
-  },
-  "autoUpdatesChannel": "latest"
+  }
 }
 ```
 
-**Field by field:**
+Let's break down each part:
 
-| Field | What It Does |
-|-------|-------------|
-| `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | Enables experimental agent teams feature |
-| `permissions.allow` | Pre-approved tool permissions (grows as you approve actions) |
-| `model` | Default model (e.g., `claude-sonnet-4-20250514`) |
-| `enabledPlugins` | Active plugins. Format: `"pluginName@marketplaceName": true` |
-| `autoUpdatesChannel` | Update channel: `"latest"`, `"stable"`, or `"none"` |
+#### `"autoUpdatesChannel": "latest"`
 
-**Installing the everything-claude-code plugin:**
+**What it does:** Tells Claude Code which update channel to follow. `"latest"` means you always get the newest stable version automatically.
+
+**Other options:**
+- `"stable"` — only get thoroughly tested updates (safer but slower)
+- `"none"` — disable auto-updates entirely
+
+**When to change it:** If Claude Code updates break something, switch to `"stable"`. Otherwise, `"latest"` is fine.
+
+#### `"extraKnownMarketplaces"` block
+
+```json
+"extraKnownMarketplaces": {
+  "everything-claude-code": {
+    "source": { "source": "github", "repo": "affaan-m/everything-claude-code" }
+  }
+}
+```
+
+**What it does:** Registers a **plugin marketplace** — a GitHub repository that contains plugins you can install. Think of it like adding a new app store to your phone.
+
+**Line by line:**
+- `"everything-claude-code"` — The name we're giving this marketplace (you choose the name)
+- `"source": "github"` — The marketplace is hosted on GitHub
+- `"repo": "affaan-m/everything-claude-code"` — The GitHub repository URL (github.com/affaan-m/everything-claude-code)
+
+**What is everything-claude-code?** It's the most popular community plugin for Claude Code, created by Affaan Mustafa. It provides:
+- **13 specialized agents** (AI assistants focused on specific tasks like code review, security analysis, planning)
+- **30+ slash commands** (shortcuts like `/plan`, `/verify`, `/tdd`)
+- **30+ skills** (predefined knowledge about coding patterns, frameworks, and best practices)
+
+**How to install it yourself:**
 ```bash
-# From inside a Claude Code session:
+# Option 1: Edit settings.json directly (as shown above)
+# Option 2: Use Claude Code's built-in commands:
 /plugin marketplace add affaan-m/everything-claude-code
 /plugin install everything-claude-code@everything-claude-code
 ```
 
-This plugin provides 13 specialized agents, 30+ slash commands, and 30+ built-in skills. The `agents.md` rule file in this repo references its agents for automatic activation.
+#### `"enabledPlugins"` block
+
+```json
+"enabledPlugins": {
+  "everything-claude-code@everything-claude-code": true
+}
+```
+
+**What it does:** Activates a specific plugin from an installed marketplace.
+
+**The format is:** `"pluginName@marketplaceName": true`
+- `everything-claude-code` (before the @) — The plugin name
+- `everything-claude-code` (after the @) — The marketplace it comes from
+- `true` — Plugin is enabled. Set to `false` to disable without uninstalling.
+
+**After enabling:** Restart Claude Code (close and reopen). The plugin's agents, commands, and skills become available immediately.
 
 ---
 
 ### MCP Servers
 
-**File:** `~/.claude.json` (in your home directory, NOT inside `~/.claude/`)
+**File:** `~/.claude.json` (note: this is in your home directory, NOT inside `~/.claude/`)
 
-MCP stands for **Model Context Protocol**. MCP servers are external programs that give Claude Code capabilities it does not have built in. Think of them as plugins that add new tools.
+MCP stands for **Model Context Protocol**. MCP servers are external programs that give Claude Code new abilities it doesn't have built in. Think of them as superpowers you can bolt on.
 
-> **Common mistake:** `~/.claude/mcp-servers.json` is for Claude Desktop (the desktop app), not Claude Code. Claude Code reads MCP config from `~/.claude.json`. If you put servers in the wrong file, they will not load.
+> **Important:** There's a common confusion — `~/.claude/mcp-servers.json` is for **Claude Desktop** (the desktop app), NOT Claude Code (the CLI). Claude Code reads MCP config from `~/.claude.json`. If you put your servers in the wrong file, they won't load.
 
-This repo configures 7 MCP servers. Here is what each one does and how to set it up.
+We recommend 2 MCP servers that provide capabilities not already built into Claude Code. Here's a minimal configuration:
 
-#### Server 1: memory (Knowledge Graph)
+```json
+{
+  "mcpServers": {
+    "memory": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {}
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {}
+    }
+  }
+}
+```
 
-Gives Claude persistent memory across sessions. Without this, Claude forgets everything when you close the terminal.
+> **Security note:** The `~/.claude.json` file can contain secrets (like GitHub tokens). Never commit this file to a public repository. This is why our backup `.gitignore` excludes it.
 
+Let's break down each server:
+
+#### Common fields explained
+
+Every MCP server has the same basic structure:
+
+```json
+"server-name": {
+  "type": "stdio",
+  "command": "npx",
+  "args": ["-y", "@package/name"],
+  "env": {}
+}
+```
+
+- **`"type": "stdio"`** — How Claude Code communicates with the server. `stdio` means "standard input/output" — they talk through text pipes. This is the most common type.
+- **`"command": "npx"`** — The program to run. `npx` is a Node.js tool that downloads and runs packages on the fly. You need [Node.js](https://nodejs.org/) installed for this.
+- **`"args": ["-y", "@package/name"]`** — Arguments passed to the command. `-y` means "yes, auto-install without asking." The package name is the actual MCP server software.
+- **`"env": {}`** — Environment variables passed to the server. Used for secrets like API tokens.
+
+#### Server 1: Memory
+
+```json
+"memory": {
+  "type": "stdio",
+  "command": "npx",
+  "args": ["-y", "@modelcontextprotocol/server-memory"],
+  "env": {}
+}
+```
+
+**What it does:** Gives Claude a persistent memory that survives across sessions. Without this, Claude forgets everything when you close the terminal. With it, Claude can store and recall facts, relationships, and context.
+
+**How Claude uses it:**
+- Stores **entities** (things like "this project uses React" or "the user prefers dark mode")
+- Creates **relations** between entities ("React" → "is used by" → "Project X")
+- Searches and retrieves stored knowledge in future sessions
+
+**Example in conversation:**
+```
+You: "Remember that our production database is on AWS us-east-1"
+Claude: (stores this as an entity in the memory server)
+
+... next week, new session ...
+
+You: "Where is our production database?"
+Claude: (searches memory server) "Your production database is on AWS us-east-1"
+```
+
+**Tools it adds:**
+| Tool | What It Does |
+|------|-------------|
+| `create_entities` | Store new facts |
+| `create_relations` | Link facts together |
+| `add_observations` | Add details to existing facts |
+| `search_nodes` | Search all stored knowledge |
+| `open_nodes` | Retrieve a specific fact by name |
+| `delete_entities` | Remove a fact |
+| `delete_observations` | Remove a specific detail |
+| `delete_relations` | Remove a link between facts |
+
+**How to add it:**
 ```bash
 claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory
 ```
 
-**Tools it adds:** `create_entities`, `create_relations`, `add_observations`, `search_nodes`, `open_nodes`, `delete_entities`, `delete_observations`, `delete_relations`, `read_graph`
+#### Server 2: Context7
 
-**No API key required.** Data is stored locally.
+```json
+"context7": {
+  "type": "stdio",
+  "command": "npx",
+  "args": ["-y", "@upstash/context7-mcp@latest"],
+  "env": {}
+}
+```
 
-#### Server 2: context7 (Live Documentation)
+**What it does:** Fetches **live, up-to-date documentation** for any programming library or framework. Claude's training data has a cutoff date — it doesn't know about features released after that date. Context7 solves this by looking up the current docs on demand.
 
-Fetches up-to-date documentation for any library or framework. Claude's training data has a cutoff date; context7 fills that gap by looking up current docs on demand.
+**Example in conversation:**
+```
+You: "How do I use the new React Server Components API?"
+Claude: (calls context7 to fetch the latest React docs)
+Claude: "According to the current React documentation..." (gives you accurate, up-to-date info)
+```
 
+**Tools it adds:**
+| Tool | What It Does |
+|------|-------------|
+| `resolve-library-id` | Find a library in context7's database |
+| `get-library-docs` | Fetch the current documentation for a library |
+
+**How to add it:**
 ```bash
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
 ```
 
-**Tools it adds:** `resolve-library-id`, `query-docs`
+#### Other Servers (Optional)
 
-**No API key required.** Pulls from the Context7 public index.
+We initially used 3 additional servers but later dropped them because they duplicate built-in Claude Code features:
 
-#### Server 3: sequential-thinking (Extended Reasoning)
+| Server | Why We Dropped It |
+|--------|------------------|
+| **sequential-thinking** | Claude Code's built-in extended thinking (up to 31,999 tokens) provides the same step-by-step reasoning. An external MCP server for this is redundant. |
+| **filesystem** | Claude Code's built-in Read, Write, Edit, Glob, and Grep tools already handle file operations. The MCP server adds move/copy but rarely justifies the overhead. |
+| **github** | The `gh` CLI via Bash covers most GitHub operations. The MCP server is convenient but not essential. Consider it if you do heavy GitHub API work (code search, bulk operations). |
 
-Provides a structured reasoning tool for complex multi-step problems.
+If you want to add the GitHub server anyway:
+```bash
+claude mcp add-json --scope user github '{"command":"npx","args":["-y","@modelcontextprotocol/server-github"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"your-token-here"}}'
+```
+
+> **Note:** We use `add-json` instead of `add` because the `--env` flag can be finicky with long token values. The JSON format is more reliable.
+
+#### Verifying your MCP servers
+
+After adding servers, restart Claude Code and check they're running:
 
 ```bash
-claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
-```
-
-**Tools it adds:** `sequentialthinking`
-
-**No API key required.**
-
-#### Server 4: github (GitHub API)
-
-Full GitHub API access for issues, pull requests, repositories, and code search.
-
-```bash
-claude mcp add-json --scope user github '{
-  "command": "npx",
-  "args": ["-y", "@modelcontextprotocol/server-github"],
-  "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_TOKEN_HERE" }
-}'
-```
-
-**Setup:** Create a Personal Access Token at https://github.com/settings/tokens with `repo`, `read:org`, and `read:user` scopes.
-
-> We use `add-json` instead of `add` because the `--env` flag can be unreliable with long token values.
-
-#### Server 5: project-tools (Custom)
-
-A custom MCP server providing project-specific tools: multi-repo git status, blog post inventory, style guide retrieval, blog post validation, and session artifact summary.
-
-```json
-"project-tools": {
-  "type": "stdio",
-  "command": "node",
-  "args": ["YOUR_CONFIG_REPO_PATH/mcp-servers/project-tools/index.js"],
-  "env": {
-    "PROJECT_ROOT": "YOUR_PROJECTS_DIR",
-    "CLAUDE_CONFIG": "YOUR_CLAUDE_HOME"
-  }
-}
-```
-
-**Setup:**
-1. `cd mcp-servers/project-tools && npm install`
-2. Update the `args` path to point to your local copy of `index.js`
-3. Set `PROJECT_ROOT` to the directory containing your git repos
-4. Set `CLAUDE_CONFIG` to your `~/.claude` directory
-
-**Tools it adds:** `repo_status`, `blog_posts`, `style_guide`, `validate_blog_post`, `session_artifacts`
-
-#### Server 6: vector-memory (Long-Term Memory)
-
-Hybrid vector + keyword search for long-term memory storage. Uses Ollama for local embeddings and sqlite-vec for storage. This is the primary memory system for storing detailed context like bug resolutions, architectural decisions, and workarounds.
-
-```json
-"vector-memory": {
-  "type": "stdio",
-  "command": "YOUR_PYTHON_PATH",
-  "args": ["-m", "mcp_memory_service.server"],
-  "env": {
-    "MCP_MEMORY_STORAGE_BACKEND": "sqlite_vec"
-  }
-}
-```
-
-**Setup:**
-1. Install Ollama: https://ollama.com
-2. Pull the embedding model: `ollama pull nomic-embed-text`
-3. Install the Python package: `pip install mcp-memory-service`
-4. Set `command` to your Python 3.11+ path (e.g., `/opt/homebrew/bin/python3.11` on macOS)
-
-**Tools it adds:** `memory_store`, `memory_search`, `memory_list`, `memory_delete`, `memory_update`, `memory_stats`, `memory_health`, `memory_quality`, `memory_graph`, `memory_cleanup`, `memory_ingest`
-
-#### Server 7: obsidian (Vault Access)
-
-Read and write files in an Obsidian vault. Requires the Obsidian MCP Tools community plugin.
-
-```json
-"obsidian": {
-  "type": "stdio",
-  "command": "YOUR_OBSIDIAN_MCP_BINARY_PATH",
-  "args": [],
-  "env": {
-    "OBSIDIAN_API_KEY": "YOUR_OBSIDIAN_API_KEY_HERE",
-    "OBSIDIAN_USE_HTTP": "true"
-  }
-}
-```
-
-**Setup:**
-1. Install the "MCP Tools" community plugin in Obsidian
-2. Enable it and copy the API key from the plugin settings
-3. Set `command` to the plugin's `mcp-server` binary path
-
-#### Full Configuration Template
-
-See `templates/claude.json.template` for a complete JSON file with the first 5 servers pre-configured. Copy it to `~/.claude.json` and fill in your paths and tokens.
-
-#### Verifying Your Servers
-
-After adding servers, restart Claude Code and verify:
-
-```bash
-# Inside a Claude Code session:
+# In Claude Code, type:
 /mcp
 
 # Or from the terminal:
 claude mcp list
 ```
 
-All servers should show as "connected." If any show "failed," see the [Troubleshooting](#troubleshooting) section.
+You should see all servers listed as "connected." If any show "failed," see the [Troubleshooting](#troubleshooting) section.
 
 ---
 
 ### Rules
 
-**Location:** `~/.claude/rules/` (organized in 4 subdirectories)
+**Location:** `~/.claude/rules/` (organized in subdirectories)
 
-Rules are persistent instructions that Claude follows in every session, in every project. They are loaded automatically at session start. Each rule is a Markdown file.
+Rules are the most powerful part of this configuration. They are **persistent instructions** that Claude follows in every session, in every project. Think of them as your coding standards document, except instead of hoping developers read it, the AI actually follows it.
 
-This repo contains 15 rule files organized by domain:
+Each rule is a simple Markdown file. Claude reads all files in `~/.claude/rules/` (including subdirectories) at the start of every session. We organize rules into three subdirectories:
 
 ```
 rules/
-  agents.md                  # Agent orchestration framework
-  core/
-    agentic-workflow.md      # Parallel task decomposition, model routing
-    coding-style.md          # Immutability, file org, error handling, no em dashes
-    memory-management.md     # Five memory systems with boundaries and triggers
-    security.md              # Pre-commit security checklist, secret management
-  content/
-    blog-content.md          # Blog writing rules (no private repo links)
-  development/
-    git-workflow.md          # Conventional commits, PR workflow, TDD
-    patterns.md              # Repository pattern, API envelopes, skeleton projects
-    plan-docs.md             # Plan output location and format standards
-    testing.md               # TDD workflow, 80% minimum coverage
-  operations/
-    context-preservation.md  # Session context preservation across compactions
-    hooks.md                 # Hook types, file protection, context preservation
-    macos-platform.md        # macOS/zsh, Homebrew, osascript notifications
-    performance.md           # Model selection (Haiku/Sonnet/Opus), cost optimization
-    windows-platform.md      # PowerShell stdin, Git Bash path mangling, OneDrive
+  agents.md              — Agent orchestration
+  core/                  — Fundamental coding principles
+    agentic-workflow.md   — Parallel task decomposition
+    coding-style.md       — Code quality standards
+    security.md           — Security checklist
+  development/           — Development workflow
+    git-workflow.md       — Commits, PRs, TDD
+    patterns.md           — Design patterns
+    testing.md            — Test requirements
+  operations/            — Operational concerns
+    hooks.md              — Hook system
+    performance.md        — Model routing
+    windows-platform.md   — Windows quirks
 ```
 
-#### Key Rules Explained
+#### Rule 1: `coding-style.md` — How Code Should Look
 
-**`coding-style.md`** enforces consistent code quality:
-- Immutability: always create new objects, never mutate existing ones
-- File organization: 200-400 lines typical, 800 max, organize by feature
-- Error handling: handle explicitly at every level, never silently swallow errors
-- Writing style: never use em dashes in any written content
+This rule enforces consistent, high-quality code across all your projects.
 
-**`security.md`** runs a mandatory pre-commit checklist:
-- No hardcoded secrets
-- All user inputs validated
-- SQL injection prevention (parameterized queries)
-- XSS prevention (sanitized HTML)
-- Rate limiting on all endpoints
-- Security response protocol (stop, fix, rotate, review)
+```markdown
+# Coding Style
 
-**`agentic-workflow.md`** requires parallel task decomposition:
-- Every non-trivial task must be broken into parallel agents
-- Automatic agent triggers (code written -> code-reviewer, bug report -> parallel explore agents)
-- Model routing table (haiku for search, sonnet for code, opus for architecture)
-- Cost optimization (use the cheapest model that is good enough)
+## Immutability (CRITICAL)
 
-**`memory-management.md`** defines five distinct memory systems:
+ALWAYS create new objects, NEVER mutate existing ones.
+```
 
-| System | Scope | Use For |
-|--------|-------|---------|
-| Auto memory (`MEMORY.md`) | Per-project, auto-loaded | Stable project facts (build commands, structure) |
-| Vector memory (MCP) | Global, on-demand | Detailed context (bug fixes, decisions, workarounds) |
-| Knowledge graph (MCP) | Global, on-demand | Entity relationships (service deps, data flows) |
-| Homunculus (hooks) | Global, auto-captured | Behavioral pattern extraction |
-| Session archive (hook) | Per-project, on exit | Full transcript backup |
+**What this means in plain English:** When you need to change data, don't modify the original — make a copy with the changes. This prevents bugs where one part of your program changes data that another part was still using.
 
-**`testing.md`** enforces TDD with 80% minimum coverage:
-1. RED: write a test that fails
-2. GREEN: write minimal code to make it pass
-3. REFACTOR: clean up with confidence
-4. Verify 80%+ coverage
+**Real-world analogy:** Instead of erasing and rewriting a shared whiteboard (someone might be reading it!), make a photocopy, write your changes on the copy, and replace the original.
 
-**`performance.md`** routes work to the right model:
+```markdown
+## File Organization
 
-| Model | Cost | Use For |
-|-------|------|---------|
-| Haiku 4.5 | $ | Background tasks, search, lightweight agents |
-| Sonnet 4.5 | $$ | Day-to-day coding, code generation |
-| Opus 4.6 | $$$ | Architecture decisions, security analysis |
+MANY SMALL FILES > FEW LARGE FILES:
+- High cohesion, low coupling
+- 200-400 lines typical, 800 max
+- Functions under 50 lines, nesting under 4 levels
+- Organize by feature/domain, not by type
+```
+
+**What this means:** Each file should do one thing well. If a file grows past 400 lines, it's time to split it. Organize files by what they do (user authentication, payment processing) not by what they are (all controllers together, all models together).
+
+```markdown
+## Error Handling
+
+ALWAYS handle errors comprehensively:
+- Handle errors explicitly at every level
+- Provide user-friendly error messages in UI-facing code
+- Log detailed error context on the server side
+- Never silently swallow errors
+```
+
+**What this means:** When something goes wrong, don't ignore it. Show the user a helpful message ("We couldn't save your file — check your internet connection") and log the technical details for debugging.
+
+```markdown
+## Input Validation
+
+ALWAYS validate at system boundaries:
+- Validate all user input before processing
+- Use schema-based validation where available
+- Fail fast with clear error messages
+- Never trust external data
+```
+
+**What this means:** Any data coming from outside your program (user typing in a form, data from another website's API, contents of a file) could be wrong, incomplete, or malicious. Always check it before using it.
+
+**Writing Style section (new):** The rule also includes a Writing Style section that prohibits em dashes in all written content (blog posts, docs, changelogs, comments). This applies to all prose output, not just code. Sentences should use commas, periods, colons, or parentheses instead.
+
+> **Note:** We intentionally removed the "Code Quality Checklist" that was in the original everything-claude-code version. It restated the rules above and added context window cost without changing Claude's behavior.
+
+---
+
+#### Rule 2: `git-workflow.md` — How to Manage Code Changes
+
+```markdown
+# Git Workflow
+
+## Commit Message Format
+
+<type>: <description>
+
+<optional body>
+
+Types: feat, fix, refactor, docs, test, chore, perf, ci
+```
+
+**What is Git?** Git is a version control system — it tracks every change to your code so you can undo mistakes, see who changed what, and collaborate with others. A **commit** is a saved snapshot of your changes.
+
+**What is a commit message?** A short description of what you changed and why. This rule enforces **conventional commits** — a standard format that makes history easy to read:
+
+| Type | Meaning | Example |
+|------|---------|---------|
+| `feat` | New feature | `feat: add login button` |
+| `fix` | Bug fix | `fix: prevent crash on empty input` |
+| `refactor` | Code restructuring (no behavior change) | `refactor: simplify payment logic` |
+| `docs` | Documentation only | `docs: update API reference` |
+| `test` | Adding or fixing tests | `test: add unit tests for cart` |
+| `chore` | Maintenance tasks | `chore: update dependencies` |
+| `perf` | Performance improvement | `perf: cache database queries` |
+| `ci` | Build/deploy pipeline changes | `ci: add automated testing` |
+
+```markdown
+## Feature Implementation Workflow
+
+1. Plan First — Analyze requirements, identify dependencies, break into phases
+2. TDD — Write tests first (RED), implement (GREEN), refactor (IMPROVE), verify 80%+ coverage
+3. Review — Review code immediately after writing; address CRITICAL and HIGH issues
+4. Commit — Detailed messages following conventional commits format
+```
+
+**What this means:** For any significant feature, Claude will follow a structured workflow: plan what to build, write tests to define what "working" means, implement the code, review it for quality, then commit. This prevents the common mistake of diving in without thinking.
+
+> **Note:** The original everything-claude-code version referenced specific agents (planner, tdd-guide, code-reviewer) in each step. We removed those references so the workflow stands alone — it works whether or not you have the plugin installed.
+
+---
+
+#### Rule 3: `testing.md` — How to Test Code
+
+```markdown
+# Testing Requirements
+
+## Minimum Test Coverage: 80%
+
+Test Types (ALL required):
+1. Unit Tests - Individual functions, utilities, components
+2. Integration Tests - API endpoints, database operations
+3. E2E Tests - Critical user flows
+```
+
+**What is test coverage?** The percentage of your code that is exercised by automated tests. 80% means 80 out of every 100 lines of code are tested. Higher coverage means fewer hidden bugs.
+
+**The three test types:**
+
+| Type | What It Tests | Analogy |
+|------|--------------|---------|
+| **Unit** | Individual functions in isolation | Testing each ingredient in a recipe tastes right |
+| **Integration** | Multiple components working together | Testing that the ingredients combine correctly |
+| **E2E (End-to-End)** | The full user experience | Testing the finished dish from a diner's perspective |
+
+```markdown
+## Test-Driven Development
+
+MANDATORY workflow:
+1. Write test first (RED) - it should FAIL
+2. Write minimal implementation (GREEN) - it should PASS
+3. Refactor (IMPROVE)
+4. Verify coverage (80%+)
+```
+
+**What is TDD?** Test-Driven Development means writing the test *before* the code. It sounds backwards, but it's one of the most effective practices in software:
+
+1. **RED:** Write a test describing what you want. It fails (red) because you haven't built it yet.
+2. **GREEN:** Write the simplest possible code to make the test pass (green).
+3. **REFACTOR:** Clean up the code, confident that if you break something, the test will catch it.
+
+**Why TDD?** It forces you to think about what "done" means before you start coding. It also gives you a safety net — if you change something later and a test fails, you know exactly what broke.
+
+---
+
+#### Rule 4: `security.md` — How to Keep Code Safe
+
+```markdown
+# Security Guidelines
+
+## Mandatory Security Checks
+
+Before ANY commit:
+- [ ] No hardcoded secrets (API keys, passwords, tokens)
+- [ ] All user inputs validated
+- [ ] SQL injection prevention (parameterized queries)
+- [ ] XSS prevention (sanitized HTML)
+- [ ] CSRF protection enabled
+- [ ] Authentication/authorization verified
+- [ ] Rate limiting on all endpoints
+- [ ] Error messages don't leak sensitive data
+```
+
+**What these mean, one by one:**
+
+| Check | What It Prevents | Real-World Analogy |
+|-------|-----------------|-------------------|
+| **No hardcoded secrets** | Your password being visible in your code (which anyone with access can see) | Don't write your PIN on your debit card |
+| **Input validation** | Bad data causing crashes or unexpected behavior | Check someone's ID before letting them in |
+| **SQL injection** | Attackers running database commands through your forms | Don't let strangers write on your shopping list |
+| **XSS prevention** | Attackers injecting malicious scripts into your website | Don't let strangers put signs up in your store |
+| **CSRF protection** | Attackers tricking users into performing actions they didn't intend | Verify the person at your door is who they say |
+| **Auth verification** | Unauthorized users accessing restricted features | Check badges before entering restricted areas |
+| **Rate limiting** | Attackers overwhelming your server with thousands of requests | Limit how many times someone can ring your doorbell |
+| **Error messages** | Technical details leaking to attackers | Don't tell a burglar which window is unlocked |
+
+```markdown
+## Secret Management
+
+- NEVER hardcode secrets in source code
+- ALWAYS use environment variables or a secret manager
+```
+
+**What are environment variables?** Instead of putting your password directly in your code (dangerous!), you store it outside the code in a protected system variable. Your code reads the variable at runtime. This way, the password never appears in your source files.
+
+```markdown
+## Security Response Protocol
+
+If security issue found:
+1. STOP immediately
+2. Fix CRITICAL issues before continuing
+3. Rotate any exposed secrets
+4. Review entire codebase for similar issues
+```
+
+**What "rotate secrets" means:** If a password or token was accidentally exposed (committed to git, shown in a log), you can't just delete it — someone may have already seen it. You need to generate a **new** password/token and deactivate the old one.
+
+---
+
+#### Rule 5: `performance.md` — How to Work Efficiently
+
+```markdown
+# Performance Optimization
+
+## Model Selection Strategy
+
+Haiku 4.5 (90% of Sonnet capability, 3x cost savings):
+- Lightweight agents, background tasks, pair programming
+
+Sonnet 4.5 (Best coding model):
+- Main development work, complex coding tasks
+
+Opus 4.6 (Deepest reasoning):
+- Architectural decisions, security analysis, research
+```
+
+**What are models?** Claude comes in different sizes, like T-shirt sizes:
+
+| Model | Strengths | Cost | When to Use |
+|-------|-----------|------|-------------|
+| **Haiku** | Fast, cheap, good enough for routine tasks | $ | Background tasks, simple code generation |
+| **Sonnet** | Great balance of speed, quality, and cost | $$ | Day-to-day coding work |
+| **Opus 4.6** | Deepest reasoning, best for complex problems | $$$ | Architecture decisions, security analysis, hard bugs |
+
+Claude Code uses a mix of these models. The rule tells Claude to use the cheapest model that's good enough for each task — like using a sedan for grocery runs and saving the SUV for road trips.
+
+```markdown
+## Context Window Management
+
+Avoid last 20% of context window for large-scale refactoring, multi-file
+features, and complex debugging. Single-file edits, utilities, docs, and
+simple bug fixes are fine at any context level.
+```
+
+**What is the context window?** Claude can only "remember" a certain amount of text in a conversation. The context window is like Claude's short-term memory. When it fills up, older parts of the conversation are compressed or forgotten.
+
+**Why avoid the last 20%?** When the context window is almost full, Claude may lose track of important details. For complex tasks that need lots of context, it's better to compact (summarize) the conversation first.
+
+**How to compact:**
+```
+/compact
+```
+
+This tells Claude to summarize the conversation so far, freeing up space for new work.
+
+> **Note:** The original everything-claude-code version included an "Extended Thinking + Plan Mode" section with UI keybindings (`Alt+T`, `Ctrl+O`). We removed it because it documented UI features rather than giving Claude behavioral instructions — it added context window cost without changing how Claude works.
+
+---
+
+#### Rule 6: `patterns.md` — Reusable Design Patterns
+
+```markdown
+# Common Patterns
+
+## Skeleton Projects
+
+When implementing new functionality:
+1. Search for battle-tested skeleton projects
+2. Evaluate options for security, extensibility, and relevance
+3. Clone best match as foundation
+4. Iterate within proven structure
+```
+
+**What this means:** Don't build everything from scratch. When starting something new, first look for existing templates or starter projects that solve a similar problem. It's faster and you benefit from someone else's experience.
+
+```markdown
+## Repository Pattern
+
+Encapsulate data access behind a consistent interface:
+- Define standard operations: findAll, findById, create, update, delete
+- Concrete implementations handle storage details
+- Business logic depends on the abstract interface
+- Enables easy swapping of data sources
+```
+
+**What this means in plain English:** Instead of your code directly talking to a database, put a "middleman" layer in between. The middleman always offers the same operations (find, create, update, delete). If you later switch from one database to another, you only change the middleman — not every piece of code that uses data.
+
+```markdown
+## API Response Format
+
+Use a consistent envelope for all API responses:
+- Include a success/status indicator
+- Include the data payload (nullable on error)
+- Include an error message field (nullable on success)
+- Include metadata for paginated responses
+```
+
+**What this means:** Every API response should look the same structurally:
+```json
+{
+  "success": true,
+  "data": { "name": "Chris", "email": "..." },
+  "error": null,
+  "metadata": { "total": 42, "page": 1 }
+}
+```
+
+This consistency makes it easy for anyone consuming your API to know what to expect.
+
+---
+
+#### Rule 7: `hooks.md` — Automation Guidelines
+
+```markdown
+# Hooks System
+
+## Hook Types
+
+- PreToolUse: Before tool execution (validation, parameter modification, file protection)
+- PostToolUse: After tool execution (auto-format, checks, logging)
+- Stop: When session ends (final verification, notifications)
+- SessionEnd: When session closes (archiving, cleanup)
+```
+
+**What are hooks?** Hooks are scripts that run automatically when Claude Code does something. They're like tripwires, when a specific event happens, your script fires.
+
+| Hook Type | When It Fires | Example Use |
+|-----------|--------------|-------------|
+| **PreToolUse** | *Before* Claude uses a tool | Block Claude from deleting important files |
+| **PostToolUse** | *After* Claude uses a tool | Auto-format code after every edit |
+| **SessionEnd** | When you close Claude Code | Save the conversation transcript |
+| **Stop** | When Claude finishes a response | Check for leftover debug statements |
+
+```markdown
+## Auto-Accept Permissions
+
+- Enable for trusted, well-defined plans
+- Disable for exploratory work
+- Never use dangerously-skip-permissions flag
+- Configure allowedTools in ~/.claude.json instead
+```
+
+**What are permissions?** By default, Claude Code asks your permission before doing anything potentially risky (running commands, editing files). You can pre-approve specific actions so it doesn't ask every time. But be careful — auto-accepting everything is like giving someone your house keys.
+
+> **Note:** The original everything-claude-code version included a "TodoWrite Best Practices" section in this rule. We removed it because it wasn't related to hooks and didn't change Claude's behavior enough to justify the context window cost.
+
+---
+
+#### Rule 8: `agents.md` — Specialized AI Assistants
+
+> **Note:** This rule requires the [everything-claude-code](https://github.com/affaan-m/everything-claude-code) plugin. Without it, the agent references won't do anything. The other 7 rules work standalone.
+
+```markdown
+# Agent Orchestration
+
+> Requires: everything-claude-code plugin.
+
+## Available Agents
+
+| Agent | Purpose | When to Use |
+|-------|---------|-------------|
+| planner | Implementation planning | Complex features, refactoring |
+| architect | System design | Architectural decisions |
+| tdd-guide | Test-driven development | New features, bug fixes |
+| code-reviewer | Code review | After writing code |
+| security-reviewer | Security analysis | Before commits |
+| build-error-resolver | Fix build errors | When build fails |
+| e2e-runner | E2E testing | Critical user flows |
+| refactor-cleaner | Dead code cleanup | Code maintenance |
+| doc-updater | Documentation | Updating docs |
+```
+
+**What are agents?** Agents are specialized Claude instances with focused expertise. Instead of one general-purpose AI, you have a team of specialists:
+
+- The **planner** thinks through what needs to be built before anyone writes code
+- The **tdd-guide** ensures tests are written first
+- The **code-reviewer** checks code quality after it's written
+- The **security-reviewer** looks for vulnerabilities
+- The **build-error-resolver** fixes compilation errors
+
+**How to invoke them:**
+```
+/plan              — Activates the planner agent
+/tdd               — Activates the TDD guide agent
+/code-review       — Activates the code reviewer agent
+/security          — Activates the security reviewer agent
+/build-fix         — Activates the build error resolver
+```
+
+```markdown
+## Immediate Agent Usage
+
+No user prompt needed:
+1. Complex feature requests - Use planner agent
+2. Code just written/modified - Use code-reviewer agent
+3. Bug fix or new feature - Use tdd-guide agent
+4. Architectural decision - Use architect agent
+```
+
+**What "proactive" means:** Claude doesn't wait for you to ask. If you request a complex feature, Claude automatically activates the planner. If it just wrote code, it automatically runs the code reviewer. This is like having a team where everyone knows when to step in.
+
+```markdown
+## Custom Agents (~/.claude/agents/)
+
+| Agent | Purpose | Model |
+|-------|---------|-------|
+| blog-post-orchestrator | Blog post writing orchestration | sonnet |
+| changelog-writer | Auto-generate CHANGELOG entries | haiku |
+| config-sync | Sync config to git repo | haiku |
+| context-health | Monitor context window | haiku |
+| deploy-verifier | Post-deploy verification | haiku |
+| home-sync | CJClaudin_home repo sync | haiku |
+| multi-repo-orchestrator | Parallel cross-repo operations | haiku |
+| pre-commit-checker | Pre-commit security and quality checks | haiku |
+| session-analyzer | Extract patterns from archives | sonnet |
+| session-checkpoint | Session context save/restore | sonnet |
+| skill-extractor | Extract instincts from transcripts (Homunculus v2) | sonnet |
+| sync-orchestrator | Multi-repo config sync orchestration | haiku |
+| wrap-up-orchestrator | End-of-session wrap-up orchestration | sonnet |
+```
+
+**What are custom agents?** Beyond the plugin's agents, you can define your own. Custom agents are markdown files in `~/.claude/agents/` with YAML frontmatter specifying the model and available tools. Claude Code's Task tool spawns them as specialized subprocesses with their own context windows.
+
+```markdown
+## Mandatory Parallel Execution
+
+See rules/core/agentic-workflow.md for full decomposition rules.
+ALWAYS use parallel Task execution for independent operations.
+```
+
+**What this means:** When Claude needs to do multiple independent things (e.g., review security AND check performance AND verify types), it runs them all simultaneously instead of one at a time. This is faster. The `agentic-workflow.md` rule (new in the restructured config) provides detailed patterns for parallel execution, automatic agent triggers, and cost optimization.
+
+---
+
+### Learned Skills
+
+**Location:** `~/.claude/skills/learned/` (one `.md` file per skill)
+
+Learned skills are reusable patterns extracted from real debugging sessions using the `/learn` command. Each skill documents a non-obvious problem, its solution, and when the pattern applies. Claude loads these at session start and uses them to avoid repeating past mistakes.
+
+**How skills get created:** The primary path is through the **Homunculus v2 instinct system**: session observations become atomic instincts (with confidence scoring), and when 3+ instincts cluster in a domain, `/evolve` graduates them into learned skills. You can also run `/learn` mid-session or invoke the `skill-extractor` agent to extract instincts from transcripts. Each learned skill documents a non-obvious problem, its solution, and when the pattern applies:
+
+```markdown
+# Descriptive Pattern Name
+
+**Extracted:** 2026-02-08
+**Context:** Brief description of when this applies
+
+## Problem
+What went wrong and why it's non-obvious
+
+## Solution
+The fix or workaround
+
+## When to Use
+Trigger conditions — how to recognize this situation
+```
+
+**Current skills (18 total, organized in 6 categories via INDEX.md):**
+
+| # | Skill File | What It Catches |
+|---|-----------|----------------|
+| 1 | `powershell-stdin-hooks.md` | PowerShell's `$input` silently returns nothing when hooks are invoked via `-File`. You need `[Console]::In.ReadToEnd()` + dot-sourcing. |
+| 2 | `mcp-config-location.md` | `~/.claude/mcp-servers.json` is for Claude Desktop, not Claude Code. Claude Code reads `~/.claude.json`. |
+| 3 | `command-yaml-frontmatter.md` | Custom slash commands are silently ignored without YAML frontmatter (`---\ndescription: ...\n---`). |
+| 4 | `git-bash-npm-path-mangling.md` | Git Bash rewrites Windows paths, breaking npm module resolution with `MODULE_NOT_FOUND`. |
+| 5 | `nextjs-client-component-metadata.md` | Can't export `metadata` from a `"use client"` component in Next.js 15+. Fix: wrapper `layout.tsx`. |
+| 6 | `mdx-same-date-sort-order.md` | Blog posts with identical date strings sort non-deterministically. Fix: use ISO timestamps. |
+| 7 | `slug-path-traversal-guard.md` | URL slug parameters in `path.join()` allow path traversal attacks. Fix: reject slugs with `/`, `\`, or `..`. |
+| 8 | `git-bash-powershell-variable-stripping.md` | Git Bash strips `$` from inline PowerShell commands. Fix: write a temp `.ps1` file. |
+| 9 | `claude-code-debug-diagnostics.md` | `claude doctor` requires an interactive TTY. Fix: `claude --debug --debug-file <path> --print "say OK"`. |
+| 10 | `token-secret-safety.md` | Reading config files with plaintext API keys exposes them in transcripts. Fix: redact to first 10-15 chars. |
+| 11 | `heredoc-permission-pollution.md` | HEREDOC commit bodies with parentheses get captured as garbage permission entries. Fix: clean settings after. |
+| 12 | `cookie-auth-over-query-strings.md` | `?secret=X` leaks in URLs, browser history, Referer headers, logs. Fix: httpOnly cookies with HMAC tokens. |
+| 13 | `ssrf-prevention-ip-validation.md` | Validate IPs against private ranges (127.x, 10.x, 172.16-31.x, 192.168.x) before external API calls. |
+| 14 | `shallow-fetch-force-push.md` | `git fetch --depth=1` + `git push --force` fails. Fix: full fetch (no `--depth`) before force push. |
+| 15 | `mdx-blog-design-system.md` | MDX callout components (`<Tip>`, `<Warning>`, `<Security>`) and product badges (`<Vercel>`, `<Nextjs>`). |
+| 16 | `vercel-json-waf-syntax.md` | vercel.json uses `routes` with `mitigate: { action: "deny" }`, not `rules`. |
+| 17 | `anthropic-model-id-format.md` | Haiku requires exact date suffix (`-20251001`), not `-latest` alias. |
+| 18 | `vitest-class-mock-constructor.md` | Arrow functions can't be called with `new`. Use `class` expressions in `vi.mock` factory functions. |
+
+**Why this matters:** Every skill represents hours of debugging compressed into a few lines. When Claude encounters a similar situation in a future session, it recognizes the pattern and applies the fix immediately instead of going through the same trial-and-error process.
 
 ---
 
@@ -370,46 +840,36 @@ rules/
 
 **Location:** `~/.claude/agents/` (one `.md` file per agent)
 
-Custom agents are specialized agent definitions that Claude Code's Task tool can spawn as subprocesses. Each agent has its own context window and focused instructions. No plugin required.
+Custom agents are specialized agent definitions that Claude Code's Task tool can spawn as subprocesses. Each agent has its own context window and focused instructions, making them ideal for specific tasks.
 
-Each agent file uses YAML frontmatter to specify:
-- `description`: what the agent does
-- `model`: which Claude model to use (haiku, sonnet, opus, inherit)
-- `tools`: which tools the agent can access
+Each agent file has YAML frontmatter specifying:
+- `description` — What the agent does
+- `model` — Which Claude model to use (haiku, sonnet, opus)
+- `tools` — Which tools the agent can access
 
-**This repo includes 20 agents:**
-
-**Core Agents** (14):
+**Current agents (13 total):**
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| `blog-post-orchestrator` | sonnet | Orchestrate blog writing with research and MDX generation |
-| `changelog-writer` | haiku | Generate CHANGELOG entries from git diffs |
-| `config-sync` | haiku | Compare local config against git repo for drift |
-| `context-health` | haiku | Monitor context window usage, suggest compaction |
-| `deploy-verifier` | haiku | Post-deploy verification (build, live site) |
-| `gmail-assistant` | sonnet | Daily Gmail inbox cleanup: trash old promotions, social, and newsletters; classify primary inbox (KEEP/ARCHIVE/TRASH/FLAG); create a draft summary report. Multi-account support via GWS CLI. |
-| `home-sync` | haiku | Sync config to backup repository |
-| `multi-repo-orchestrator` | haiku | Parallel git operations across repos |
-| `pre-commit-checker` | haiku | Pre-commit security and quality checks |
-| `session-analyzer` | sonnet | Extract patterns from session archive transcripts |
-| `session-checkpoint` | sonnet | Save/restore session context across compactions |
-| `skill-extractor` | sonnet | Extract instincts from transcripts (Homunculus v2) |
-| `sync-orchestrator` | haiku | Multi-repo config sync orchestration |
-| `wrap-up-orchestrator` | haiku | End-of-session wrap-up (docs, commits, pushes) |
-
-**Game Development Team** (6):
-
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| `game-artist` | sonnet | Asset creation and art direction for game projects |
-| `game-designer` | sonnet | Game mechanics, level design, and gameplay systems |
-| `game-developer` | sonnet | Game implementation, engine code, and technical execution |
-| `game-director` | sonnet | Creative leadership and game vision coordination |
-| `game-ux` | sonnet | Player experience, UI/UX, and interface design |
-| `game-writer` | sonnet | Narrative, dialogue, and story scripting |
+| **blog-post-orchestrator** | sonnet | Orchestrates blog post writing with research and MDX generation |
+| **changelog-writer** | haiku | Generates CHANGELOG.md entries from git diffs and session context |
+| **config-sync** | haiku | Compares local `~/.claude/` config against the git repo for drift |
+| **context-health** | haiku | Monitors context window usage and suggests compaction points |
+| **deploy-verifier** | haiku | Verifies builds and live site after deployment |
+| **home-sync** | haiku | Syncs CJClaudin_home repo with current config state |
+| **multi-repo-orchestrator** | haiku | Runs parallel git operations across all project repos |
+| **pre-commit-checker** | haiku | Pre-commit security and quality validation |
+| **session-analyzer** | sonnet | Reads session archive transcripts and extracts actionable patterns |
+| **session-checkpoint** | sonnet | Saves and restores session context across compactions |
+| **skill-extractor** | sonnet | Extracts instincts from session transcripts for Homunculus v2 learning system |
+| **sync-orchestrator** | haiku | Orchestrates config sync across multiple repos |
+| **wrap-up-orchestrator** | sonnet | End-of-session wrap-up with docs, commits, and pushes |
 
 **How to create your own agent:**
+
+1. Create a `.md` file in `~/.claude/agents/`
+2. Add YAML frontmatter with `description`, `model`, and `tools`
+3. Write instructions as if briefing a specialist on their role
 
 ```markdown
 ---
@@ -430,73 +890,24 @@ You are a [specialist role]. Your job is to [objective].
 Describe the expected output format.
 ```
 
-Save this as `~/.claude/agents/your-agent.md` and Claude Code's Task tool can spawn it.
-
----
-
-### Learned Skills
-
-**Location:** `~/.claude/skills/learned/` (one `.md` file per skill)
-
-Learned skills are reusable debugging patterns extracted from real sessions. Each documents a non-obvious problem, its solution, and when the pattern applies. Claude loads these at session start and uses them to avoid repeating past mistakes.
-
-This repo contains 23 unique skills organized into 6 categories (with copies in subdirectories for browsing):
-
-| Category | Skills |
-|----------|--------|
-| **Claude Code** (8) | MCP config location, YAML frontmatter requirement, debug diagnostics, HEREDOC permission pollution, shallow fetch + force push, settings validation, interactive mode freeze, context compaction |
-| **Security** (4) | Cookie auth over query strings, SSRF prevention with IP validation, path traversal guards, token secret safety |
-| **Next.js** (4) | Client component metadata, MDX same-date sort order, MDX blog design system, Vercel WAF syntax |
-| **Platform** (3) | PowerShell stdin hooks, Git Bash npm path mangling, Git Bash variable stripping |
-| **Workflow** (2) | Blog post production pipeline, parallel agent decomposition |
-| **API / Testing** (2) | Anthropic model ID format, Vitest class mock constructor |
-
-Each skill follows this format:
-
-```markdown
-# Descriptive Pattern Name
-
-**Extracted:** 2026-02-08
-**Context:** Brief description of when this applies
-
-## Problem
-What went wrong and why it is non-obvious
-
-## Solution
-The fix or workaround
-
-## When to Use
-Trigger conditions for recognizing this situation
-```
-
-**How skills get created:** The primary path is through the Homunculus instinct system. Session observations become atomic instincts (with confidence scoring), and when 3+ instincts cluster in a domain, they graduate into learned skills. You can also run `/learn` mid-session or invoke the `skill-extractor` agent to extract instincts from transcripts.
-
-See `skills/learned/INDEX.md` for the full index.
-
 ---
 
 ### Custom Skills
 
-**Location:** `~/.claude/skills/*/skill.md`
+**Location:** `~/.claude/skills/*/SKILL.md`
 
-Custom skills are user-invocable workflows triggered by slash commands. Each lives in its own subdirectory with a `skill.md` file (lowercase) containing YAML frontmatter and detailed instructions. The lowercase filename ensures cross-platform compatibility when syncing via Syncthing between macOS and Windows. Skills take priority over commands when both exist for the same name.
+Custom skills are user-invocable workflows (similar to slash commands) that provide complex multi-step automation. Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML frontmatter and detailed instructions.
 
-This repo includes 8 skills:
+Skills take priority over commands when both exist for the same name.
+
+**Current skills (4 total):**
 
 | Skill | What It Does |
 |-------|-------------|
-| `/wrap-up` | 12-step end-of-session agent: pull repos, review session, update CHANGELOG/README/MEMORY, extract skills, clean state, commit, push |
-| `/blog-post` | Interactive blog writing agent: asks topic, gathers source material, writes formatted MDX post |
-| `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
-| `/game-dev` | Game development team orchestration and project automation |
-| `/gws` | Google Workspace CLI for Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, People, and Forms. Teaches on-demand API discovery via `gws schema` with a 4-tier safety system (read, create, modify, delete). |
-| `/multi-repo-status` | Git status dashboard across all project repos in parallel |
-| `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks with descriptions |
-| `/sync` | Configuration sync across repos, mirrors local `~/.claude/` state to git backups |
-
-Additional supporting files in `skills/`:
-- `blog-mdx-reference.md`: MDX syntax reference for blog posts
-- `blog-style-guide.md`: Blog writing standards and conventions
+| **`/wrap-up`** | 12-step end-of-session agent: pulls repos, reviews session, updates CHANGELOG/README/MEMORY, extracts skills, cleans state, commits, pushes. |
+| **`/blog-post`** | Interactive blog writing agent. Asks what to write about, gathers source material, writes a formatted MDX post. Delegates to Sonnet for cost-efficient content generation. |
+| **`/multi-repo-status`** | Quick dashboard showing git status across all 4 project repos in parallel. |
+| **`/skill-catalog`** | Full inventory of all agents, skills, commands, and hooks with descriptions. |
 
 ---
 
@@ -504,15 +915,23 @@ Additional supporting files in `skills/`:
 
 **Location:** `~/.claude/commands/` (one `.md` file per command)
 
-Custom commands are slash commands that encode multi-step workflows into a single invocation. They are the predecessor to skills. When a skill and command share the same name, the skill takes priority.
+Custom commands are user-level slash commands that encode complex multi-step workflows into a single invocation. They work from any project.
 
-This repo includes 4 commands:
-- `blog-post.md`: Blog post writing (superseded by `/blog-post` skill)
-- `ingest-sessions.md`: Session transcript ingestion for Homunculus learning
-- `kb-article.md`: KB Article authoring
-- `smart-compact.md`: Pre-compact context preservation
+Each command file is a markdown document with YAML frontmatter and detailed instructions. When you type the command (e.g., `/wrap-up`), Claude reads the file and follows the instructions with full access to the conversation history and all its tools.
 
-Each command file requires YAML frontmatter with a `description` field. Without it, Claude Code silently ignores the command.
+**Current commands (2 total):**
+
+| Command | File | What It Does |
+|---------|------|-------------|
+| **`/wrap-up`** | `wrap-up.md` | 12-step end-of-session agent. Pulls all repos, reviews the session, updates CHANGELOG/README/MEMORY, extracts learned skills, cleans global state and permissions, commits with Hulk Hogan persona, and pushes after confirmation. |
+| **`/blog-post`** | `blog-post.md` | Interactive blog writing agent for cryptoflexllc.com. Asks what to write about, gathers source material from git logs and session history, writes a fully formatted MDX post. Delegates to Sonnet 4.5 for cost-efficient content generation. |
+
+**How to create your own:**
+
+1. Create a `.md` file in `~/.claude/commands/` (user-level) or `.claude/commands/` (project-level)
+2. Add YAML frontmatter with a `description` field — **this is required** or Claude Code silently ignores the file
+3. Write instructions as if briefing a capable assistant on a complex task
+4. Restart Claude Code — commands are discovered at session start, not mid-session
 
 ```markdown
 ---
@@ -521,261 +940,98 @@ description: "What this command does in one line"
 
 # /your-command - Title
 
-Instructions for Claude to follow when this command is invoked.
+You are a [role]. Your job is to [objective].
+
+## Steps
+1. First thing to do
+2. Second thing to do
+
+## Important Notes
+- Safety rails and constraints
 ```
 
----
-
-### Hooks
-
-**Location:** `~/.claude/hooks/` (or your project's `.claude/hooks/`)
-
-Hooks are scripts that run automatically when Claude Code performs certain actions. They are like event listeners: when a specific event happens, your script fires.
-
-| Hook Type | When It Fires | Example Use |
-|-----------|--------------|-------------|
-| **PreToolUse** | Before Claude uses a tool | Block edits to sensitive files |
-| **PostToolUse** | After Claude uses a tool | Log the operation, trigger learning |
-| **Stop** | When Claude finishes a response | Play notification sound |
-| **SessionEnd** | When the session closes | Archive the transcript |
-
-This repo includes 7 hook scripts:
-
-| Script | Hook Type | What It Does |
-|--------|-----------|-------------|
-| `file-guard.sh` | PreToolUse | Checks if the target file is sensitive (.env, .pem, credentials). If so, exits non-zero to block the edit. |
-| `log-activity.sh` | PostToolUse | Appends a timestamped log entry for each tool use (Bash, Edit, Write, NotebookEdit). Runs async so it does not block Claude. |
-| `memory-nudge.sh` | PostToolUse | Analyzes tool output and reminds Claude to save significant findings to vector memory (macOS/Linux). |
-| `memory-nudge.ps1` | PostToolUse | PowerShell port of `memory-nudge.sh` for Windows. Tracks significant work units (Edit, Write, Bash, Agent tool calls) and reminds Claude to save to vector memory after 5+ units without a `memory_store` call. Configured in `settings.json` under the `Edit\|Write\|Bash\|Agent` PostToolUse matcher. |
-| `observe-homunculus.sh` | PostToolUse | Captures behavioral observations and appends them to `observations.jsonl` for later instinct extraction. |
-| `prompt-notify.sh` | Stop | Plays a system notification sound (macOS: `osascript`, Windows: `[console]::beep`) when Claude finishes responding. |
-| `save-session.sh` | SessionEnd | Reads session metadata from stdin (JSON with `transcript_path` and `session_id`), copies the transcript to a dated archive directory. |
-
-#### Hook Configuration
-
-Hooks are configured in `.claude/settings.local.json`. This repo includes a template at `hooks/settings.local.json.template`:
-
-```json
-{
-  "permissions": {
-    "allow": [
-      "Bash(git:*)",
-      "Bash(ls:*)",
-      "WebSearch",
-      "..."
-    ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HOOK_COMMAND_FILE_GUARD"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash|Edit|Write|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HOOK_COMMAND_LOG_ACTIVITY",
-            "async": true
-          }
-        ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HOOK_COMMAND_OBSERVE_HOMUNCULUS",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HOOK_COMMAND_PROMPT_NOTIFY"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "HOOK_COMMAND_SAVE_SESSION"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**To set up hooks:**
-1. Copy the template to your project's `.claude/settings.local.json`
-2. Replace each `HOOK_COMMAND_*` placeholder with the actual command, for example:
-   - **macOS:** `"bash /path/to/hooks/file-guard.sh"`
-   - **Windows:** `"powershell -NoProfile -ExecutionPolicy Bypass -Command \". '/path/to/hooks/file-guard.ps1'\""`
-3. Ensure hook scripts are executable: `chmod +x hooks/*.sh`
-
-**Key configuration fields:**
-- `matcher`: which tools trigger the hook (`"Edit|Write"` means Edit or Write, `"*"` means all tools)
-- `async`: if `true`, the hook runs in the background without blocking Claude
-- `type`: always `"command"` for shell-based hooks
-
----
-
-### Homunculus: Continuous Learning
-
-**Location:** `~/.claude/homunculus/` (or `homunculus/` in this repo)
-
-The Homunculus system is a continuous learning loop that extracts behavioral patterns from Claude Code sessions and encodes them as atomic instincts.
-
-#### How It Works
-
-```
-Session work
-    |
-    v
-observe-homunculus.sh hook  -->  observations.jsonl (raw behavioral data)
-    |
-    v
-skill-extractor agent  -->  instincts/personal/*.md (atomic instincts, 0.4 confidence)
-    |
-    v
-When 3+ instincts cluster  -->  Graduated into learned skills (skills/learned/)
-```
-
-1. During every session, the `observe-homunculus.sh` PostToolUse hook captures what Claude does and appends observations to `observations.jsonl`.
-2. The `skill-extractor` agent (or the `/wrap-up` skill) processes accumulated observations and session transcripts, extracting atomic instincts.
-3. Each instinct starts at 0.4 confidence. Repeated evidence across sessions increases confidence.
-4. When 3+ related instincts cluster in a domain, they can be promoted into full learned skills.
-
-#### Directory Structure
-
-```
-homunculus/
-  identity.json.template     # User identity profile
-  instincts/
-    personal/                 # 30 auto-extracted instincts
-    inherited/.gitkeep        # Space for instincts shared by other users
-  evolved/
-    agents/.gitkeep           # Agents evolved from instinct clusters
-    commands/.gitkeep         # Commands evolved from patterns
-    skills/.gitkeep           # Skills evolved from patterns
-```
-
-#### Identity Template
-
-The `identity.json.template` captures user preferences that influence instinct extraction:
-
-```json
-{
-  "name": "YOUR_GITHUB_USERNAME",
-  "technical_level": "intermediate-advanced",
-  "primary_stack": ["Next.js", "React", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-  "preferences": {
-    "immutability": true,
-    "functional_style": true,
-    "small_files": true,
-    "commit_style": "conventional-commits",
-    "no_em_dashes": true
-  }
-}
-```
-
-Copy this template, fill in your values, and save it as `identity.json`.
-
----
-
-### Templates
-
-**Location:** `templates/` in this repo
-
-Templates are starter configuration files. Copy them to the target locations and fill in your values.
-
-| Template | Copy To | What It Configures |
-|----------|---------|-------------------|
-| `claude.json.template` | `~/.claude.json` | MCP server definitions (5 servers pre-configured) |
-| `settings.json.template` | `~/.claude/settings.json` | Model preference, plugins, permissions, update channel |
-| `env.sh.template` | `~/.claude/scripts/env.sh` | Shared environment variables (repo paths, tool paths) |
-| `gitignore.template` | `~/.claude/.gitignore` | Git ignore rules for backing up portable config |
-
-**Example: setting up env.sh:**
-```bash
-cp templates/env.sh.template ~/.claude/scripts/env.sh
-# Edit the file and set your paths:
-# PROJECTS_DIR="/Users/you/Projects"
-# REPO_CJCLAUDE="$PROJECTS_DIR/your-project"
-```
+**Key insight:** You're not writing code — you're writing instructions for an agent. The quality of the output depends entirely on the quality of your instructions. Be specific about formats, include examples, and add safety rails for things that could go wrong.
 
 ---
 
 ### Backup Strategy
 
-**File:** `~/.claude/.gitignore` (use `templates/gitignore.template` as a starting point)
+**File:** `~/.claude/.gitignore`
 
-The gitignore uses an **ignore-everything-then-whitelist** pattern:
+This file controls what gets backed up to GitHub and what stays local. It uses an **ignore-everything-then-whitelist** pattern:
 
 ```gitignore
 # Ignore everything by default
 *
 
-# Track portable configuration
+# ===== TRACK THESE =====
 !.gitignore
 !README.md
+!COMPLETE-GUIDE.md
+
+# Rules (organized in subdirectories: core/, development/, operations/)
 !rules/
 !rules/**
+
+# Custom agents
 !agents/
 !agents/*.md
+
+# Skills (custom SKILL.md + learned patterns)
 !skills/
 !skills/**
+
+# Custom commands
 !commands/
 !commands/*.md
-!scripts/
-!scripts/*.sh
-!hooks/
-!hooks/**
 
-# Never track (even if whitelisted above)
+# ===== NEVER TRACK (even if whitelisted above) =====
 cache/
+plugins/cache/
 sessions/
 history.jsonl
 settings.json
 projects/
-node_modules/
-.env
-*.pem
-*.key
+file-history/
+shell-snapshots/
+todos/
+tasks/
+plans/
+downloads/
+debug/
+ide/
+session-env/
 ```
 
-**What gets backed up:** Rules, agents, skills, commands, scripts, hooks (your portable configuration).
+**How this works:**
 
-**What stays local:** Session history, caches, settings with machine-specific paths, secrets, node_modules.
+1. `*` — Start by ignoring EVERYTHING
+2. `!rules/` and `!rules/*.md` — Exception: track rule files (the `!` means "don't ignore this")
+3. `!skills/` and `!skills/**` — Exception: track learned skills
+4. Everything in the "NEVER TRACK" section — Explicitly ignored even if a whitelist rule would match
 
-**To set up a config backup repo:**
-```bash
-cd ~/.claude
-git init
-cp /path/to/claude-code-config/templates/gitignore.template .gitignore
-git add -A
-git commit -m "Initial config backup"
+**What gets backed up and why:**
 
-# Push to GitHub
-gh repo create my-claude-config --private --source=. --push
-```
+| Tracked | Why Back It Up |
+|---------|---------------|
+| Rule files (`rules/**/*.md`) | Your coding standards, organized in subdirectories |
+| Agent files (`agents/*.md`) | Custom agent definitions |
+| Learned skills (`skills/learned/`) | Patterns Claude learned from your sessions |
+| Custom skills (`skills/*/SKILL.md`) | Workflow automation |
+| Custom commands (`commands/*.md`) | Slash command definitions |
+| `.gitignore` | So the ignore rules themselves are versioned |
+| `README.md` | Documents what's in the repo |
+| `COMPLETE-GUIDE.md` | Comprehensive setup walkthrough |
+
+**What stays local and why:**
+
+| Excluded | Why Exclude It |
+|----------|---------------|
+| `settings.json` | Contains machine-specific paths |
+| `sessions/`, `history.jsonl` | Conversation history — huge files, private |
+| `plugins/cache/` | Downloaded plugins — can be re-fetched |
+| `projects/` | Per-project memory files |
+| `cache/`, `file-history/`, etc. | Temporary working data |
 
 ---
 
@@ -789,33 +1045,79 @@ These files live inside a specific project and only affect that project.
 
 **File:** `your-project/CLAUDE.md` (in the project root)
 
-This is the first thing Claude reads when you open a project. It tells Claude what the project is, how to work on it, and what rules to follow. Think of it as the project's onboarding document.
+This is the most important file in any Claude Code project. It's the first thing Claude reads when you open the project. Think of it as the project's "employee handbook" — it tells Claude what this project is, how to work on it, and what rules to follow.
 
-**Minimal template:**
+Here's a real example:
 
 ```markdown
 # Project Context
 
-[Describe your project in 1-2 sentences]
-
-## Tech Stack
-- Language: [e.g., TypeScript]
-- Framework: [e.g., Next.js 15]
-- Database: [e.g., PostgreSQL]
-
-## Session Instructions
-1. [Your rules for Claude to follow every session]
-2. [e.g., "Always use TypeScript strict mode"]
-3. [e.g., "Update CHANGELOG.md after significant changes"]
-
-## Project Structure
-[Key directories and their purposes]
+This is a Claude Code learning project. The goal is to explore Claude Code's
+capabilities while keeping a comprehensive record of what was tried, what
+worked, what failed, and why.
 ```
 
-**Best practices:**
-- Keep it concise. Claude reads this every session, so every line costs context window space.
-- Include tech stack and key constraints so Claude does not make wrong assumptions.
-- Document hooks and automation that are already in place so Claude does not duplicate them.
+**The opening paragraph** gives Claude essential context. Without this, Claude doesn't know if it's working on a medical app, a game, or a learning project. The context shapes every decision Claude makes.
+
+```markdown
+## Project Structure
+
+.claude/
+  hooks/
+    save-session.ps1      # Archives transcripts on session end
+    log-activity.ps1      # Logs tool usage in real time
+  session_archive/        # Archived transcripts (git-ignored)
+  settings.local.json     # Permissions + hooks config
+
+CLAUDE.md          # This file
+CHANGELOG.md       # Human-readable history of changes
+README.md          # Journey document: what we learned
+activity_log.txt   # Running log of all tool operations (git-ignored)
+```
+
+**The project structure** tells Claude where everything is. Without this, Claude has to search the entire project to find things, which wastes time and context window.
+
+```markdown
+## Session Instructions
+
+Follow these instructions every session:
+
+1. Record what you do. Update CHANGELOG.md with dated entries.
+2. Explain your reasoning. Include comments explaining why, not just what.
+3. Document failures too. Failed approaches are valuable learning material.
+4. Keep README.md as a journey document.
+5. Commit with descriptive messages when asked.
+6. Don't delete history. Document abandoned approaches instead.
+```
+
+**Session instructions** are like standing orders. Every time Claude starts a conversation in this project, it follows these rules. You can put anything here — "always use TypeScript," "never modify the database schema without asking," "update the changelog after every change."
+
+```markdown
+## Hooks System
+
+- SessionEnd hook: save-session.ps1 copies the full conversation transcript
+- PostToolUse hook: log-activity.ps1 logs every operation to activity_log.txt
+
+These run automatically — no manual action needed.
+```
+
+**Documenting hooks** in CLAUDE.md is good practice because it helps Claude understand what automation is already in place. Claude won't try to manually do something that a hook already handles.
+
+```markdown
+## Tech Notes
+
+- Platform: Windows (PowerShell for hook scripts)
+- No external dependencies required
+- Raw transcripts are git-ignored; human-readable docs are tracked
+```
+
+**Tech notes** prevent Claude from making wrong assumptions (like trying to use bash scripts on a Windows machine).
+
+**How to create your own CLAUDE.md:** Create a file called `CLAUDE.md` in your project root. Include:
+1. What the project is (one paragraph)
+2. The file/folder structure
+3. Any rules Claude should follow
+4. Technical constraints (language, framework, platform)
 
 ---
 
@@ -823,128 +1125,311 @@ This is the first thing Claude reads when you open a project. It tells Claude wh
 
 **File:** `your-project/.claude/settings.local.json`
 
-This file configures permissions and hooks for a specific project. See the [Hooks](#hooks) section for the full template.
+This file has two main sections: **permissions** and **hooks**.
 
-**Permissions** pre-approve specific actions so Claude does not ask every time:
+#### Permissions Section
 
 ```json
 {
   "permissions": {
     "allow": [
-      "Bash(git:*)",
-      "Bash(npm:*)",
-      "WebSearch"
+      "Bash(dir)",
+      "WebSearch",
+      "WebFetch(domain:docs.claude.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(powershell:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
 ```
 
-**Permission format:**
-- `"Bash(git:*)"`: allow any git command
-- `"Bash(npm test:*)"`: allow `npm test` with any arguments
-- `"WebFetch(domain:docs.claude.com)"`: allow fetching from a specific domain
-- `"mcp__memory__search_nodes"`: allow a specific MCP tool
+**What this does:** Pre-approves specific actions so Claude doesn't ask permission every time. Without these, Claude would prompt you for approval on every single command.
 
-**Security note:** Be deliberate with wildcards. `Bash(*)` would allow Claude to run any command without asking. The permissions in this config are intentionally specific.
+**How to read the permission format:**
 
-> **Tip:** You do not need to write permissions by hand. When Claude asks "Allow this command?" and you approve it, Claude Code automatically adds it to the permissions list. Over time, your permissions file fills up with commands you have approved.
+| Permission | What It Allows |
+|-----------|---------------|
+| `"Bash(dir)"` | Run the `dir` command (list files on Windows) |
+| `"WebSearch"` | Search the web |
+| `"WebFetch(domain:docs.claude.com)"` | Fetch web pages from docs.claude.com only |
+| `"WebFetch(domain:github.com)"` | Fetch web pages from github.com only |
+| `"Bash(powershell:*)"` | Run any PowerShell command (the `*` means "anything") |
+| `"Bash(git add:*)"` | Run any `git add` command |
+| `"Bash(git commit:*)"` | Run any `git commit` command |
+| `"Bash(git push:*)"` | Run `git push` |
+
+**The wildcard `*`:** Means "match anything." `Bash(git add:*)` allows `git add README.md`, `git add .`, `git add --all`, etc.
+
+**Security note:** Be careful with wildcards. `Bash(*)` would allow Claude to run ANY command without asking — including deleting files. The permissions in this config are deliberately specific.
+
+> **Tip:** You don't need to write these by hand. When Claude asks "Allow this command?" and you approve it, Claude Code automatically adds it to the permissions list. Over time, your permissions file fills up with commands you've approved.
+
+#### Hooks Section
+
+```json
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \". '.claude/hooks/save-session.ps1'\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \". '.claude/hooks/log-activity.ps1'\"",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Let's decode this piece by piece:
+
+**SessionEnd hook:**
+```json
+"SessionEnd": [{
+  "hooks": [{
+    "type": "command",
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \". '.claude/hooks/save-session.ps1'\""
+  }]
+}]
+```
+
+- `"SessionEnd"` — This hook fires when you close Claude Code or type `/exit`
+- `"type": "command"` — It runs a shell command
+- `"command"` — The actual command to run. Let's break it down:
+  - `powershell` — Use PowerShell (Windows's scripting language)
+  - `-NoProfile` — Don't load the user's PowerShell profile (faster startup)
+  - `-ExecutionPolicy Bypass` — Allow the script to run (Windows security policy)
+  - `-Command ". '.claude/hooks/save-session.ps1'"` — Run the script using dot-sourcing (a PowerShell technique that allows reading stdin)
+
+**PostToolUse hook:**
+```json
+"PostToolUse": [{
+  "matcher": "Bash|Edit|Write|NotebookEdit",
+  "hooks": [{
+    "type": "command",
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \". '.claude/hooks/log-activity.ps1'\"",
+    "async": true
+  }]
+}]
+```
+
+- `"PostToolUse"` — This hook fires after Claude uses a tool
+- `"matcher": "Bash|Edit|Write|NotebookEdit"` — Only fire for these specific tools (the `|` means "or"). It won't fire for Read, Grep, or Glob operations.
+- `"async": true` — **This is important.** The hook runs in the background and doesn't block Claude from continuing. Without this, Claude would freeze every time it edits a file, waiting for the logging script to finish.
+
+---
+
+### Hooks
+
+The hook scripts are PowerShell files that do the actual work when hooks fire.
+
+#### `save-session.ps1` — Session Archiver
+
+This script runs when you end a Claude Code session. It saves a copy of your entire conversation.
+
+```powershell
+$ErrorActionPreference = "SilentlyContinue"
+```
+
+**What this does:** Tells PowerShell to silently continue if any errors occur. Hooks should NEVER crash Claude Code — a logging failure shouldn't break your workflow.
+
+```powershell
+try {
+    $inputJson = [Console]::In.ReadToEnd()
+} catch {
+    $inputJson = $input | Out-String
+}
+if (-not $inputJson -or $inputJson.Trim() -eq "") { exit 0 }
+```
+
+**What this does:** Reads the JSON data that Claude Code sends to the hook via stdin (standard input). Claude Code passes information like the session ID and where the transcript file is stored.
+
+**Why `[Console]::In.ReadToEnd()` instead of `$input`?** This is a Windows/PowerShell gotcha. The normal `$input` variable doesn't work when PowerShell is invoked with `-Command`. You have to use the `[Console]::In` method instead. This took trial and error to discover!
+
+```powershell
+$data = $inputJson | ConvertFrom-Json
+$transcriptPath = $data.transcript_path
+$sessionId      = $data.session_id
+```
+
+**What this does:** Parses the JSON data and extracts:
+- `transcript_path` — Where Claude Code stored the raw conversation file
+- `session_id` — A unique ID for this session
+
+```powershell
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$archiveDir  = Join-Path $projectRoot ".claude\session_archive"
+```
+
+**What this does:** Figures out where the project root is. Since this script lives in `.claude/hooks/`, it goes up 2 directory levels to find the project root, then sets the archive directory.
+
+```powershell
+$timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+$archiveName = "${timestamp}_${sessionId}"
+Copy-Item -Path $transcriptPath -Destination $destPath -Force
+```
+
+**What this does:** Creates a timestamped filename (like `2026-02-07_14-30-00_abc123.jsonl`) and copies the transcript there.
+
+The script also creates a **human-readable summary** and updates an **index file** for easy searching.
+
+#### `log-activity.ps1` — Activity Logger
+
+This script runs after every tool use (edits, writes, commands). It creates a running log of everything Claude does.
+
+The structure is similar to `save-session.ps1` — read JSON from stdin, parse it, write a log line:
+
+```powershell
+$detail = ""
+switch ($toolName) {
+    "Edit"  { $detail = "Edited: $file" }
+    "Write" { $detail = "Wrote: $file" }
+    "Bash"  { $detail = "Ran: $cmd" }
+    "NotebookEdit" { $detail = "Edited notebook: $nb" }
+    default { $detail = "Used tool: $toolName" }
+}
+
+$logLine = "[$timestamp] ($sessionId) $toolName | $detail"
+$logLine | Out-File -Append -FilePath $logPath -Encoding utf8
+```
+
+**What the output looks like:**
+```
+[2026-02-07 12:30:15] (abc123) Bash | Ran: git status
+[2026-02-07 12:30:22] (abc123) Edit | Edited: D:\project\README.md
+[2026-02-07 12:31:05] (abc123) Write | Wrote: D:\project\new_file.txt
+```
+
+This gives you a complete audit trail of everything Claude did in your project.
 
 ---
 
 ## How to Set This Up From Scratch
 
+Here's a step-by-step guide to replicate this entire configuration on a fresh machine.
+
 ### Prerequisites
 
-1. **Node.js** (v18 or newer): https://nodejs.org/
-2. **Git**: https://git-scm.com/
-3. **Claude Code**: `npm install -g @anthropic-ai/claude-code`
+1. **Node.js** (v18 or newer) — download from [nodejs.org](https://nodejs.org/)
+2. **Git** — download from [git-scm.com](https://git-scm.com/)
+3. **Claude Code** — install with `npm install -g @anthropic-ai/claude-code`
 4. **A Claude account** with API access or a Pro/Team subscription
 
-### Step 1: Clone This Repo
+### Step 1: Install Claude Code
 
 ```bash
-cd ~/GitProjects  # or wherever you keep repos
-git clone https://github.com/chris2ao/claude-code-config.git
+npm install -g @anthropic-ai/claude-code
+claude     # First run — will prompt you to log in
 ```
 
-### Step 2: Copy Rules
+### Step 2: Install the Everything-Claude-Code Plugin
 
-```bash
-mkdir -p ~/.claude/rules
-cp -r claude-code-config/rules/* ~/.claude/rules/
+Create or edit `~/.claude/settings.json`:
+
+```json
+{
+  "autoUpdatesChannel": "latest",
+  "extraKnownMarketplaces": {
+    "everything-claude-code": {
+      "source": { "source": "github", "repo": "affaan-m/everything-claude-code" }
+    }
+  },
+  "enabledPlugins": {
+    "everything-claude-code@everything-claude-code": true
+  }
+}
 ```
 
-Rules are active immediately. No restart needed (they are loaded at session start).
+### Step 3: Create Your Rules
 
-### Step 3: Set Up MCP Servers
-
-Start with the two core servers:
+Create the directory structure `~/.claude/rules/` with subdirectories and add the rule files. You can copy them from this repository or write your own.
 
 ```bash
+mkdir -p ~/.claude/rules/core ~/.claude/rules/development ~/.claude/rules/operations
+```
+
+The rules from this config (10 files in 3 subdirectories + root):
+- `agents.md` — Agent orchestration (plugin + custom)
+- `core/agentic-workflow.md` — Parallel task decomposition
+- `core/coding-style.md` — Code quality + writing style
+- `core/security.md` — Security checklist
+- `development/git-workflow.md` — Commits, PRs, TDD workflow
+- `development/patterns.md` — Design patterns
+- `development/testing.md` — TDD and coverage
+- `operations/hooks.md` — Hook types and file protection
+- `operations/performance.md` — Model routing and cost optimization
+- `operations/windows-platform.md` — Windows-specific workarounds
+
+### Step 4: Set Up MCP Servers
+
+We recommend 2 servers that provide capabilities Claude Code doesn't have built in:
+
+```bash
+# Memory — persistent knowledge across sessions (no built-in equivalent)
 claude mcp add --scope user memory -- npx -y @modelcontextprotocol/server-memory
+
+# Context7 — live documentation lookup (beats relying on training data)
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp@latest
 ```
 
-Add more as needed (see [MCP Servers](#mcp-servers) section for all 7).
-
-### Step 4: Copy Agents
-
+Optional — add the GitHub server if you do heavy GitHub API work:
 ```bash
-cp -r claude-code-config/agents/ ~/.claude/agents/
+claude mcp add-json --scope user github '{"command":"npx","args":["-y","@modelcontextprotocol/server-github"],"env":{"GITHUB_PERSONAL_ACCESS_TOKEN":"YOUR_TOKEN_HERE"}}'
 ```
 
-### Step 5: Copy Skills
+> **Why only 2?** We initially installed 5 servers but dropped filesystem (duplicates built-in Read/Write/Edit/Glob/Grep), sequential-thinking (duplicates built-in extended thinking), and github (largely covered by the `gh` CLI). See the [MCP Servers](#mcp-servers) section for details.
 
-```bash
-cp -r claude-code-config/skills/ ~/.claude/skills/
+### Step 5: Create a Project with CLAUDE.md
+
+In your project directory, create a `CLAUDE.md` file:
+
+```markdown
+# Project Context
+
+[Describe your project in 1-2 sentences]
+
+## Session Instructions
+
+1. [Your rules for Claude to follow every session]
+2. [e.g., "Always use TypeScript"]
+3. [e.g., "Update CHANGELOG.md after changes"]
 ```
 
-### Step 6: Install Hooks
+### Step 6: (Optional) Set Up Hooks
 
-```bash
-cp -r claude-code-config/hooks/ ~/.claude/hooks/
-chmod +x ~/.claude/hooks/*.sh
-```
+Create `.claude/hooks/` in your project and add hook scripts. Then configure them in `.claude/settings.local.json`.
 
-Then configure hooks in your project's `.claude/settings.local.json`. Use `hooks/settings.local.json.template` as a starting point, replacing `HOOK_COMMAND_*` placeholders with actual paths.
-
-### Step 7: Set Up Templates
-
-```bash
-# Copy and customize the settings template
-cp claude-code-config/templates/settings.json.template ~/.claude/settings.json
-# Edit and set your preferred model
-
-# Copy and customize the environment template
-mkdir -p ~/.claude/scripts
-cp claude-code-config/templates/env.sh.template ~/.claude/scripts/env.sh
-# Edit and set your project paths
-```
-
-### Step 8: (Optional) Install the Plugin
-
-Inside a Claude Code session:
-```
-/plugin marketplace add affaan-m/everything-claude-code
-/plugin install everything-claude-code@everything-claude-code
-```
-
-### Step 9: (Optional) Set Up Homunculus
-
-```bash
-cp -r claude-code-config/homunculus/ ~/.claude/homunculus/
-cp ~/.claude/homunculus/identity.json.template ~/.claude/homunculus/identity.json
-# Edit identity.json with your info
-```
-
-### Step 10: (Optional) Back Up Your Config
+### Step 7: (Optional) Back Up Your Config
 
 ```bash
 cd ~/.claude
 git init
-cp ~/GitProjects/claude-code-config/templates/gitignore.template .gitignore
+
+# Create .gitignore (ignore everything, whitelist what matters)
+# See the Backup Strategy section above for the full .gitignore
+
 git add -A
 git commit -m "Initial config backup"
+
+# Push to GitHub (requires gh CLI: npm install -g gh)
+gh auth login
 gh repo create my-claude-config --private --source=. --push
 ```
 
@@ -954,35 +1439,56 @@ gh repo create my-claude-config --private --source=. --push
 
 ### What Is a CLI?
 
-CLI stands for Command Line Interface. It is a text-based way to interact with your computer by typing commands instead of clicking buttons. Claude Code runs in the CLI.
+CLI stands for Command Line Interface — a text-based way to interact with your computer. Instead of clicking buttons in a graphical window, you type commands. Claude Code runs in the CLI.
 
 ### What Is Git?
 
-Git is a version control system that tracks changes to files over time. Every change is saved as a "commit" with a message describing what changed. You can go back to any previous version, see who changed what, and collaborate with others.
+Git is a version control system that tracks changes to files over time. Every change is saved as a "commit" with a message describing what changed. You can go back to any previous version, see who changed what, and collaborate with others without overwriting each other's work.
 
 ### What Is GitHub?
 
-GitHub is a website that hosts Git repositories online. It adds collaboration features like pull requests (proposed changes for review), issues (bug reports and feature requests), and actions (automated workflows).
+GitHub is a website that hosts Git repositories (collections of files tracked by Git) online. It adds collaboration features like pull requests (proposed changes for review), issues (bug reports and feature requests), and actions (automated workflows).
 
 ### What Is JSON?
 
-JSON (JavaScript Object Notation) is a text format for storing structured data. It uses curly braces `{}` for objects, square brackets `[]` for lists, and `"key": "value"` pairs. Most Claude Code configuration files use JSON.
+JSON (JavaScript Object Notation) is a text format for storing structured data. It uses curly braces `{}` for objects, square brackets `[]` for lists, and `"key": "value"` pairs:
+
+```json
+{
+  "name": "Chris",
+  "tools": ["Claude Code", "VS Code", "Git"],
+  "experience": {
+    "level": "learning",
+    "focus": "AI-assisted development"
+  }
+}
+```
+
+Most Claude Code configuration files use JSON.
 
 ### What Is Markdown?
 
-Markdown is a simple formatting language for text files (`.md`). It uses `#` for headings, `**` for bold, `-` for bullet points, and triple backticks for code blocks. All rule files, agent definitions, and this guide use Markdown.
+Markdown is a simple formatting language for text. It's what `.md` files use:
+
+```markdown
+# This is a heading
+## This is a smaller heading
+**This is bold**
+*This is italic*
+- This is a bullet point
+1. This is a numbered list
+`this is inline code`
+```
+
+All the rule files and CLAUDE.md use Markdown because it's easy to read both as raw text and when rendered.
 
 ### What Are Tokens?
 
-In AI, a "token" is roughly a word or word-piece. Claude's context window is measured in tokens. When this config mentions context window management, it is referring to the limited amount of text Claude can "remember" within a single conversation.
+In AI, a "token" is roughly a word or word-piece. Claude's context window is measured in tokens. When this config mentions "31,999 tokens for thinking," it means Claude can use roughly 24,000 words of internal reasoning before answering.
 
 ### What Is npx?
 
-`npx` is a tool that comes with Node.js. It downloads and runs a package temporarily without permanently installing it. All the `npx`-based MCP servers use `npx -y`, where `-y` means "yes, install without asking."
-
-### What Are MCP Servers?
-
-MCP (Model Context Protocol) servers are external programs that extend Claude Code's capabilities. They communicate via stdin/stdout and provide tools that Claude can call. Think of them as plugins that add new abilities (memory, documentation lookup, GitHub access).
+`npx` is a tool that comes with Node.js. It downloads and runs a program temporarily without permanently installing it. All our MCP servers use `npx -y` — the `-y` flag means "yes, install without asking."
 
 ---
 
@@ -992,7 +1498,7 @@ MCP (Model Context Protocol) servers are external programs that extend Claude Co
 
 **Symptom:** `/mcp` shows "No MCP servers configured"
 
-**Cause:** Servers are in the wrong config file.
+**Cause:** Servers might be in the wrong config file.
 
 **Fix:** Make sure servers are in `~/.claude.json` (NOT `~/.claude/mcp-servers.json`). Use `claude mcp add --scope user` to add them correctly.
 
@@ -1000,32 +1506,20 @@ MCP (Model Context Protocol) servers are external programs that extend Claude Co
 
 **Symptom:** `/mcp` shows a server with "failed" status
 
-**Cause:** Usually Node.js is not installed or not in PATH.
+**Cause:** Usually Node.js isn't installed or isn't in PATH.
 
 **Fix:**
 1. Verify Node.js is installed: `node --version`
 2. Try running the server manually: `npx -y @modelcontextprotocol/server-memory`
 3. Restart Claude Code from a fresh terminal
 
-### Vector memory server fails to start
-
-**Symptom:** vector-memory server shows "failed" in `/mcp`
-
-**Cause:** Python path is wrong, `mcp-memory-service` is not installed, or Ollama is not running.
-
-**Fix:**
-1. Verify Python 3.11+: `python3 --version`
-2. Verify the package: `python3 -m mcp_memory_service.server --help`
-3. Verify Ollama is running: `ollama list` (should show `nomic-embed-text`)
-4. Check the `command` field in `~/.claude.json` points to the correct Python path
-
 ### Plugin commands not appearing
 
-**Symptom:** Typing `/` does not show expected commands like `/plan` or `/verify`
+**Symptom:** Typing `/` doesn't show expected commands like `/plan` or `/verify`
 
-**Cause:** Plugin command files may be missing YAML frontmatter.
+**Cause:** Plugin command files may be missing YAML frontmatter (a known bug in some plugin versions).
 
-**Fix:** Check that each command `.md` file starts with:
+**Fix:** Check that each command `.md` file in the plugin cache starts with:
 ```yaml
 ---
 description: What this command does
@@ -1036,42 +1530,31 @@ Plugin cache location: `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>
 
 ### Hooks not firing
 
-**Symptom:** Activity log or session archive is not being created
+**Symptom:** Activity log or session archive isn't being created
 
 **Fix checklist:**
 1. Check `.claude/settings.local.json` has the hooks configured
-2. Verify hook scripts exist at the paths referenced in the config
-3. Verify scripts are executable: `ls -la hooks/*.sh` (should show `-rwxr-xr-x`)
-4. On macOS, test manually: `echo '{"tool_name":"test"}' | bash hooks/log-activity.sh`
-5. On Windows, use `-Command ". 'script.ps1'"` (dot-sourcing), not `-File script.ps1`
+2. Verify the hook scripts exist at the paths referenced
+3. On Windows: make sure the command uses `-Command ". 'script.ps1'"` (dot-sourcing), not `-File script.ps1`
+4. Test the script manually: `echo '{"tool_name":"test"}' | powershell -NoProfile -Command ". '.claude/hooks/log-activity.ps1'"`
 
 ### Context window filling up
 
-**Symptom:** Claude seems to forget earlier parts of the conversation or behaves erratically
+**Symptom:** Claude seems to forget earlier parts of the conversation
 
-**Fix:** Type `/compact` to summarize the conversation and free up space. Do this at natural stopping points (after finishing a task, before switching to something new). The `context-health` agent can help monitor usage.
+**Fix:** Type `/compact` to summarize the conversation and free up space. Do this at natural stopping points — after finishing a task, before switching to something new.
 
 ### Permission denied errors
 
 **Symptom:** Claude says "permission denied" when trying to run a command
 
-**Fix:** Either approve the action when prompted, or pre-approve it in `.claude/settings.local.json` under `permissions.allow`. See the [Project Settings](#project-settings) section for the format.
-
-### Hooks crash Claude Code
-
-**Symptom:** Claude Code hangs or exits after a hook fires
-
-**Fix:** Hooks should never crash. Add error handling at the top of every hook script:
-- **Bash:** `set +e` (continue on errors)
-- **PowerShell:** `$ErrorActionPreference = "SilentlyContinue"`
-
-Also ensure async hooks have `"async": true` in the settings. A slow synchronous hook will block Claude from responding.
+**Fix:** Either approve the action when prompted, or pre-approve it in `.claude/settings.local.json` under `permissions.allow`. See the [Permissions Section](#permissions-section) for the format.
 
 ---
 
 ## Credits
 
-- **[Claude Code](https://docs.claude.com/en/docs/claude-code)** by [Anthropic](https://www.anthropic.com/)
-- **[everything-claude-code](https://github.com/affaan-m/everything-claude-code)** plugin by [Affaan Mustafa](https://github.com/affaan-m)
-- **[Model Context Protocol](https://github.com/modelcontextprotocol)** community servers
-- Configuration developed and documented by Chris with Claude
+- **Claude Code** by [Anthropic](https://www.anthropic.com/)
+- **everything-claude-code** plugin by [Affaan Mustafa](https://github.com/affaan-m/everything-claude-code)
+- **MCP servers** by the [Model Context Protocol](https://github.com/modelcontextprotocol) community
+- Configuration documented and explained by Chris with Claude

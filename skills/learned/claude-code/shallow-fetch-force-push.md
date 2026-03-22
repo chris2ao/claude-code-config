@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Shallow Fetch Breaks Force Push
 
 **Extracted:** 2026-02-11

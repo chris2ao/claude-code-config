@@ -1,0 +1,13 @@
+{
+  "name": "chris2ao",
+  "technical_level": "intermediate-advanced",
+  "primary_stack": ["Next.js", "React", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+  "preferences": {
+    "immutability": true,
+    "functional_style": true,
+    "small_files": true,
+    "commit_style": "conventional-commits-hulk-hogan",
+    "no_em_dashes": true
+  },
+  "created": "2026-02-15"
+}

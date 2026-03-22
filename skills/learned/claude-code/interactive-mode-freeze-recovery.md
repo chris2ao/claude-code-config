@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Interactive Mode Freeze Recovery
 
 **Extracted:** 2026-02-13

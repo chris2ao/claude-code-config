@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # Cookie Auth Over Query Strings
 
 ## Problem

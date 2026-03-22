@@ -1,3 +1,7 @@
+---
+platform: portable
+---
+
 # MDX Same-Date Sort Order Non-Determinism
 
 **Extracted:** 2026-02-07
