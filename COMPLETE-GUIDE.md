@@ -919,12 +919,16 @@ Custom commands are user-level slash commands that encode complex multi-step wor
 
 Each command file is a markdown document with YAML frontmatter and detailed instructions. When you type the command (e.g., `/wrap-up`), Claude reads the file and follows the instructions with full access to the conversation history and all its tools.
 
-**Current commands (2 total):**
+**Current commands (6 total):**
 
 | Command | File | What It Does |
 |---------|------|-------------|
-| **`/wrap-up`** | `wrap-up.md` | 12-step end-of-session agent. Pulls all repos, reviews the session, updates CHANGELOG/README/MEMORY, extracts learned skills, cleans global state and permissions, commits with Hulk Hogan persona, and pushes after confirmation. |
-| **`/blog-post`** | `blog-post.md` | Interactive blog writing agent for cryptoflexllc.com. Asks what to write about, gathers source material from git logs and session history, writes a fully formatted MDX post. Delegates to Sonnet 4.5 for cost-efficient content generation. |
+| **`/blog-post`** | `blog-post.md` | Interactive blog writing agent for cryptoflexllc.com. Asks what to write about, gathers source material from git logs and session history, writes a fully formatted MDX post. |
+| **`/claude-config-sync`** | `claude-config-sync.md` | Syncs live ~/.claude/ config to the claude-code-config repo with parallel agents. |
+| **`/ingest-sessions`** | `ingest-sessions.md` | Ingests session archives into vector memory for long-term context. |
+| **`/kb-article`** | `kb-article.md` | KB article authoring workflow for structured knowledge base entries. |
+| **`/Knowledge-Graph-Sync`** | `Knowledge-Graph-Sync.md` | Reconciles the knowledge graph (MCP memory server) against actual files on disk. Finds missing, stale, and orphaned entities. |
+| **`/smart-compact`** | `smart-compact.md` | Pre-compact context preservation: saves session state before compaction. |
 
 **How to create your own:**
 

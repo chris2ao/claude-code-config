@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 20 agents, 7 invocable skills, 23 learned skills, 13 scripts, 5 commands, 15 hooks, 7 MCP servers, and 38 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 20 agents, 7 invocable skills, 23 learned skills, 13 scripts, 6 commands, 17 hooks, 7 MCP servers, and 38 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
