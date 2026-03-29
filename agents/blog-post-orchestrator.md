@@ -60,6 +60,7 @@ Show the thing -> Explain what's happening -> Explain why it matters
 - Marketing language
 - Vague statements without specifics
 - Em dashes (NEVER, use commas, periods, colons, or parentheses instead)
+- Putting markdown content (tables, headers, lists, bold text) inside code fences. Code fences are for actual code only (bash, JSON, TypeScript, YAML, XML, config, shell output). If it's a report, summary, comparison table, or any structured content, render it as native markdown.
 
 ## Post Length Guidelines
 | Post Type | Word Count | Reading Time |

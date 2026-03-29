@@ -56,6 +56,16 @@ Select only relevant tags from this taxonomy:
 
 Use: `YYYY-MM-DD-<topic>.md`
 
+## Living Documents
+
+Some KB articles are living documents with a defined entry format. When asked to add an entry to one of these, read the existing article first and follow its established format exactly.
+
+| Keyword | Article | Action |
+|---------|---------|--------|
+| "scheduled task" | `~/.openclaw/Knowledge_Base/2026-03-25-scheduled-tasks.md` | Read the article, copy the entry template in the HTML comment, fill in values for the new task, append below existing entries |
+
+When the user says "create new KB for scheduled task" or "add a scheduled task to KB", do NOT create a new article. Instead, read the existing scheduled tasks article and append a new entry using the template format defined in that file.
+
 ## Quality Bar
 
 - Concise, decision-useful writing
