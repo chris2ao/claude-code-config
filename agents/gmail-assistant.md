@@ -93,6 +93,9 @@ gws gmail users labels create --params '{"userId": "me"}' --json '{"name": "Auto
 
 # Auto/Work
 gws gmail users labels create --params '{"userId": "me"}' --json '{"name": "Auto/Work", "labelListVisibility": "labelShow", "messageListVisibility": "show"}'
+
+# Auto/Security-Threat
+gws gmail users labels create --params '{"userId": "me"}' --json '{"name": "Auto/Security-Threat", "labelListVisibility": "labelShow", "messageListVisibility": "show"}'
 ```
 
 Record the label IDs returned for each newly created label. For labels that already existed (409), retrieve their IDs from the Step 0.2 label list.
@@ -324,6 +327,25 @@ gws gmail users messages get --params '{"userId": "me", "id": "<MOST_RECENT_MESS
 Extract the sender (From header), subject, snippet, labelIds, and full body content. If multiple messages in the same thread show conflicting classification signals, classify based on the most recent message and add the thread to the FLAG list with reason "Thread has conflicting signals - classified by most recent message".
 
 **Attachment awareness:** While reading `payload.parts`, check for any part with a non-empty `filename` and `body.size > 0`. If any attachment has `body.size` greater than 10485760 (10 MB), add the email to the "Large Attachments" report section with: sender, subject, filename, and size in MB.
+
+**Phishing and malware detection (check BEFORE classification):** While reading each email's full content, evaluate it for phishing or malware indicators. If two or more of the following signals are present, classify the email as a security threat:
+
+1. **Sender domain mismatch**: the display name or subject claims to be from a known organization (PayPal, Amazon, Apple, Microsoft, Google, banks, IRS, USPS, FedEx, UPS) but the actual sender domain does not match the organization's real domain
+2. **Urgency + action demand**: language like "your account will be suspended," "verify immediately," "unauthorized access detected," "act within 24 hours" combined with a request to click a link or provide information
+3. **Credential harvesting**: requests for passwords, SSN, credit card numbers, bank account details, or login credentials via email or a linked form
+4. **Misspelled brand names**: slight variations of real brands in the sender address or subject (e.g., "Paypa1," "Arnazon," "Micros0ft," "App1e")
+5. **Reply-to mismatch**: the Reply-To header contains a different address than the From header, especially if the Reply-To domain is unrelated to the claimed sender
+6. **Risky attachments**: files with extensions .exe, .scr, .bat, .cmd, .ps1, .vbs, .js, .msi, .jar, or password-protected .zip/.rar files
+7. **Suspicious link patterns**: URLs in the body that use URL shorteners, IP addresses instead of domains, or domains that mimic real brands with extra characters
+
+When a security threat is detected:
+- TRASH the email: add TRASH and `<PROCESSED_LABEL_ID>` labels, remove INBOX (and STARRED/IMPORTANT if present)
+- Apply the `Auto/Security-Threat` label
+- Add to a "Phishing/Malware Detected" section in the report with: sender, subject, which signals triggered detection, and the suspicious domain or attachment name
+- Also include in the combined attention email (Step 6) so the user is immediately aware of threats that bypassed Gmail's filters
+- Count as `security_threats_detected`
+
+**Exception**: Do NOT flag legitimate security alerts from real services (e.g., actual password reset from Google, real fraud alert from USAA). The key distinction is whether the email IS a security alert versus an email PRETENDING to be one. Check the sender domain against known legitimate domains before flagging.
 
 **IMPORTANT:** Process threads in batches of 10-20 with brief pauses between batches to avoid rate limits.
 
@@ -644,6 +666,8 @@ rm -f "$TMPFILE"
 
 11. **Errors** - list any errors encountered, or "None"
 
+Run metrics (timestamps, counts, elapsed time) are appended to `~/.cache/gmail-assistant/run-metrics.jsonl` at the end of each run for historical tracking.
+
 12. **Classification Staleness Footer** (new):
 
 ```html
@@ -659,19 +683,36 @@ The date comes from the `<!-- CLASSIFICATION_LAST_REVIEWED: YYYY-MM-DD -->` comm
 
 ### Step 8: Post-Run Cleanup
 
-1. **Save delta sync state:**
+1. **Append run metrics to JSONL log:**
+
+   Compute elapsed seconds from the start time recorded in Step 0.7:
+   ```bash
+   START=$(cat /tmp/gmail-assistant-start 2>/dev/null || echo 0)
+   NOW=$(date +%s)
+   ELAPSED=$((NOW - START))
+   ```
+
+   Then append a JSON record to `~/.cache/gmail-assistant/run-metrics.jsonl` (create the directory if needed):
+   ```bash
+   mkdir -p ~/.cache/gmail-assistant
+   echo "{\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"account\":\"<ACCOUNT_EMAIL>\",\"duration_seconds\":$ELAPSED,\"sync_mode\":\"<delta_or_full>\",\"emails_processed\":<TOTAL_COUNT>,\"promotions_trashed\":<N>,\"promotions_rescued\":<N>,\"social_trashed\":<N>,\"social_rescued\":<N>,\"newsletters_trashed\":<N>,\"newsletters_rescued\":<N>,\"primary_kept\":<N>,\"primary_archived\":<N>,\"primary_trashed\":<N>,\"primary_flagged\":<N>,\"urgent_count\":<N>,\"vip_overrides\":<N>,\"security_threats_detected\":<N>,\"drafts_generated\":<N>,\"pending_replies\":<N>,\"attention_email_sent\":<true_or_false>,\"errors\":[<QUOTED_ERROR_STRINGS_OR_EMPTY>],\"circuit_breaker_triggered\":<true_or_false>}" >> ~/.cache/gmail-assistant/run-metrics.jsonl
+   ```
+
+   Replace each `<placeholder>` with the actual counter values tracked throughout the run. For `errors`, use a JSON array of quoted strings (e.g., `["Rate limit on batch 3", "Thread abc123 skipped"]`), or `[]` if no errors occurred.
+
+2. **Save delta sync state:**
    ```bash
    mkdir -p ~/.cache/gmail-assistant
    echo "<LATEST_HISTORY_ID>" > ~/.cache/gmail-assistant/last-history-id
    ```
    The `historyId` comes from the most recent `messages.get` or `threads.get` response during the run.
 
-2. **Clean up temp files:**
+3. **Clean up temp files:**
    ```bash
    rm -f /tmp/gmail-assistant-*.txt
    ```
 
-3. **Report elapsed time** in the output summary.
+4. **Report elapsed time** in the output summary.
 
 ## Safety Rules (CRITICAL)
 

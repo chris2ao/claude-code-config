@@ -82,3 +82,12 @@ At the beginning of each session, if the user describes a task related to previo
 ## Save During, Not After
 
 Save memories continuously throughout the session as events occur. Do not wait until session end, as hard kills skip exit hooks and lose unsaved context.
+
+## Knowledge Graph Maintenance
+
+When you create, modify, or delete any Claude Code component (agent, skill, hook, command, script, or MCP server config), update the knowledge graph:
+- New component: create entity with type, file path, and description. Add relations to related entities.
+- Modified component: add observations reflecting the change.
+- Deleted component: delete the entity (which removes its relations).
+
+Run /Knowledge-Graph-Sync periodically (during wrap-up or config-sync) to catch drift.

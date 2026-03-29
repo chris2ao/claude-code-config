@@ -54,6 +54,19 @@ if [ "$tool_name" = "Agent" ]; then
     work_units=3
 fi
 
+# MCP tool calls that modify state count as significant work
+case "$tool_name" in
+    mcp__memory__create_entities|mcp__memory__create_relations|mcp__memory__delete_entities|mcp__memory__add_observations)
+        work_units=2
+        ;;
+    mcp__obsidian__create_vault_file|mcp__obsidian__patch_vault_file|mcp__obsidian__update_active_file)
+        work_units=1
+        ;;
+    mcp__github__create_pull_request|mcp__github__create_issue|mcp__github__push_files|mcp__github__create_or_update_file)
+        work_units=2
+        ;;
+esac
+
 # Edit and Write count if they target source-like files
 if [ "$tool_name" = "Edit" ] || [ "$tool_name" = "Write" ]; then
     # Extract file_path from tool_input JSON
@@ -63,9 +76,9 @@ if [ "$tool_name" = "Edit" ] || [ "$tool_name" = "Write" ]; then
         basename=$(basename "$file_path")
         ext="${basename##*.}"
 
-        # Skip pure documentation and data files
+        # Skip pure data files (but NOT markdown, which includes agents/skills/commands)
         case "$ext" in
-            mdx|txt|csv|log)
+            txt|csv|log)
                 exit 0
                 ;;
         esac
@@ -77,7 +90,7 @@ if [ "$tool_name" = "Edit" ] || [ "$tool_name" = "Write" ]; then
 
         # Count code files anywhere (not just hardcoded source paths)
         case "$ext" in
-            py|js|ts|tsx|jsx|rs|go|java|rb|sh|css|scss|html|vue|svelte|sql|c|cpp|h)
+            py|js|ts|tsx|jsx|rs|go|java|rb|sh|css|scss|html|vue|svelte|sql|c|cpp|h|md|mdx)
                 work_units=1
                 ;;
             json|yaml|yml|toml|ini|cfg)
@@ -131,16 +144,16 @@ sed -i '' "s/^edits=.*/edits=$edits/" "$state_file" 2>/dev/null || {
     echo "reminded=$reminded" >> "$state_file"
 }
 
-# Nudge at 5 work units, then every 10 after that
-threshold=5
+# Nudge at 3 work units, then every 8 after that
+threshold=3
 if [ "$reminded" -gt 0 ]; then
-    threshold=$(( 5 + reminded * 10 ))
+    threshold=$(( 3 + reminded * 8 ))
 fi
 
 if [ "$edits" -ge "$threshold" ]; then
     reminded=$((reminded + 1))
     sed -i '' "s/^reminded=.*/reminded=$reminded/" "$state_file" 2>/dev/null
-    echo "MEMORY REMINDER: You have accumulated $edits units of significant work this session without storing a vector memory. If you have completed any significant tasks, bug fixes, or architectural decisions, store them now using mcp__vector-memory__memory_store before continuing."
+    echo "MEMORY SAVE REQUIRED: You have $edits units of work without a vector memory save. Review what you have accomplished and store each significant item NOW using mcp__vector-memory__memory_store. Save criteria: (1) tasks completed, (2) decisions made, (3) bugs found or fixed, (4) gotchas or workarounds discovered, (5) errors and their solutions. Include project name as a tag. Do this before continuing with other work."
 fi
 
 exit 0
