@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 20 agents, 7 invocable skills, 23 learned skills, 13 scripts, 6 commands, 17 hooks, 7 MCP servers, and 38 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 24 agents, 8 invocable skills, 24 learned skills, 11 scripts, 6 commands, 11 hooks, 7 MCP servers, and 38 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -58,39 +58,48 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (20 files)
+### Agents (24 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
-**Core Agents** (14):
+**Core Agents** (13):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| `blog-post-orchestrator` | sonnet | Orchestrate blog post writing with research and MDX generation |
-| `changelog-writer` | haiku | Auto-generate CHANGELOG entries from git diffs |
-| `config-sync` | haiku | Detect config drift between local and git repo |
-| `context-health` | haiku | Monitor context window usage, suggest compaction points |
-| `deploy-verifier` | haiku | Post-deploy verification (build check, live site) |
-| `gmail-assistant` | sonnet | Daily Gmail inbox cleanup: content-aware classification, auto-labeling, VIP detection, follow-up tracking, and combined attention email |
-| `home-sync` | haiku | Harvest and sync config to backup repo |
-| `multi-repo-orchestrator` | haiku | Parallel git operations across all project repos |
-| `pre-commit-checker` | inherit | Pre-commit security and quality gate |
-| `session-analyzer` | sonnet | Extract actionable patterns from session transcripts |
-| `session-checkpoint` | haiku | Save and restore session context across compactions |
-| `skill-extractor` | sonnet | Extract instincts from transcripts (Homunculus v2) |
-| `sync-orchestrator` | haiku | Multi-repo config sync orchestration |
-| `wrap-up-orchestrator` | haiku | End-of-session wrap-up with docs, commits, pushes |
+| `changelog-writer` | haiku | Auto-generate CHANGELOG.md entries from git diffs and session context |
+| `config-sync` | haiku | Compare local Claude Code config against claude-code-config repo |
+| `context-health` | haiku | Monitor context window usage and suggest compaction points |
+| `deploy-verifier` | haiku | Captain agent: end-to-end deploy verification with parallel checks |
+| `gmail-assistant` | sonnet | Daily Gmail inbox cleanup: content-aware classification, auto-labeling, VIP detection, follow-up tracking |
+| `home-sync` | haiku | Harvest and sync config artifacts from all repos |
+| `multi-repo-orchestrator` | haiku | Captain agent: parallel git operations across all project repos |
+| `pre-commit-checker` | inherit | Unified pre-commit security and code quality gate |
+| `session-analyzer` | sonnet | Captain agent: parallel session transcript analysis with synthesis |
+| `session-checkpoint` | haiku | Lightweight mid-session state preservation before context compaction |
+| `skill-extractor` | sonnet | Captain agent: parallel instinct extraction from transcripts |
+| `sync-orchestrator` | haiku | Bidirectional config sync with security scanning |
+| `wrap-up-orchestrator` | haiku | Automated session wrap-up for multi-repo workflows |
 
 **Game Development Team** (6):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| `game-artist` | sonnet | Sprites, animations, CSS styling, canvas rendering, art direction |
-| `game-designer` | sonnet | Core loop, systems, balance, progression, game data |
-| `game-developer` | sonnet | Engine logic, state management, game loop, physics, AI |
+| `game-artist` | sonnet | Game visual artist: sprites, animations, CSS styling, canvas rendering |
+| `game-designer` | sonnet | Game mechanics designer: core loop, systems, balance, progression |
+| `game-developer` | sonnet | Game developer: engine logic, state management, game loop, physics, AI |
 | `game-director` | opus | Captain agent: orchestrates game development team |
-| `game-ux` | sonnet | Menus, HUD, player feedback, accessibility, controls |
-| `game-writer` | haiku | Story, dialogue, world-building, lore, tutorial text |
+| `game-ux` | sonnet | Game UX/UI designer: menus, HUD, player feedback, accessibility |
+| `game-writer` | haiku | Game writer: story, dialogue, world-building, lore, tutorial text |
+
+**Blog Production Team** (5):
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `blog-captain` | opus | Captain agent: orchestrates multi-agent blog post production pipeline |
+| `blog-editor` | sonnet | Senior blog editor: reviews posts for hooks, pacing, entertainment |
+| `blog-ux` | haiku | Blog UX/UI agent: build verification and structural analysis of MDX |
+| `blog-voice` | sonnet | Blog voice agent: maintains living voice profile, produces voice briefs |
+| `blog-writer` | sonnet | Blog post writer: drafts and revises MDX posts for CryptoFlex LLC |
 
 ### Superpowers Plugin Skills (14 skills + 1 agent)
 
@@ -115,12 +124,13 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (7 invocable + 23 learned)
+### Skills (8 invocable + 24 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
 | Skill | What It Does |
 |-------|-------------|
+| `/blog-post` | Multi-agent blog post production pipeline with research and MDX generation |
 | `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
 | `/game-dev` | Game development team orchestration and project automation |
 | `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
@@ -129,7 +139,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/sync` | Configuration sync across repos, mirrors local state to git backups |
 | `/wrap-up` | 12-step end-of-session agent: pulls repos, updates docs, extracts skills, commits, pushes |
 
-**Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 23 unique skills organized into 6 categories:
+**Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 24 unique skills organized into 6 categories:
 
 | Category | Count | Examples |
 |----------|-------|---------|
@@ -142,24 +152,22 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (13 files)
+### Scripts (11 files)
 
 Automation scripts in `scripts/` for common operations:
 
 | Script | Purpose |
 |--------|---------|
 | `blog-inventory.sh` | Blog post inventory and metadata |
+| `blog-voice-diff.sh` | Blog voice profile updates and versioning |
 | `cleanup-session.sh` | Clean up session artifacts |
 | `config-diff.sh` | Compare local config against git repo |
-| `context-health.sh` | Context window health check |
 | `env.sh` | Shared environment variables for repo paths and tool paths |
 | `git-stats.sh` | Git statistics across repos |
 | `memory-maintenance.py` | Memory database maintenance and cleanup |
-| `memory-toggle.ps1` | Windows: switch vector-memory between SSE (Mac LAN server) and local stdio |
-| `sync-status.sh` | Syncthing sync validation: folder status, connections, and conflicts |
+| `sync-status.sh` | Syncthing sync validation: folder status and connections |
 | `sync-survey.sh` | Config sync status survey |
 | `validate-mdx.sh` | Validate MDX blog post files |
-| `windows-sync-setup-prompt.md` | Windows sync and memory setup guide |
 | `wrap-up-survey.sh` | Multi-repo wrap-up data collection |
 
 ## MCP Servers (7 configured)
