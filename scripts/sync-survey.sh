@@ -116,78 +116,90 @@ get_repo_status() {
 
 # compare_file_lists
 # Takes two JSON arrays (as temp files) and produces diff
-# Uses associative arrays for O(n) comparison
+# Uses temp files for bash 3 compatibility (no associative arrays)
 compare_locations() {
     local live_files="$1"
     local target_files="$2"
     local target_name="$3"
 
-    # Build associative arrays from file lists
-    # Parse JSON arrays with grep/sed (no jq dependency)
-    declare -A live_hashes target_hashes
-    declare -a all_paths
+    local tmp_live=$(mktemp)
+    local tmp_target=$(mktemp)
 
-    # Extract path:hash pairs from live
-    while IFS='|' read -r path hash; do
+    # Extract path|hash pairs from live
+    echo "$live_files" | grep -o '"path":"[^"]*","hash":"[^"]*"' | sed 's/"path":"//;s/","hash":"/|/;s/"$//' | sort > "$tmp_live"
+
+    # Extract path|hash pairs from target
+    echo "$target_files" | grep -o '"path":"[^"]*","hash":"[^"]*"' | sed 's/"path":"//;s/","hash":"/|/;s/"$//' | sort > "$tmp_target"
+
+    # Extract just paths for set operations
+    local tmp_live_paths=$(mktemp)
+    local tmp_target_paths=$(mktemp)
+    cut -d'|' -f1 "$tmp_live" | sort > "$tmp_live_paths"
+    cut -d'|' -f1 "$tmp_target" | sort > "$tmp_target_paths"
+
+    # New in live (paths in live but not target)
+    local tmp_new_live=$(mktemp)
+    comm -23 "$tmp_live_paths" "$tmp_target_paths" > "$tmp_new_live"
+
+    # New in target (paths in target but not live)
+    local tmp_new_target=$(mktemp)
+    comm -13 "$tmp_live_paths" "$tmp_target_paths" > "$tmp_new_target"
+
+    # Common paths (in both)
+    local tmp_common=$(mktemp)
+    comm -12 "$tmp_live_paths" "$tmp_target_paths" > "$tmp_common"
+
+    # For common paths, check if hashes diverge
+    local tmp_diverged=$(mktemp)
+    local tmp_identical=$(mktemp)
+    while IFS= read -r path; do
         [[ -z "$path" ]] && continue
-        live_hashes["$path"]="$hash"
-        all_paths+=("$path")
-    done < <(echo "$live_files" | grep -o '"path":"[^"]*","hash":"[^"]*"' | sed 's/"path":"//;s/","hash":"/|/;s/"$//')
-
-    # Extract path:hash pairs from target
-    while IFS='|' read -r path hash; do
-        [[ -z "$path" ]] && continue
-        target_hashes["$path"]="$hash"
-        # Add to all_paths if not already present
-        if [[ -z "${live_hashes[$path]+x}" ]]; then
-            all_paths+=("$path")
-        fi
-    done < <(echo "$target_files" | grep -o '"path":"[^"]*","hash":"[^"]*"' | sed 's/"path":"//;s/","hash":"/|/;s/"$//')
-
-    # Classify each path
-    local new_in_live=() new_in_target=() diverged=() identical=()
-
-    for path in "${all_paths[@]}"; do
-        local in_live="${live_hashes[$path]+yes}"
-        local in_target="${target_hashes[$path]+yes}"
-
-        if [[ "$in_live" == "yes" && "$in_target" != "yes" ]]; then
-            new_in_live+=("$path")
-        elif [[ "$in_live" != "yes" && "$in_target" == "yes" ]]; then
-            new_in_target+=("$path")
-        elif [[ "${live_hashes[$path]}" != "${target_hashes[$path]}" ]]; then
-            diverged+=("$path")
+        local live_hash=$(grep "^${path}|" "$tmp_live" | head -1 | cut -d'|' -f2)
+        local target_hash=$(grep "^${path}|" "$tmp_target" | head -1 | cut -d'|' -f2)
+        if [[ "$live_hash" != "$target_hash" ]]; then
+            echo "$path" >> "$tmp_diverged"
         else
-            identical+=("$path")
+            echo "$path" >> "$tmp_identical"
         fi
-    done
+    done < "$tmp_common"
 
     # Output as JSON
     printf '"new_in_live":['
     local first=true
-    for p in "${new_in_live[@]+"${new_in_live[@]}"}"; do
+    while IFS= read -r p; do
+        [[ -z "$p" ]] && continue
         [[ "$first" == true ]] && first=false || printf ','
         printf '"%s"' "$(json_escape "$p")"
-    done
+    done < "$tmp_new_live"
     printf '],"new_in_%s":[' "$target_name"
     first=true
-    for p in "${new_in_target[@]+"${new_in_target[@]}"}"; do
+    while IFS= read -r p; do
+        [[ -z "$p" ]] && continue
         [[ "$first" == true ]] && first=false || printf ','
         printf '"%s"' "$(json_escape "$p")"
-    done
+    done < "$tmp_new_target"
     printf '],"diverged":['
     first=true
-    for p in "${diverged[@]+"${diverged[@]}"}"; do
-        [[ "$first" == true ]] && first=false || printf ','
-        printf '"%s"' "$(json_escape "$p")"
-    done
+    if [[ -f "$tmp_diverged" ]]; then
+        while IFS= read -r p; do
+            [[ -z "$p" ]] && continue
+            [[ "$first" == true ]] && first=false || printf ','
+            printf '"%s"' "$(json_escape "$p")"
+        done < "$tmp_diverged"
+    fi
     printf '],"identical":['
     first=true
-    for p in "${identical[@]+"${identical[@]}"}"; do
-        [[ "$first" == true ]] && first=false || printf ','
-        printf '"%s"' "$(json_escape "$p")"
-    done
+    if [[ -f "$tmp_identical" ]]; then
+        while IFS= read -r p; do
+            [[ -z "$p" ]] && continue
+            [[ "$first" == true ]] && first=false || printf ','
+            printf '"%s"' "$(json_escape "$p")"
+        done < "$tmp_identical"
+    fi
     printf ']'
+
+    # Cleanup
+    rm -f "$tmp_live" "$tmp_target" "$tmp_live_paths" "$tmp_target_paths" "$tmp_new_live" "$tmp_new_target" "$tmp_common" "$tmp_diverged" "$tmp_identical"
 }
 
 # ================================================================

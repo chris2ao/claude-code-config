@@ -66,6 +66,7 @@ what would happen without it, how does this connect to the bigger picture.
 - Apologizing or hedging ("I'm not an expert, but..." just explain the thing)
 - Lists of links without context (every link should earn its place with explanation)
 - Em dashes (NEVER, use commas, periods, colons, or parentheses instead)
+- Markdown content inside code fences. Tables, headers, lists, and bold text must always render as native markdown. Code fences are exclusively for actual code (bash, JSON, TypeScript, YAML, XML, config files, shell output). Sample reports, draft summaries, and comparison tables should be written as rendered markdown, never wrapped in triple backticks.
 
 ## Example Opening Paragraphs (match the style, DO NOT copy)
 

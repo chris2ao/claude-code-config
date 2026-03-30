@@ -76,7 +76,7 @@ parse_tags() {
 
     # Split by comma
     IFS=',' read -ra tags <<< "$tags_str"
-    for tag in "${tags[@]}"; do
+    for tag in "${tags[@]:-}"; do
         # Strip whitespace first, then quotes
         tag="$(echo "$tag" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
         tag="${tag#\"}"
@@ -114,7 +114,7 @@ echo "  \"post_count\": $post_count,"
 echo "  \"posts\": ["
 
 # Process each MDX file
-declare -A all_tags_map
+all_tags_list=""
 total_word_count=0
 latest_date=""
 latest_post=""
@@ -150,14 +150,14 @@ while IFS= read -r file; do
 
     # Collect unique tags
     IFS=',' read -ra tag_arr <<< "$tags_raw"
-    for tag in "${tag_arr[@]}"; do
+    for tag in "${tag_arr[@]:-}"; do
         tag="$(echo "$tag" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
         tag="${tag#\"}"
         tag="${tag%\"}"
         tag="${tag#\'}"
         tag="${tag%\'}"
         if [[ -n "$tag" ]]; then
-            all_tags_map["$tag"]=1
+            all_tags_list="${all_tags_list}${tag}"$'\n'
         fi
     done
 
@@ -199,7 +199,7 @@ if ! $MINIMAL; then
     # Output all tags sorted
     echo "    \"all_tags\": ["
     first_tag=true
-    for tag in $(printf '%s\n' "${!all_tags_map[@]}" | sort); do
+    for tag in $(echo "$all_tags_list" | sort -u | grep -v '^$'); do
         if ! $first_tag; then
             echo ","
         fi
