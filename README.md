@@ -92,6 +92,29 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `game-ux` | sonnet | Menus, HUD, player feedback, accessibility, controls |
 | `game-writer` | haiku | Story, dialogue, world-building, lore, tutorial text |
 
+### Superpowers Plugin Skills (14 skills + 1 agent)
+
+The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) provides a structured development workflow. Skills activate automatically based on context. Standard flow: brainstorming -> using-git-worktrees -> writing-plans -> subagent-driven-development -> test-driven-development -> requesting-code-review -> finishing-a-development-branch.
+
+| Skill | Trigger | What It Does |
+|-------|---------|-------------|
+| `using-superpowers` | Auto (session start) | Gateway: explains how to find and invoke all other skills |
+| `brainstorming` | Before creative work | Socratic design refinement, saves spec to `docs/superpowers/specs/` |
+| `writing-plans` | After brainstorming | Breaks designs into 2-5 min tasks with file paths, code, and verification |
+| `executing-plans` | Offline plan execution | Loads plan, executes tasks with verification checkpoints |
+| `subagent-driven-development` | In-session plan execution | One subagent per task with two-stage review |
+| `test-driven-development` | Before production code | RED-GREEN-REFACTOR cycle |
+| `systematic-debugging` | Bug encountered | 4-phase root cause: investigate, analyze, hypothesize, implement |
+| `verification-before-completion` | Before claiming done | Evidence-before-claims verification |
+| `using-git-worktrees` | After design approval | Isolated workspace with .gitignore verification |
+| `finishing-a-development-branch` | After implementation | Merge/PR/keep/discard options, worktree cleanup |
+| `requesting-code-review` | After completing tasks | Dispatches code-reviewer agent |
+| `receiving-code-review` | Receiving feedback | Technical evaluation before implementing changes |
+| `dispatching-parallel-agents` | 2+ independent problems | Concurrent subagents for independent tasks |
+| `writing-skills` | Creating new skills | TDD methodology for skill authoring |
+
+Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
+
 ### Skills (7 invocable + 23 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
