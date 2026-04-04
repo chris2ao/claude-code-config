@@ -16,12 +16,14 @@ Process session summary and survey data to:
 2. Update README.md journey narrative if needed
 3. Generate MEMORY.md delta (cannot write directly due to sandbox)
 4. Commit and push changes across all repositories
-5. Return structured JSON with results
+5. Echo `component_changes` from survey input into output JSON (pass-through for main session KG processing)
+6. Return structured JSON with results
 
 ## Input Expected
 
 - **Session summary:** User-provided 2-5 sentence description of what happened
 - **Survey JSON:** Output from `wrap-up-survey.sh` (optional, provides file change context)
+- **Component changes:** Array of recently modified Claude Code component files (from survey's `component_changes` field)
 
 ## Repository Configuration
 
@@ -141,6 +143,7 @@ Return JSON:
       "pushed": true
     }
   ],
+  "component_changes": [],
   "errors": [],
   "summary": "Updated 2 repositories, 3 files changed, ready for next session"
 }
@@ -184,3 +187,4 @@ Before returning:
 - [ ] JSON output is valid and complete
 - [ ] Errors logged if any occurred
 - [ ] claude-code-config pushed to `master` not `main`
+- [ ] component_changes echoed from survey input to output JSON

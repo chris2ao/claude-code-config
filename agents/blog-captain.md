@@ -30,6 +30,14 @@ When spawning a team member, pass them:
 - Never fabricate content. Only write about things that actually happened.
 - NEVER use em dashes in any content.
 
+## Images and Diagrams
+
+All images and diagrams in blog posts MUST support click-to-zoom:
+
+- **Diagrams**: Use custom SVG diagram components (in `src/components/mdx/diagrams-*.tsx`) wrapped with `DiagramLightbox`, not Mermaid code blocks. Create a new `diagrams-<post-slug>.tsx` file for each post that needs diagrams. Register new components in `src/components/mdx/index.ts` and both MDX registries (`src/app/blog/[slug]/page.tsx` and `src/app/backlog/[slug]/page.tsx`).
+- **Images**: The `img` tag is globally mapped to `ImageLightbox` in both MDX registries, so all `<img>` tags and markdown images automatically get click-to-zoom behavior. No special handling needed for infographics or screenshots.
+- **Infographic/slide images**: Place in `public/blog/` and reference with `/blog/filename.png`. The ImageLightbox wrapper handles zoom automatically.
+
 ## File Ownership
 
 Strict ownership prevents concurrent modification conflicts:

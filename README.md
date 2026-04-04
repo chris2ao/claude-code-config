@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 24 agents, 8 invocable skills, 24 learned skills, 11 scripts, 6 commands, 11 hooks, 7 MCP servers, and 38 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 26 agents, 13 invocable skills, 42 learned skills, 10 scripts, 7 commands, 6 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -49,7 +49,6 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `core/security.md` | Pre-commit security checklist, secret management protocol |
 | `development/git-workflow.md` | Conventional commits, PR workflow, feature implementation |
 | `development/patterns.md` | Repository pattern, API response envelopes, skeleton projects |
-| `development/plan-docs.md` | Plan output location and format standards |
 | `development/testing.md` | TDD workflow, 80% minimum coverage |
 | `operations/hooks.md` | Hook types, file protection, context preservation |
 | `operations/performance.md` | Model selection (Haiku/Sonnet/Opus), cost optimization |
@@ -58,88 +57,40 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (24 files)
+### Agents (26 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
-**Core Agents** (13):
-
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| `changelog-writer` | haiku | Auto-generate CHANGELOG.md entries from git diffs and session context |
-| `config-sync` | haiku | Compare local Claude Code config against claude-code-config repo |
-| `context-health` | haiku | Monitor context window usage and suggest compaction points |
-| `deploy-verifier` | haiku | Captain agent: end-to-end deploy verification with parallel checks |
-| `gmail-assistant` | sonnet | Daily Gmail inbox cleanup: content-aware classification, auto-labeling, VIP detection, follow-up tracking |
-| `home-sync` | haiku | Harvest and sync config artifacts from all repos |
-| `multi-repo-orchestrator` | haiku | Captain agent: parallel git operations across all project repos |
-| `pre-commit-checker` | inherit | Unified pre-commit security and code quality gate |
-| `session-analyzer` | sonnet | Captain agent: parallel session transcript analysis with synthesis |
-| `session-checkpoint` | haiku | Lightweight mid-session state preservation before context compaction |
-| `skill-extractor` | sonnet | Captain agent: parallel instinct extraction from transcripts |
-| `sync-orchestrator` | haiku | Bidirectional config sync with security scanning |
-| `wrap-up-orchestrator` | haiku | Automated session wrap-up for multi-repo workflows |
+| `blog-post-orchestrator` | sonnet | Orchestrate blog post writing with research and MDX generation |
+| `changelog-writer` | haiku | Auto-generate CHANGELOG entries from git diffs |
+| `config-sync` | haiku | Detect config drift between local and git repo |
+| `context-health` | haiku | Monitor context window usage, suggest compaction points |
+| `deploy-verifier` | haiku | Post-deploy verification (build check, live site) |
+| `home-sync` | haiku | Harvest and sync config to backup repo |
+| `multi-repo-orchestrator` | haiku | Parallel git operations across all project repos |
+| `pre-commit-checker` | haiku | Pre-commit security and quality gate |
+| `session-analyzer` | sonnet | Extract actionable patterns from session transcripts |
+| `session-checkpoint` | sonnet | Save and restore session context across compactions |
+| `skill-extractor` | sonnet | Extract instincts from transcripts (Homunculus v2) |
+| `sync-orchestrator` | haiku | Multi-repo config sync orchestration |
+| `wrap-up-orchestrator` | haiku | End-of-session wrap-up with docs, commits, pushes |
 
-**Game Development Team** (6):
-
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| `game-artist` | sonnet | Game visual artist: sprites, animations, CSS styling, canvas rendering |
-| `game-designer` | sonnet | Game mechanics designer: core loop, systems, balance, progression |
-| `game-developer` | sonnet | Game developer: engine logic, state management, game loop, physics, AI |
-| `game-director` | opus | Captain agent: orchestrates game development team |
-| `game-ux` | sonnet | Game UX/UI designer: menus, HUD, player feedback, accessibility |
-| `game-writer` | haiku | Game writer: story, dialogue, world-building, lore, tutorial text |
-
-**Blog Production Team** (5):
-
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| `blog-captain` | opus | Captain agent: orchestrates multi-agent blog post production pipeline |
-| `blog-editor` | sonnet | Senior blog editor: reviews posts for hooks, pacing, entertainment |
-| `blog-ux` | haiku | Blog UX/UI agent: build verification and structural analysis of MDX |
-| `blog-voice` | sonnet | Blog voice agent: maintains living voice profile, produces voice briefs |
-| `blog-writer` | sonnet | Blog post writer: drafts and revises MDX posts for CryptoFlex LLC |
-
-### Superpowers Plugin Skills (14 skills + 1 agent)
-
-The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) provides a structured development workflow. Skills activate automatically based on context. Standard flow: brainstorming -> using-git-worktrees -> writing-plans -> subagent-driven-development -> test-driven-development -> requesting-code-review -> finishing-a-development-branch.
-
-| Skill | Trigger | What It Does |
-|-------|---------|-------------|
-| `using-superpowers` | Auto (session start) | Gateway: explains how to find and invoke all other skills |
-| `brainstorming` | Before creative work | Socratic design refinement, saves spec to `docs/superpowers/specs/` |
-| `writing-plans` | After brainstorming | Breaks designs into 2-5 min tasks with file paths, code, and verification |
-| `executing-plans` | Offline plan execution | Loads plan, executes tasks with verification checkpoints |
-| `subagent-driven-development` | In-session plan execution | One subagent per task with two-stage review |
-| `test-driven-development` | Before production code | RED-GREEN-REFACTOR cycle |
-| `systematic-debugging` | Bug encountered | 4-phase root cause: investigate, analyze, hypothesize, implement |
-| `verification-before-completion` | Before claiming done | Evidence-before-claims verification |
-| `using-git-worktrees` | After design approval | Isolated workspace with .gitignore verification |
-| `finishing-a-development-branch` | After implementation | Merge/PR/keep/discard options, worktree cleanup |
-| `requesting-code-review` | After completing tasks | Dispatches code-reviewer agent |
-| `receiving-code-review` | Receiving feedback | Technical evaluation before implementing changes |
-| `dispatching-parallel-agents` | 2+ independent problems | Concurrent subagents for independent tasks |
-| `writing-skills` | Creating new skills | TDD methodology for skill authoring |
-
-Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
-
-### Skills (8 invocable + 24 learned)
+### Skills (13 invocable + 42 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
 | Skill | What It Does |
 |-------|-------------|
-| `/blog-post` | Multi-agent blog post production pipeline with research and MDX generation |
-| `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
-| `/game-dev` | Game development team orchestration and project automation |
-| `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
+| `/wrap-up` | 12-step end-of-session agent: pulls repos, updates docs, extracts skills, commits, pushes |
+| `/blog-post` | Interactive blog writing agent with research and MDX generation |
 | `/multi-repo-status` | Git status dashboard across all project repos in parallel |
 | `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks |
 | `/sync` | Configuration sync across repos, mirrors local state to git backups |
-| `/wrap-up` | 12-step end-of-session agent: pulls repos, updates docs, extracts skills, commits, pushes |
+| `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
 
-**Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 24 unique skills organized into 6 categories:
+**Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 42 unique skills organized into 6 categories:
 
 | Category | Count | Examples |
 |----------|-------|---------|
@@ -152,23 +103,22 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (11 files)
+### Scripts (10 files)
 
 Automation scripts in `scripts/` for common operations:
 
 | Script | Purpose |
 |--------|---------|
-| `blog-inventory.sh` | Blog post inventory and metadata |
-| `blog-voice-diff.sh` | Blog voice profile updates and versioning |
-| `cleanup-session.sh` | Clean up session artifacts |
-| `config-diff.sh` | Compare local config against git repo |
-| `env.sh` | Shared environment variables for repo paths and tool paths |
-| `git-stats.sh` | Git statistics across repos |
-| `memory-maintenance.py` | Memory database maintenance and cleanup |
-| `sync-status.sh` | Syncthing sync validation: folder status and connections |
-| `sync-survey.sh` | Config sync status survey |
-| `validate-mdx.sh` | Validate MDX blog post files |
 | `wrap-up-survey.sh` | Multi-repo wrap-up data collection |
+| `sync-survey.sh` | Config sync status survey |
+| `config-diff.sh` | Compare local config against git repo |
+| `context-health.sh` | Context window health check |
+| `blog-inventory.sh` | Blog post inventory and metadata |
+| `cleanup-session.sh` | Clean up session artifacts |
+| `git-stats.sh` | Git statistics across repos |
+| `validate-mdx.sh` | Validate MDX blog post files |
+| `env.sh` | Shared environment variables for repo paths and tool paths |
+| `memory-maintenance.py` | Memory database maintenance and cleanup |
 
 ## MCP Servers (7 configured)
 
@@ -216,39 +166,24 @@ cd mcp-servers/project-tools && npm install
 
 See [mcp-servers/README.md](./mcp-servers/README.md) for detailed configuration, JSON snippets, and troubleshooting.
 
-## Hooks (15 lifecycle hooks)
+## Hooks (6 lifecycle hooks)
 
-Hooks in `hooks/` are shell scripts (macOS/Linux) and PowerShell scripts (Windows) that fire automatically at different points in the Claude Code lifecycle.
-
-**macOS/Linux (.sh):**
+Hooks in `hooks/` are shell scripts that fire automatically at different points in the Claude Code lifecycle. Configure them in your project's `.claude/settings.local.json` using the template at `hooks/settings.local.json.template`.
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| `dispatch.sh` | Any | Cross-platform hook dispatcher (runs .sh or .ps1 based on OS) |
 | `file-guard.sh` | PreToolUse | Block Edit/Write on sensitive files (.env, .pem, credentials) |
 | `log-activity.sh` | PostToolUse | Log every tool execution with timestamps to activity log |
-| `memory-nudge.sh` | PostToolUse | Remind Claude to save context to vector memory after significant work |
+| `memory-nudge.sh` | PostToolUse | Remind Claude to save important context to vector memory |
 | `observe-homunculus.sh` | PostToolUse | Capture behavioral observations for the Homunculus learning system |
-| `pre-compact.sh` | PreToolUse | Save session state before context compaction |
 | `prompt-notify.sh` | Stop | Play notification sound when Claude finishes a response |
 | `save-session.sh` | SessionEnd | Archive full conversation transcript on session close |
-| `session-scratchpad.sh` | PostToolUse | Maintain in-flight session state for context recovery |
-
-**Windows (.ps1):**
-
-| Hook | Event | Purpose |
-|------|-------|---------|
-| `file-guard.ps1` | PreToolUse | Block Edit/Write on sensitive files (Windows port) |
-| `log-activity.ps1` | PostToolUse | Log tool executions (Windows port) |
-| `memory-nudge.ps1` | PostToolUse | Memory save reminders (Windows port) |
-| `observe-homunculus.ps1` | PostToolUse | Behavioral observations (Windows port) |
-| `prompt-notify.ps1` | Stop | Notification sound (Windows port) |
-| `save-session.ps1` | SessionEnd | Session archive (Windows port) |
 
 **Setup:**
 1. Copy `hooks/` to `~/.claude/hooks/` (or your project's `.claude/hooks/`)
 2. Make scripts executable: `chmod +x hooks/*.sh`
-3. Configure hooks in your project's `.claude/settings.local.json`
+3. Copy `hooks/settings.local.json.template` to `.claude/settings.local.json`
+4. Replace the `HOOK_COMMAND_*` placeholders with actual paths to your hook scripts
 
 ## Homunculus (Continuous Learning System)
 
@@ -256,9 +191,9 @@ The `homunculus/` directory contains the continuous learning system that extract
 
 ```
 homunculus/
-  identity.json              # User identity profile
+  identity.json.template    # User identity profile template
   instincts/
-    personal/                # 38 learned instincts (auto-extracted)
+    personal/                # 50 learned instincts (auto-extracted)
     inherited/.gitkeep       # Instincts shared from other users
   evolved/
     agents/.gitkeep          # Agents evolved from instinct clusters
@@ -272,7 +207,7 @@ homunculus/
 3. Instincts start at 0.4 confidence and increase with repeated evidence
 4. When 3+ instincts cluster in a domain, they can be graduated into learned skills
 
-Currently contains 38 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
+Currently contains 50 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
 
 ## Templates
 
@@ -297,14 +232,14 @@ This configuration supports both **macOS** and **Windows**:
 ```
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
-  agents/                        # 20 custom agent definitions
-  skills/                        # 8 invocable skills + 23 learned skills
-  commands/                      # 5 commands
-  scripts/                       # 13 automation scripts
-  hooks/                         # 15 lifecycle hooks (9 macOS/Linux + 6 Windows)
+  agents/                        # 26 custom agent definitions
+  skills/                        # 13 invocable skills + 42 learned skills
+  commands/                      # 7 commands
+  scripts/                       # 10 automation scripts
+  hooks/                         # 6 lifecycle hooks + settings template
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
-  homunculus/                    # Continuous learning system (38 instincts)
+  homunculus/                    # Continuous learning system (50 instincts)
   COMPLETE-GUIDE.md              # Comprehensive beginner walkthrough
 ```
 

@@ -196,6 +196,53 @@ printf '    "todo_count":%d,\n' "$TODO_COUNT"
 printf '    "activity_log_lines":%d\n' "$ACTIVITY_LOG_LINES"
 printf '  },\n'
 
+# Component change detection
+MARKER="$HOME/.claude/.last-wrap-up-timestamp"
+printf '  "component_changes":[\n'
+
+COMP_FIRST=true
+if [[ -f "$MARKER" ]]; then
+    for comp_dir_type in "agents|Agent" "skills|Skill" "hooks|Hook" "commands|Command" "scripts|Script"; do
+        dir="${comp_dir_type%%|*}"
+        type="${comp_dir_type#*|}"
+        comp_path="$HOME/.claude/$dir"
+        [[ -d "$comp_path" ]] || continue
+
+        while IFS= read -r filepath; do
+            [[ -z "$filepath" ]] && continue
+            # For skills, use parent dir name (e.g., wrap-up/SKILL.md -> wrap-up)
+            if [[ "$type" == "Skill" ]]; then
+                fname=$(basename "$(dirname "$filepath")")
+            else
+                fname=$(basename "$filepath" | sed 's/\.[^.]*$//')
+            fi
+            if [[ "$COMP_FIRST" == true ]]; then
+                COMP_FIRST=false
+            else
+                printf ',\n'
+            fi
+            printf '    {"path":"%s","type":"%s","name":"%s"}' \
+                "$(json_escape "$filepath")" "$type" "$(json_escape "$fname")"
+        done < <(find "$comp_path" -maxdepth 2 -newer "$MARKER" -type f \
+                    \( -name "*.sh" -o -name "*.md" -o -name "*.py" \) 2>/dev/null)
+    done
+fi
+
+printf '\n  ],\n'
+
+# Config drift detection
+DRIFT_COUNT=0
+CONFIG_REPO="${CLAUDE_CONFIG:-$HOME/GitProjects/claude-code-config}"
+for check_dir in agents skills hooks commands scripts rules; do
+    if [[ -d "$HOME/.claude/$check_dir" ]] && [[ -d "$CONFIG_REPO/$check_dir" ]]; then
+        dir_drift=$(diff -rq "$HOME/.claude/$check_dir" "$CONFIG_REPO/$check_dir" 2>/dev/null | wc -l) || true
+        DRIFT_COUNT=$((DRIFT_COUNT + dir_drift))
+    fi
+done
+
+printf '  "config_drift":{"detected":%s,"file_count":%d},\n' \
+    "$( [[ $DRIFT_COUNT -gt 0 ]] && echo true || echo false )" "$DRIFT_COUNT"
+
 # Health checks (computed from repo data)
 printf '  "health_checks":{\n'
 printf '    "all_repos_clean":%s,\n' "$ALL_CLEAN"
