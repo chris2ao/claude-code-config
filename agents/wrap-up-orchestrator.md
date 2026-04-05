@@ -1,7 +1,7 @@
 ---
 platform: portable
 description: "Automated session wrap-up for multi-repo workflows"
-model: haiku
+model: sonnet
 tools: [Read, Edit, Write, Bash]
 ---
 
@@ -27,18 +27,20 @@ Process session summary and survey data to:
 
 ## Repository Configuration
 
-| Repo | Path | Branch |
+CRITICAL: Always use the paths provided in the survey JSON input, not the fallback table below. The survey contains the actual paths for the current machine. The table below is only a fallback if no survey is provided.
+
+| Repo | Fallback Path | Branch |
 |------|------|--------|
-| CJClaude_1 | `$HOME/GitProjects/CJClaude_1` | main |
-| CJClaudin_Mac | `$HOME/GitProjects/CJClaudin_Mac` | main |
-| CJClaudin_home | `$HOME/GitProjects/CJClaudin_home` | main |
-| cryptoflexllc | `$HOME/GitProjects/cryptoflexllc` | main |
-| cryptoflex-ops | `$HOME/GitProjects/cryptoflex-ops` | main |
-| claude-code-config | `$HOME/GitProjects/claude-code-config` | **master** (NOT main) |
-| Openclaw_MissionControl | `$HOME/GitProjects/Openclaw_MissionControl` | main |
-| JClaw_Config | `$HOME/GitProjects/JClaw_Config` | main |
-| Third-Conflict | `$HOME/GitProjects/Third-Conflict` | main |
-| Cann-Cann | `$HOME/GitProjects/Cann-Cann` | main |
+| CJClaude_1 | `/c/ClaudeProjects/CJClaude_1` | main |
+| CJClaudin_Mac | `/c/ClaudeProjects/CJClaudin_Mac` | main |
+| CJClaudin_home | `/c/ClaudeProjects/CJClaudin_home` | main |
+| cryptoflexllc | `/c/ClaudeProjects/cryptoflexllc` | main |
+| cryptoflex-ops | `/c/ClaudeProjects/cryptoflex-ops` | main |
+| claude-code-config | `/c/ClaudeProjects/claude-code-config` | **master** (NOT main) |
+| Openclaw_MissionControl | `/c/ClaudeProjects/Openclaw_MissionControl` | main |
+| JClaw_Config | `/c/ClaudeProjects/JClaw_Config` | main |
+| Third-Conflict | `/c/ClaudeProjects/Third-Conflict` | main |
+| Cann-Cann | `/c/ClaudeProjects/Cann-Cann` | main |
 
 ## Workflow
 
@@ -84,10 +86,13 @@ CRITICAL: Commit and push ALL repositories that have uncommitted changes, not ju
 
 For each repository with changes:
 
-1. Stage ALL files: `git add -A`
-2. Commit with conventional commit format (inspect the diff to write an accurate message)
-3. Push to remote
-4. If a repo has only pre-existing changes (not from this session), still commit them with an appropriate message describing what the changes contain
+1. **Check for untracked build artifacts.** Before staging, run `git status` and review untracked files. If any look like build artifacts (compiled output, PDFs generated from source, intermediate HTML files, cache files, review/audit docs), check whether they should be added to `.gitignore` instead of committed. Add gitignore rules for artifact patterns, then continue.
+2. **Stage ALL modified and untracked files:** Run `git add -A` to stage everything. Do NOT cherry-pick individual files.
+3. **Verify staging is complete.** Run `git status` after staging. If ANY modified or untracked files remain unstaged (other than gitignored files), stage them before committing. Every file shown in the pre-survey as modified or untracked must either be staged or gitignored.
+4. Commit with conventional commit format (inspect the diff to write an accurate message).
+5. Push to remote.
+6. **Verify push succeeded.** Run `git status` one final time. If the repo still shows uncommitted changes, something went wrong. Log the error.
+7. If a repo has only pre-existing changes (not from this session), still commit them with an appropriate message describing what the changes contain.
 
 **Commit message template:**
 ```
@@ -184,6 +189,9 @@ Before returning:
 - [ ] MEMORY delta is concise and actionable
 - [ ] All commit messages have factual body
 - [ ] All commits pushed successfully
+- [ ] Every dirty repo from the survey is now clean (verified with `git status`)
+- [ ] No modified files were left uncommitted (CHANGELOG, settings, .gitignore, etc.)
+- [ ] Untracked build artifacts were gitignored, not committed
 - [ ] JSON output is valid and complete
 - [ ] Errors logged if any occurred
 - [ ] claude-code-config pushed to `master` not `main`

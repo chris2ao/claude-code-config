@@ -21,7 +21,7 @@ Ask the user (use AskUserQuestion):
 
 After getting user answers, spawn a Task agent:
 - **subagent_type:** general-purpose
-- **model:** haiku
+- **model:** sonnet
 - **name:** wrap-up-orchestrator
 
 Pass to the agent:

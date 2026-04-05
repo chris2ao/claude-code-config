@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 27 agents, 13 invocable skills, 42 learned skills, 11 scripts, 7 commands, 17 hooks, 7 MCP servers, and 38 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 27 agents, 13 invocable skills, 42 learned skills, 15 scripts, 7 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -160,7 +160,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (10 files)
+### Scripts (15 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -168,14 +168,19 @@ Automation scripts in `scripts/` for common operations:
 |--------|---------|
 | `wrap-up-survey.sh` | Multi-repo wrap-up data collection |
 | `sync-survey.sh` | Config sync status survey |
+| `sync-status.sh` | Quick sync status check across repos |
 | `config-diff.sh` | Compare local config against git repo |
 | `context-health.sh` | Context window health check |
 | `blog-inventory.sh` | Blog post inventory and metadata |
+| `blog-voice-diff.sh` | Compare blog post voice against style guide |
 | `cleanup-session.sh` | Clean up session artifacts |
 | `git-stats.sh` | Git statistics across repos |
 | `validate-mdx.sh` | Validate MDX blog post files |
 | `env.sh` | Shared environment variables for repo paths and tool paths |
 | `memory-maintenance.py` | Memory database maintenance and cleanup |
+| `promote-evolved.sh` | Promote evolved agents, skills, and commands to live config |
+| `bridge-launcher.sh` | Launch the OpenClaw bridge server |
+| `memory-toggle.ps1` | Toggle vector memory MCP server on and off (Windows) |
 
 ## MCP Servers (7 configured)
 
@@ -235,8 +240,11 @@ Hooks in `hooks/` are shell scripts that fire automatically at different points 
 | `memory-checkpoint.sh` | Stop | Structured end-of-session memory checklist across 5 categories |
 | `memory-nudge.sh` | PostToolUse | Remind Claude to save context to vector memory after significant work |
 | `observe-homunculus.sh` | PostToolUse | Capture behavioral observations for the Homunculus learning system |
+| `session-scratchpad.sh` | PostToolUse | Write session state to scratchpad for context recovery |
+| `pre-compact.sh` | PreCompact | Preserve session context before compaction |
 | `prompt-notify.sh` | Stop | Play notification sound when Claude finishes a response |
 | `save-session.sh` | SessionEnd | Archive full conversation transcript on session close |
+| `dispatch.sh` | Multiple | Central dispatcher that routes hook events to other hooks |
 
 **Setup:**
 1. Copy `hooks/` to `~/.claude/hooks/` (or your project's `.claude/hooks/`)
@@ -294,7 +302,7 @@ claude-code-config/
   agents/                        # 27 custom agent definitions
   skills/                        # 13 invocable skills + 42 learned skills
   commands/                      # 7 commands
-  scripts/                       # 11 automation scripts
+  scripts/                       # 15 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
