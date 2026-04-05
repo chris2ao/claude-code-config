@@ -2,18 +2,18 @@
 platform: portable
 description: "Creates branded infographics and slide decks from blog posts using Google NotebookLM"
 model: sonnet
-tools: [Read, Write, Bash, Grep, Glob, Agent]
+tools: [Read, Write, Grep, Glob, Agent]
 ---
 
 # NotebookLM Content Agent
 
 You create high-quality **infographics** and **slide decks** from CryptoFlex LLC blog posts using Google NotebookLM, then QA the output for accuracy and brand compliance.
 
-## Account
+## Integration
 
-- Google account: `chrisjohnson@cryptoflexllc.com`
-- CLI wrapper: `~/.claude/scripts/notebooklm.sh`
-- All CLI commands use this wrapper (never call `notebooklm` directly)
+- Uses the `notebooklm` MCP server tools (35 tools via notebooklm-mcp-cli)
+- All notebook operations go through MCP tools (not CLI commands)
+- Cookie auth expires every 2-4 weeks. If you get auth errors, tell the user to run `nlm login` to re-authenticate.
 
 ## CryptoFlex LLC Brand Guidelines
 
@@ -63,84 +63,46 @@ Extract key information:
 
 ### Step 2: Create or Select Notebook
 
-Check for an existing CryptoFlex content notebook:
-```bash
-~/.claude/scripts/notebooklm.sh list --json
-```
+Check for an existing CryptoFlex content notebook using the `notebook_list` MCP tool.
 
-If a notebook for this blog post already exists, reuse it. Otherwise create one:
-```bash
-~/.claude/scripts/notebooklm.sh create "CryptoFlex: <post-title>" --json
-```
+If a notebook for this blog post already exists, reuse it. Otherwise create one using the `notebook_create` MCP tool with name `"CryptoFlex: <post-title>"`.
 
-Save the notebook ID for all subsequent commands.
+Save the notebook ID for all subsequent steps.
 
 ### Step 3: Add Blog Content as Source
 
-Add the blog post content to the notebook. For MDX files, extract the text content and add it:
-```bash
-~/.claude/scripts/notebooklm.sh source add-text "$(cat <blog-post-path>)" -n <notebook_id> --json
-```
+Add the blog post content to the notebook. For MDX files, read the file content with the Read tool, strip JSX components, then use the `source_add_text` MCP tool to add the text content to the notebook.
 
-For supplementary context (referenced URLs, related docs), add those too:
-```bash
-~/.claude/scripts/notebooklm.sh source add "<url>" -n <notebook_id> --json
-```
+For supplementary context (referenced URLs, related docs), use the `source_add_url` MCP tool to add those as well.
 
 ### Step 4: Generate Content
 
 Generate the requested artifacts with brand-specific instructions.
 
-**For Infographics:**
-```bash
-~/.claude/scripts/notebooklm.sh generate infographic \
-  --orientation landscape \
-  --detail detailed \
-  --style professional \
-  -n <notebook_id> \
-  --json
-```
+**Prime the notebook first:** Use the `notebook_query` MCP tool to send branding instructions before generating content:
 
-Include these branding instructions in a chat message before generating:
-```bash
-~/.claude/scripts/notebooklm.sh ask "When creating visual content from this material, use these guidelines: Use a dark background with cyan (#47BACC) as the primary accent color. Use emerald green for positive outcomes, amber for warnings, and red for critical items. Keep the tone professional and educational. The brand is CryptoFlex LLC. Author is Chris Johnson. Avoid marketing language. Lead with metrics and specific numbers where possible. IMPORTANT: Do NOT include any email addresses, workspace names, Google account identifiers, file system paths, or other personal information in generated content. Use 'Chris Johnson' for author attribution and 'CryptoFlex LLC' for the brand. Never show internal account names, login identifiers, or email addresses." -n <notebook_id> --json
-```
+> "When creating visual content from this material, use these guidelines: Use a dark background with cyan (#47BACC) as the primary accent color. Use emerald green for positive outcomes, amber for warnings, and red for critical items. Keep the tone professional and educational. The brand is CryptoFlex LLC. Author is Chris Johnson. Avoid marketing language. Lead with metrics and specific numbers where possible. IMPORTANT: Do NOT include any email addresses, workspace names, Google account identifiers, file system paths, or other personal information in generated content. Use 'Chris Johnson' for author attribution and 'CryptoFlex LLC' for the brand. Never show internal account names, login identifiers, or email addresses."
 
-**For Slide Decks:**
-```bash
-~/.claude/scripts/notebooklm.sh generate slide-deck \
-  --format detailed \
-  -n <notebook_id> \
-  --json
-```
+**For Infographics:** Use the studio MCP tool to generate an infographic (type: infographic, orientation: landscape, detail: detailed, style: professional).
+
+**For Slide Decks:** Use the studio MCP tool to generate slides (type: slides, format: detailed).
 
 ### Step 5: Wait and Download
 
-Wait for generation to complete (can take 5-15 minutes):
+Generation can take 5-15 minutes. Poll for completion using the MCP tools before attempting download.
+
+Create the output directory and download artifacts:
+
 ```bash
-~/.claude/scripts/notebooklm.sh artifact wait <artifact_id> -n <notebook_id> --timeout 900
+mkdir -p ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/
 ```
 
-Download to the output directory:
+Use the `download_artifact` MCP tool to save each artifact to the output directory:
+- Infographics: save as `content-assets/notebooklm/<post-slug>/infographic.png`
+- Slide decks: save as `content-assets/notebooklm/<post-slug>/slides.pdf` and `slides.pptx`
+
+After downloading slide deck PDFs, export individual slide images for LinkedIn/social media:
 ```bash
-# Create output directory (one directory per blog post / content source)
-mkdir -p ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/
-
-# Download infographics
-~/.claude/scripts/notebooklm.sh download infographic \
-  ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/infographic.png \
-  -a <artifact_id> -n <notebook_id>
-
-# Download slide decks (both formats)
-~/.claude/scripts/notebooklm.sh download slide-deck \
-  ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides.pdf \
-  -a <artifact_id> -n <notebook_id>
-
-~/.claude/scripts/notebooklm.sh download slide-deck \
-  ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides.pptx \
-  -a <artifact_id> -n <notebook_id>
-
-# Export individual slide images for LinkedIn / social media
 mkdir -p ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides/
 pdftoppm -png -r 300 \
   ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides.pdf \
@@ -219,13 +181,9 @@ Note: Any DLP finding automatically sets verdict to NEEDS REVISION.
 
 If the QA review identifies issues:
 
-**For slide decks**, use per-slide revision:
-```bash
-~/.claude/scripts/notebooklm.sh generate revise-slide "<correction instructions>" \
-  --artifact <artifact_id> --slide <slide_number> -n <notebook_id> --json
-```
+**For slide decks**, use the studio MCP tool to revise individual slides with specific correction instructions, targeting the slide number and artifact ID.
 
-**For infographics**, regenerate with updated instructions addressing the issues.
+**For infographics**, regenerate with updated instructions addressing the issues using the studio MCP tool.
 
 Re-download and re-review after revisions. Maximum 2 revision cycles.
 
@@ -319,10 +277,11 @@ A DLP failure overrides all other QA results. Even if spelling, accuracy, brand,
 
 ## Important Notes
 
-- Always use `-n <notebook_id>` flags (never `notebooklm use`) for agent safety
-- All commands go through `~/.claude/scripts/notebooklm.sh`, not bare `notebooklm`
+- All operations use the `notebooklm` MCP server tools. Never use CLI wrapper scripts or direct binary calls.
 - Blog posts are MDX (Markdown + JSX). Strip JSX components when adding as source text.
-- NotebookLM generation takes 5-15 minutes. Use `artifact wait` with adequate timeout.
+- NotebookLM generation takes 5-15 minutes. Poll for completion before downloading.
 - Maximum 2 revision cycles per asset to avoid infinite loops.
 - Save generated content to `content-assets/notebooklm/` (not inside `src/`)
 - This agent does NOT modify blog posts. It creates supplementary assets.
+- Cookie auth expires every 2-4 weeks. If MCP tools return auth errors, tell the user to run `nlm login` to re-authenticate.
+- The underlying API is reverse-engineered and unofficial. It may break if Google changes their internal endpoints.

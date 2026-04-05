@@ -18,10 +18,9 @@ Create high-quality infographics and slide decks from your blog posts using Goog
 
 ## Prerequisites
 
-- NotebookLM CLI installed in dedicated venv (`~/.notebooklm-venv/`)
-- Wrapper script: `~/.claude/scripts/notebooklm.sh`
-- Authenticated with `chrisjohnson@cryptoflexllc.com`
-- First-time setup: run `~/.claude/scripts/notebooklm.sh login` to authenticate
+- NotebookLM MCP server (`notebooklm-mcp-cli`) configured in `~/.claude.json`
+- Authenticated via `nlm login` with `chrisjohnson@cryptoflexllc.com`
+- First-time setup: run `nlm login` in your terminal to authenticate
 
 ## Usage
 
@@ -57,11 +56,11 @@ Create high-quality infographics and slide decks from your blog posts using Goog
 ## What Happens
 
 1. Reads the specified blog post from the cryptoflexllc repo
-2. Creates a NotebookLM notebook with the post content as a source
-3. Primes the notebook with CryptoFlex LLC branding guidelines
-4. Generates the requested content type(s) (5-15 min per asset)
+2. Uses NotebookLM MCP tools to create a notebook and add the post content as a source
+3. Primes the notebook with CryptoFlex LLC branding guidelines via MCP query
+4. Generates the requested content type(s) via MCP studio tools (5-15 min per asset)
 5. Downloads output to `~/GitProjects/cryptoflexllc/content-assets/notebooklm/`
-6. Runs QA review: spelling, accuracy, brand compliance, format
+6. Runs QA review: spelling, accuracy, brand compliance, DLP scanning
 7. Revises if needed (max 2 cycles)
 8. Reports results with file paths and QA summary
 
@@ -97,12 +96,12 @@ Agent(
 
 ## Authentication
 
-If not yet logged in, the skill will prompt you to run:
+If not yet logged in or cookies have expired, run in your terminal:
 ```bash
-~/.claude/scripts/notebooklm.sh login
+nlm login
 ```
 
-This opens a browser window for Google OAuth with `chrisjohnson@cryptoflexllc.com`. Sessions expire every 1-2 weeks and require re-authentication.
+This opens a Chromium browser window for Google sign-in with `chrisjohnson@cryptoflexllc.com`. Cookie sessions expire every 2-4 weeks and require re-authentication.
 
 ## Relationship to Blog Post Pipeline
 
@@ -118,6 +117,7 @@ The blog-post captain does not call this skill. You invoke it independently when
 
 - NotebookLM generation takes 5-15 minutes per asset
 - Infographic style is influenced but not fully controlled by instructions (NotebookLM makes its own design choices)
-- Session cookies expire every 1-2 weeks
-- Uses reverse-engineered Google APIs (may break without notice)
+- Cookie auth expires every 2-4 weeks (run `nlm login` to refresh)
+- Uses reverse-engineered Google APIs via notebooklm-mcp-cli (may break without notice)
 - Maximum 50 sources per notebook
+- Free tier rate limit: approximately 50 queries per day
