@@ -900,14 +900,25 @@ Custom skills are user-invocable workflows (similar to slash commands) that prov
 
 Skills take priority over commands when both exist for the same name.
 
-**Current skills (4 total):**
+**Current skills (14 total):**
 
 | Skill | What It Does |
 |-------|-------------|
-| **`/wrap-up`** | 12-step end-of-session agent: pulls repos, reviews session, updates CHANGELOG/README/MEMORY, extracts skills, cleans state, commits, pushes. |
-| **`/blog-post`** | Interactive blog writing agent. Asks what to write about, gathers source material, writes a formatted MDX post. Delegates to Sonnet for cost-efficient content generation. |
-| **`/multi-repo-status`** | Quick dashboard showing git status across all 4 project repos in parallel. |
+| **`/blog-post`** | Multi-agent blog post production pipeline with research, drafting, review, and MDX generation. |
+| **`/cmux`** | Terminal CLI reference for cmux multiplexer and session management. |
+| **`/content-validation`** | Validate content integrity beyond HTTP status codes: media, API responses, and data contracts. |
+| **`/cross-platform-parsing`** | Safe text and CLI output parsing patterns across Windows and Unix. |
+| **`/deep-research`** | Multi-source deep research using Exa, Firecrawl, and WebSearch with citations. |
+| **`/game-dev`** | Game development team orchestration and project automation. |
+| **`/gws`** | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more. |
+| **`/memory-architecture`** | Two-tier memory architecture and vector memory configuration for Claude sessions. |
+| **`/multi-agent-orchestration`** | Patterns for structuring multi-agent teams with phase gating and sandbox constraints. |
+| **`/multi-repo-status`** | Quick dashboard showing git status across all project repos in parallel. |
+| **`/notebooklm-content`** | Create branded infographics and slide decks from blog posts using Google NotebookLM. |
+| **`/openclaw-ops`** | Configuration gotchas and operational patterns for OpenClaw multi-agent systems. |
 | **`/skill-catalog`** | Full inventory of all agents, skills, commands, and hooks with descriptions. |
+| **`/sync`** | Bidirectional configuration sync across repos, mirrors local state to git backups. |
+| **`/wrap-up`** | End-of-session agent: updates docs, persists to memory systems, commits and pushes all repos. |
 
 ---
 
@@ -919,15 +930,17 @@ Custom commands are user-level slash commands that encode complex multi-step wor
 
 Each command file is a markdown document with YAML frontmatter and detailed instructions. When you type the command (e.g., `/wrap-up`), Claude reads the file and follows the instructions with full access to the conversation history and all its tools.
 
-**Current commands (6 total):**
+**Current commands (8 total):**
 
 | Command | File | What It Does |
 |---------|------|-------------|
 | **`/blog-post`** | `blog-post.md` | Interactive blog writing agent for cryptoflexllc.com. Asks what to write about, gathers source material from git logs and session history, writes a fully formatted MDX post. |
 | **`/claude-config-sync`** | `claude-config-sync.md` | Syncs live ~/.claude/ config to the claude-code-config repo with parallel agents. |
+| **`/evolve`** | `evolve.md` | Cluster instincts into evolved agents, skills, and commands via the Homunculus system. |
 | **`/ingest-sessions`** | `ingest-sessions.md` | Ingests session archives into vector memory for long-term context. |
 | **`/kb-article`** | `kb-article.md` | KB article authoring workflow for structured knowledge base entries. |
 | **`/Knowledge-Graph-Sync`** | `Knowledge-Graph-Sync.md` | Reconciles the knowledge graph (MCP memory server) against actual files on disk. Finds missing, stale, and orphaned entities. |
+| **`/memory-audit`** | `memory-audit.md` | Scan vector memory for contradictions, stale entries, and duplicate clusters. |
 | **`/smart-compact`** | `smart-compact.md` | Pre-compact context preservation: saves session state before compaction. |
 
 **How to create your own:**

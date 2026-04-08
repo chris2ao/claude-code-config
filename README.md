@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 27 agents, 13 invocable skills, 42 learned skills, 15 scripts, 7 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 27 agents, 14 invocable skills, 42 learned skills, 15 scripts, 8 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -126,7 +126,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (13 invocable + 42 learned)
+### Skills (14 invocable + 42 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -135,6 +135,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/blog-post` | Multi-agent blog post production pipeline with research and MDX generation |
 | `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
 | `/content-validation` | Validate content integrity beyond HTTP status codes: media, API responses, data contracts |
+| `/deep-research` | Multi-source deep research using Exa, Firecrawl, and WebSearch with citations |
 | `/cross-platform-parsing` | Safe text and CLI output parsing patterns across Windows and Unix |
 | `/game-dev` | Game development team orchestration and project automation |
 | `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
@@ -180,6 +181,8 @@ Automation scripts in `scripts/` for common operations:
 | `memory-maintenance.py` | Memory database maintenance and cleanup |
 | `promote-evolved.sh` | Promote evolved agents, skills, and commands to live config |
 | `bridge-launcher.sh` | Launch the OpenClaw bridge server |
+| `exa-wrapper.sh` | Wrapper to launch the Exa MCP server with secrets loaded from environment |
+| `firecrawl-wrapper.sh` | Wrapper to launch the Firecrawl MCP server with secrets loaded from environment |
 | `memory-toggle.ps1` | Toggle vector memory MCP server on and off (Windows) |
 
 ## MCP Servers (7 configured)
@@ -300,8 +303,8 @@ This configuration supports both **macOS** and **Windows**:
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
   agents/                        # 27 custom agent definitions
-  skills/                        # 13 invocable skills + 42 learned skills
-  commands/                      # 7 commands
+  skills/                        # 14 invocable skills + 42 learned skills
+  commands/                      # 8 commands
   scripts/                       # 15 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server

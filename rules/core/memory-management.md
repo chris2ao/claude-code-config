@@ -72,6 +72,29 @@ Include these fields in every memory:
 
 Use 3-5 tags per memory. Always include the project name as a tag.
 
+## Fact Versioning Protocol
+
+Before storing a new memory that updates or replaces an existing fact:
+
+1. **Search first**: Run `memory_search` with keywords from the new memory
+2. **Check for overlap**: If a result covers the same topic/entity with different information:
+   - Update the old memory via `memory_update`: prepend "[SUPERSEDED YYYY-MM-DD]" to its content and add "superseded" to its tags
+   - Store the new memory with tag "supersedes:<old-hash>" (hash from search result)
+3. **If no overlap**: Store normally
+
+This prevents fact accumulation where outdated information competes with current facts during retrieval.
+
+### When to Version
+- Configuration values that changed (port numbers, versions, paths)
+- Decisions that were reversed or updated
+- Bug fixes that change the understanding of a prior bug report
+- Architecture changes that invalidate prior descriptions
+
+### When NOT to Version
+- Genuinely distinct memories about the same broad topic
+- Memories from different projects that happen to share keywords
+- Historical records that are still accurate (they just describe the past)
+
 ## Session Start
 
 At the beginning of each session, if the user describes a task related to previous work:
