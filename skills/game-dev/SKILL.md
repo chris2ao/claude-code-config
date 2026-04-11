@@ -39,9 +39,10 @@ Ask the user these questions (use AskUserQuestion, one at a time):
 5. **Team Composition:** Which specialists do you need?
    - **Full team** (Director + Designer + Artist + UX + Developer + Writer) - recommended for Create
    - **Core team** (Director + Designer + Developer) - recommended for Add
-   - **Dev team** (Director + Developer + Artist) - good for visual features and fixes
+   - **Dev team** (Director + Developer + Artist) - good for visual/audio features and fixes
+   - **UX team** (Director + Developer + UX) - good for UI, responsive, and mobile fixes
    - **Minimal** (Director + Developer) - recommended for Debug and small fixes
-   - **Custom** - pick specific roles from: Designer, Artist, UX/UI, Developer, Writer
+   - **Custom** - pick specific roles from: Designer, Artist/Audio, UX/UI, Developer, Writer
 
 ## Pre-Survey
 
@@ -50,6 +51,11 @@ If the project path exists, run this before spawning the director:
 ```bash
 cd {PROJECT_PATH} && echo "=== Recent Commits ===" && git log -5 --oneline 2>/dev/null && echo "=== Changed Files ===" && git diff --stat 2>/dev/null && echo "=== Source File Count ===" && find src -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.gd" -o -name "*.cs" \) 2>/dev/null | wc -l && echo "=== Project Structure ===" && ls -1 src/ 2>/dev/null
 ```
+
+## Available Tooling
+
+- **Playwright MCP**: Browser automation for responsive testing, visual QA, and accessibility validation. The UX agent uses this to screenshot game states at multiple viewports and verify touch targets, layout, and accessibility.
+- **Context7**: Current API documentation for frameworks (React, Next.js, Tailwind, etc.)
 
 ## Orchestration
 

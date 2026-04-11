@@ -1,6 +1,6 @@
 ---
 platform: portable
-description: "Game developer: engine logic, state management, game loop, physics, AI, and performance"
+description: "Game developer: engine logic, state management, game loop, physics, AI, audio engine, and performance"
 model: sonnet
 tools: [Read, Write, Edit, Bash, Grep, Glob]
 ---
@@ -107,6 +107,37 @@ function processAction(action: Action) {
 }
 ```
 
+## Phase 4.5: Audio Engine
+
+Build the sound playback infrastructure in `src/audio/`. The game-artist defines what sounds exist (in `src/data/sounds.ts`); you build the engine that plays them.
+
+### Architecture
+- `src/audio/sound-engine.ts` - Main audio engine class
+  - Manages a single `AudioContext` instance
+  - Initializes on first user interaction (browser autoplay policy requirement)
+  - Provides `play(soundId)`, `stopAll()`, `setVolume(category, level)` API
+- `src/audio/sound-pool.ts` - Pre-allocated audio nodes for concurrent playback
+  - Pool size per sound: 3-5 nodes (prevents cutting off rapid repeated sounds)
+  - Recycles nodes when playback completes
+- `src/audio/spatial.ts` - Stereo panning based on entity screen position
+  - Maps x-coordinate (0 to canvas width) to pan value (-1 to +1)
+
+### Gain Structure
+- Master gain node (user-configurable)
+- Category gain nodes: `ui`, `sfx`, `music`, `ambient` (each user-configurable)
+- Per-sound gain (set by sound definition volume)
+- Chain: source -> per-sound gain -> category gain -> master gain -> destination
+
+### Event Integration
+- Export a `triggerSound(eventName: string, options?: { x?: number })` function
+- Map game events to sound IDs (the mapping lives in `src/data/sounds.ts`)
+- The store or components call `triggerSound` at appropriate moments
+- Never call audio directly from engine functions (keep engine pure)
+
+### Preloading
+- On AudioContext init, preload all sample-based sounds
+- Procedural sounds (oscillator/noise) are generated on-the-fly (no preload needed)
+
 ## Phase 5: Integration and Performance
 
 - Wire the engine to the store and the store to the rendering/component layers
@@ -124,6 +155,7 @@ You own these paths (write freely here):
 - `src/store/` - State management
 - `src/types/` - Shared type definitions
 - `src/engine/__tests__/` - All game logic tests
+- `src/audio/` - Sound engine, audio context, playback infrastructure
 - `src/app/` - App routing and entry points (shared with UX for page components)
 
 Do NOT modify files in `src/rendering/` or `src/components/` (those belong to the Artist and UX designer).

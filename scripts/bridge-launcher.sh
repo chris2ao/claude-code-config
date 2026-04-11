@@ -44,21 +44,41 @@ log "Bridge launcher starting (PID $$)"
         exit 0
       fi
 
-      log "Updating trigger $TRIGGER_ID to environment $ENV_ID"
-      UPDATE_PROMPT="You must update a scheduled trigger's environment_id. Use the RemoteTrigger tool with action 'update', trigger_id '$TRIGGER_ID'. The body should set job_config.ccr.environment_id to '$ENV_ID'. You MUST preserve the existing events, session_context, and all other fields from the current trigger config. First use RemoteTrigger action 'get' to read the current config, then use action 'update' with the full job_config but with the new environment_id. Reply only 'done' when complete."
+      # Update trigger with retries and verification
+      MAX_RETRIES=3
+      for ATTEMPT in $(seq 1 "$MAX_RETRIES"); do
+        log "Updating trigger $TRIGGER_ID to environment $ENV_ID (attempt $ATTEMPT/$MAX_RETRIES)"
 
-      echo "$UPDATE_PROMPT" \
-        | "$CLAUDE" -p --model haiku --verbose 2>&1 \
-        | while IFS= read -r line; do log "  claude: $line"; done
+        UPDATE_PROMPT="CRITICAL: You must update a scheduled trigger and then VERIFY the update succeeded.
 
-      EXIT_CODE=${PIPESTATUS[1]}
-      if [[ "$EXIT_CODE" -eq 0 ]]; then
-        log "Trigger update succeeded"
-        echo "$ENV_ID" > "$ENV_ID_FILE.prev"
-      else
-        log "WARNING: claude -p exited with code $EXIT_CODE"
-      fi
-      exit 0
+Step 1: Use the RemoteTrigger tool with action 'get' and trigger_id '$TRIGGER_ID' to read the current config. Save the full job_config.
+
+Step 2: Use the RemoteTrigger tool with action 'update' and trigger_id '$TRIGGER_ID'. The body must contain the COMPLETE job_config from step 1, with ONLY job_config.ccr.environment_id changed to '$ENV_ID'. Preserve events, session_context, model, and all other fields exactly as they are.
+
+Step 3: Use the RemoteTrigger tool with action 'get' and trigger_id '$TRIGGER_ID' again. Check that the response contains environment_id '$ENV_ID'.
+
+If step 3 confirms the update, reply with exactly: VERIFIED
+If step 3 shows a different environment_id, reply with exactly: FAILED"
+
+        UPDATE_OUTPUT=$("$CLAUDE" -p --model sonnet --allowedTools "RemoteTrigger" --bare <<< "$UPDATE_PROMPT" 2>&1)
+        EXIT_CODE=$?
+
+        log "  claude exit code: $EXIT_CODE"
+        echo "$UPDATE_OUTPUT" | while IFS= read -r line; do log "  claude: $line"; done
+
+        if [[ "$EXIT_CODE" -eq 0 ]] && echo "$UPDATE_OUTPUT" | grep -q "VERIFIED"; then
+          log "Trigger update VERIFIED on attempt $ATTEMPT"
+          echo "$ENV_ID" > "$ENV_ID_FILE.prev"
+          exit 0
+        fi
+
+        log "WARNING: Update not verified on attempt $ATTEMPT"
+        sleep 5
+      done
+
+      log "ERROR: Trigger update failed after $MAX_RETRIES attempts. Bridge env=$ENV_ID, trigger may still use old env."
+      osascript -e 'display notification "Gmail trigger update failed after 3 retries. Manual fix needed." with title "Claude Bridge" sound name "Basso"' 2>/dev/null || true
+      exit 1
     fi
   done
   log "ERROR: Timed out after 60s waiting for environment URL in bridge log"

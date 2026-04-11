@@ -51,15 +51,30 @@ Spawn in a single message:
 
 **Phase 3: Implementation (parallel)**
 Spawn in a single message:
-- `game-developer`: Core engine, game loop, state management, tests
-- `game-artist` (if on team): Visual assets, rendering code, sprites, CSS
-- `game-ux` (if on team): Menus, HUD, controls, player feedback
+- `game-developer`: Core engine, game loop, state management, audio engine, tests
+- `game-artist` (if on team): Visual assets, rendering code, sprites, CSS, sound design
+- `game-ux` (if on team): Menus, HUD, controls, player feedback, sound settings UI
 
 Pass each agent the design spec from Phase 1 and the architecture from Phase 2.
 Assign clear file ownership to prevent conflicts:
-- Developer owns: `src/engine/`, `src/store/`, `src/types/`
-- Artist owns: `src/rendering/`, visual CSS files
-- UX owns: `src/components/`, layout CSS files
+- Developer owns: `src/engine/`, `src/store/`, `src/types/`, `src/audio/`
+- Artist owns: `src/rendering/`, visual CSS files, `src/data/sounds.ts`
+- UX owns: `src/components/`, layout CSS files, `src/data/controls.ts`
+
+**Phase 3.5: Visual QA (sequential, you coordinate)**
+Use Playwright MCP to validate the game at multiple viewports before integration:
+1. Start the dev server (`npm run dev` or equivalent)
+2. Spawn `game-ux` with instruction to run Playwright responsive checks:
+   - Screenshot at mobile portrait (375x667), mobile landscape (667x375), tablet (768x1024), desktop (1280x720)
+   - Verify control panels do not obscure the gameplay area on mobile
+   - Check all interactive elements have touch targets >= 44px
+   - Validate keyboard tab order through menus and controls
+   - Check accessibility tree for missing aria-labels
+3. Quality gates (block integration if any fail):
+   - Controls visible and usable at all viewport sizes
+   - No overlapping UI elements on mobile portrait
+   - All buttons and interactive elements meet 44px minimum touch target
+   - Accessibility tree contains labels for all interactive elements
 
 **Phase 4: Integration (sequential, you do this)**
 - Review all agent outputs for conflicts
@@ -94,11 +109,17 @@ Assign clear file ownership to prevent conflicts:
 **Phase 2: Implementation (parallel)**
 Spawn the relevant agents based on the feature:
 - `game-developer`: Always (code implementation)
-- `game-artist`: If feature has visual components
+- `game-artist`: If feature has visual or audio components
 - `game-ux`: If feature has UI/UX components
 - `game-writer`: If feature has narrative content
 
 Pass the design spec from Phase 1 to all implementation agents.
+
+**Phase 2.5: Visual QA (if UI/visual changes)**
+If the feature touches UI or rendering, run the Visual QA checks from Create Mode Phase 3.5:
+- Playwright viewport screenshots at mobile, tablet, and desktop
+- Touch target and accessibility validation
+- Block integration if quality gates fail
 
 **Phase 3: Integration (sequential, you do this)**
 - Merge outputs, resolve conflicts
