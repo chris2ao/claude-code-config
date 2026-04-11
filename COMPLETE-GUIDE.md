@@ -900,7 +900,7 @@ Custom skills are user-invocable workflows (similar to slash commands) that prov
 
 Skills take priority over commands when both exist for the same name.
 
-**Current skills (14 total):**
+**Current skills (15 total):**
 
 | Skill | What It Does |
 |-------|-------------|

@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 27 agents, 14 invocable skills, 42 learned skills, 15 scripts, 8 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 27 agents, 15 invocable skills, 42 learned skills, 16 scripts, 8 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -126,7 +126,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (14 invocable + 42 learned)
+### Skills (15 invocable + 42 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -161,7 +161,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (15 files)
+### Scripts (16 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -184,6 +184,7 @@ Automation scripts in `scripts/` for common operations:
 | `exa-wrapper.sh` | Wrapper to launch the Exa MCP server with secrets loaded from environment |
 | `firecrawl-wrapper.sh` | Wrapper to launch the Firecrawl MCP server with secrets loaded from environment |
 | `memory-toggle.ps1` | Toggle vector memory MCP server on and off (Windows) |
+| `obsidian-wrapper.sh` | Wrapper to launch the Obsidian MCP server with secrets loaded from environment (macOS) |
 
 ## MCP Servers (7 configured)
 
@@ -303,9 +304,9 @@ This configuration supports both **macOS** and **Windows**:
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
   agents/                        # 27 custom agent definitions
-  skills/                        # 14 invocable skills + 42 learned skills
+  skills/                        # 15 invocable skills + 42 learned skills
   commands/                      # 8 commands
-  scripts/                       # 15 automation scripts
+  scripts/                       # 16 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
