@@ -930,7 +930,7 @@ Custom commands are user-level slash commands that encode complex multi-step wor
 
 Each command file is a markdown document with YAML frontmatter and detailed instructions. When you type the command (e.g., `/wrap-up`), Claude reads the file and follows the instructions with full access to the conversation history and all its tools.
 
-**Current commands (8 total):**
+**Current commands (9 total):**
 
 | Command | File | What It Does |
 |---------|------|-------------|
@@ -942,6 +942,7 @@ Each command file is a markdown document with YAML frontmatter and detailed inst
 | **`/Knowledge-Graph-Sync`** | `Knowledge-Graph-Sync.md` | Reconciles the knowledge graph (MCP memory server) against actual files on disk. Finds missing, stale, and orphaned entities. |
 | **`/memory-audit`** | `memory-audit.md` | Scan vector memory for contradictions, stale entries, and duplicate clusters. |
 | **`/smart-compact`** | `smart-compact.md` | Pre-compact context preservation: saves session state before compaction. |
+| **`/storage-cleanup`** | `storage-cleanup.md` | Scan Mac storage, identify cleanup opportunities, and move safe files to external drive. |
 
 **How to create your own:**
 

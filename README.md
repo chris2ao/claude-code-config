@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 32 agents, 16 invocable skills, 42 learned skills, 16 scripts, 8 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 32 agents, 17 invocable skills, 42 learned skills, 16 scripts, 9 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -136,7 +136,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (16 invocable + 42 learned)
+### Skills (17 invocable + 42 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -155,6 +155,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/notebooklm-content` | Create branded infographics and slide decks from blog posts using Google NotebookLM |
 | `/openclaw-ops` | Configuration gotchas and operational patterns for OpenClaw multi-agent systems |
 | `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks |
+| `/storage-cleanup` | Scan Mac storage, identify cleanup opportunities, and move safe files to external drive |
 | `/sync` | Configuration sync across repos, mirrors local state to git backups |
 | `/ui-ux` | UI/UX design and quality system: aesthetic direction, component architecture, performance, and visual QA with a coordinated agent team |
 | `/wrap-up` | End-of-session wrap-up: update docs, persist to memory systems, commit and push all repos |
