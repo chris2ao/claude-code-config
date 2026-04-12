@@ -29,8 +29,9 @@ All generated content MUST match these brand standards:
 - Foreground: Near-white on dark backgrounds
 
 **Typography:**
-- Body: Geist Sans (or clean sans-serif fallback: Inter, Helvetica Neue)
-- Code: Geist Mono (or monospace fallback)
+- Headings: Space Grotesk
+- Body: Source Serif 4
+- Code: JetBrains Mono
 - Keep text concise and scannable
 
 **Visual Style:**

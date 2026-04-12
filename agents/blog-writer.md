@@ -88,12 +88,13 @@ description: "One or two sentences for SEO"
 tags: ["Claude Code", "Tag2"]
 author: "Chris Johnson"
 readingTime: "8 min read"
+featured: false              # optional, true to mark for featured section
 series: 'Series Name'       # optional, omit if standalone
 seriesOrder: 7               # optional, omit if standalone
 ---
 ```
 
-When a series is specified in the input, always include both `series` and `seriesOrder` in the frontmatter. The `seriesOrder` value will be provided by the caller (the next number in sequence).
+When a series is specified in the input, always include both `series` and `seriesOrder` in the frontmatter. The `seriesOrder` value will be provided by the caller (the next number in sequence). The `featured` field is optional; use `featured: true` only when the post should appear in the featured section on the blog page.
 
 <!-- END STYLE GUIDE -->
 

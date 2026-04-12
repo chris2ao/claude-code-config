@@ -49,6 +49,8 @@ line_num=0
 in_frontmatter=false
 frontmatter_count=0
 found_fields=()
+optional_fields=("featured" "series" "seriesOrder")
+found_optional_fields=()
 
 while IFS= read -r line; do
     line="${line%$'\r'}"
@@ -70,6 +72,12 @@ while IFS= read -r line; do
         for field in "${required_fields[@]}"; do
             if [[ "$line" =~ ^${field}: ]]; then
                 found_fields+=("$field")
+            fi
+        done
+
+        for field in "${optional_fields[@]}"; do
+            if [[ "$line" =~ ^${field}: ]]; then
+                found_optional_fields+=("$field")
             fi
         done
     fi

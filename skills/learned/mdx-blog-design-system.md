@@ -7,6 +7,11 @@ platform: portable
 **Extracted:** 2026-02-10
 **Context:** When writing or editing blog posts (`.mdx` files) in `src/content/blog/` for cryptoflexllc.com
 
+## Typography
+- **Headings:** Space Grotesk
+- **Body text:** Source Serif 4
+- **Code/Monospace:** JetBrains Mono
+
 ## Problem
 Blog posts written as plain markdown lack visual hierarchy. Key warnings, tips, and lessons blend into the surrounding text, making posts harder to scan and reducing the impact of important information.
 
