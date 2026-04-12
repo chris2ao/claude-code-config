@@ -847,7 +847,7 @@ Each agent file has YAML frontmatter specifying:
 - `model` — Which Claude model to use (haiku, sonnet, opus)
 - `tools` — Which tools the agent can access
 
-**Current agents (13 total):**
+**Current agents (32 total):**
 
 | Agent | Model | Purpose |
 |-------|-------|---------|

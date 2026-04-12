@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 27 agents, 15 invocable skills, 42 learned skills, 16 scripts, 8 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 32 agents, 16 invocable skills, 42 learned skills, 16 scripts, 8 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -57,7 +57,7 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (27 files)
+### Agents (32 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
@@ -103,6 +103,16 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `blog-voice` | sonnet | Blog voice agent: maintains living voice profile, produces voice briefs |
 | `blog-writer` | sonnet | Blog post writer: drafts and revises MDX posts for CryptoFlex LLC |
 
+**UI/UX Team** (5):
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `ui-component-architect` | sonnet | UI/UX Component Architect: design tokens, composition patterns, responsive design, semantic HTML, Tailwind |
+| `ui-performance-reviewer` | haiku | UI/UX Performance Reviewer: bundle size, Core Web Vitals, React/Next.js patterns, server vs client analysis |
+| `ui-ux-director` | sonnet | Captain agent: orchestrates UI/UX design team across design, build, review, and audit workflows |
+| `ui-ux-reviewer` | sonnet | UI/UX Reviewer + QA: heuristics evaluation, TASTE scoring, anti-pattern detection, Playwright visual testing, final quality gate |
+| `ui-visual-designer` | sonnet | UI/UX Visual Designer: aesthetic direction, color systems, typography, layout composition, anti-AI-slop |
+
 ### Superpowers Plugin Skills (14 skills + 1 agent)
 
 The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) provides a structured development workflow. Skills activate automatically based on context. Standard flow: brainstorming -> using-git-worktrees -> writing-plans -> subagent-driven-development -> test-driven-development -> requesting-code-review -> finishing-a-development-branch.
@@ -126,7 +136,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (15 invocable + 42 learned)
+### Skills (16 invocable + 42 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -146,6 +156,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/openclaw-ops` | Configuration gotchas and operational patterns for OpenClaw multi-agent systems |
 | `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks |
 | `/sync` | Configuration sync across repos, mirrors local state to git backups |
+| `/ui-ux` | UI/UX design and quality system: aesthetic direction, component architecture, performance, and visual QA with a coordinated agent team |
 | `/wrap-up` | End-of-session wrap-up: update docs, persist to memory systems, commit and push all repos |
 
 **Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 42 unique skills organized into 6 categories:
