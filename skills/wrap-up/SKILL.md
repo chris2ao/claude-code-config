@@ -87,16 +87,16 @@ If the count is greater than 0, include this line in the Step 5 summary:
 
 > **Evolution ready:** N new instinct(s) since last evolution. Run `/evolve` to generate skill/agent/command candidates.
 
-### Step 4c: Dashboard Export
+### Step 4c: Gmail Metrics Export
 
-After all commits are pushed, run `/dashboard-export --no-push` to update the SNES environment dashboard data files in the cryptoflexllc repo. The cryptoflexllc commit from Step 4 will push the data along with any other changes.
+After all commits are pushed, run `/gmail-metrics-export --no-push` to refresh `src/data/gmail-metrics.json` and `src/data/session-archive.json` in the cryptoflexllc repo. The cryptoflexllc commit from Step 4 will push the data along with any other changes.
 
-If the cryptoflexllc repo was not modified in this session, run `/dashboard-export` (with push) to trigger a standalone Vercel rebuild with fresh data.
+If the cryptoflexllc repo was not modified in this session, run `/gmail-metrics-export` (with push) to trigger a standalone Vercel rebuild with fresh data.
 
 ### Step 5: Display summary
 Display to the user:
 - Commits made (repo names, pushed status)
 - If any commits failed, alert the user
 - Memory status: MEMORY.md delta applied, vector memory stored (yes/no), KG entities updated (count)
-- Dashboard: data exported (yes/no)
+- Gmail metrics: exported (yes/no)
 - Config drift: if `config_drift.detected` is true, suggest running `/claude-config-sync`

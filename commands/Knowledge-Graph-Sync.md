@@ -139,8 +139,3 @@ Wait for user confirmation before deleting anything.
 - If the MCP memory server is unavailable, display: "Knowledge graph is unreachable. Cannot sync. Check that the memory MCP server is running."
 - Use today's date in `YYYY-MM-DD` format for all observation timestamps.
 
-## Phase 6: Dashboard Export
-
-After reconciliation is complete (whether or not changes were made), run `/dashboard-export` to update the SNES environment dashboard with the latest KG data. This ensures the dashboard stays in sync with the graph.
-
-If the user passed `--no-export`, skip this phase.
