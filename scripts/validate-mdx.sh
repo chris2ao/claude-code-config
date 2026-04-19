@@ -188,9 +188,9 @@ private_repo_links=()
 line_num=0
 while IFS= read -r line; do
     line_num=$((line_num + 1))
-    # Match github.com/chris2ao/ links that are NOT the two public repos
+    # Match github.com/chris2ao/ links that are NOT the public repos
     if echo "$line" | grep -qE 'github\.com/chris2ao/' ; then
-        if ! echo "$line" | grep -qE 'github\.com/chris2ao/(cryptoflexllc|claude-code-config)(\s|/|"|'"'"'|\)|$)'; then
+        if ! echo "$line" | grep -qE 'github\.com/chris2ao/(cryptoflexllc|claude-code-config|unifi-mcp|pihole-mcp)(\s|/|"|'"'"'|\)|$)'; then
             private_repo_links+=($line_num)
         fi
     fi
