@@ -105,9 +105,14 @@ For each finding, the reader should return:
 - **why**: reasoning or root cause
 - **tags**: relevant keywords (project name, technology, domain)
 - **session_date**: from the archive filename
+- **session_id**: first 8 chars of session UUID from filename
+- **excerpt**: 1-3 lines quoted from the transcript that support this finding (required when refine_candidate is true)
 - **instinct_candidate**: true/false (is this a behavioral pattern worth making an instinct?)
 - **instinct_trigger**: if candidate, "when [situation]"
 - **instinct_action**: if candidate, what to do
+- **refine_candidate**: true/false (does this finding suggest an EXISTING skill/agent/command/instinct should be edited?)
+- **component_hint**: if refine_candidate, best guess at target component path (e.g. `skills/foo/SKILL.md`, `agents/bar.md`, `homunculus/instincts/personal/baz.md`). If unknown, set to "" and the refine captain will infer.
+- **refinement_type**: if refine_candidate, one of `fact-update | gotcha-addition | trigger-tightening | deprecation`
 
 ### Phase 4: Deduplicate
 
@@ -127,6 +132,23 @@ For each unique finding, call `memory_store` with:
 After all stores complete, save an ingestion log entry:
 - Content: "Session ingestion run: processed N archives, stored M memories, created K instincts"
 - Tags: ["ingestion-log", "meta"]
+
+### Phase 5.5: Queue Refine Candidates
+
+For each finding where `refine_candidate` is true, append a JSON object to `~/.claude/state/refine-queue.jsonl`. One object per line:
+
+```json
+{"component_hint": "skills/foo/SKILL.md", "refinement_type": "gotcha-addition", "finding_summary": "...", "session_id": "a1b2c3d4", "session_date": "YYYY-MM-DD", "excerpt": "quoted line(s) from transcript", "queued_at": "ISO_TIMESTAMP"}
+```
+
+Setup (idempotent):
+
+```bash
+mkdir -p "$HOME/.claude/state"
+touch "$HOME/.claude/state/refine-queue.jsonl"
+```
+
+Do NOT dedup the queue here; the `/refine` captain will merge entries at consumption time. Do NOT attempt to apply any edits here. Queuing is the only action; `/refine` does the rest.
 
 ### Phase 6: Create Instinct Drafts
 
@@ -155,8 +177,13 @@ Output a summary:
 - New memories stored: N
 - Instinct candidates found: N
 - Instincts created: N (after user approval)
+- Refine candidates queued: N
 - Domains covered: [list]
 ```
+
+If any refine candidates were queued, close the report with:
+
+> N refine candidates queued in `~/.claude/state/refine-queue.jsonl`. Run `/refine` when you are ready to review evidence-backed edits to existing components.
 
 ## Important Notes
 

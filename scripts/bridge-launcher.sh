@@ -60,7 +60,7 @@ Step 3: Use the RemoteTrigger tool with action 'get' and trigger_id '$TRIGGER_ID
 If step 3 confirms the update, reply with exactly: VERIFIED
 If step 3 shows a different environment_id, reply with exactly: FAILED"
 
-        UPDATE_OUTPUT=$("$CLAUDE" -p --model sonnet --allowedTools "RemoteTrigger" --bare <<< "$UPDATE_PROMPT" 2>&1)
+        UPDATE_OUTPUT=$("$CLAUDE" -p --model sonnet --allowedTools "RemoteTrigger" <<< "$UPDATE_PROMPT" 2>&1)
         EXIT_CODE=$?
 
         log "  claude exit code: $EXIT_CODE"
