@@ -847,7 +847,7 @@ Each agent file has YAML frontmatter specifying:
 - `model` — Which Claude model to use (haiku, sonnet, opus)
 - `tools` — Which tools the agent can access
 
-**Current agents (32 total):**
+**Current agents (34 total):**
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -859,6 +859,8 @@ Each agent file has YAML frontmatter specifying:
 | **home-sync** | haiku | Syncs CJClaudin_home repo with current config state |
 | **multi-repo-orchestrator** | haiku | Runs parallel git operations across all project repos |
 | **pre-commit-checker** | haiku | Pre-commit security and quality validation |
+| **refine-captain** | opus | Orchestrates evidence-based component refinement from session transcripts |
+| **refine-reader** | haiku | Extracts relevant transcript excerpts for component editing |
 | **session-analyzer** | sonnet | Reads session archive transcripts and extracts actionable patterns |
 | **session-checkpoint** | sonnet | Saves and restores session context across compactions |
 | **skill-extractor** | sonnet | Extracts instincts from session transcripts for Homunculus v2 learning system |
@@ -900,7 +902,7 @@ Custom skills are user-invocable workflows (similar to slash commands) that prov
 
 Skills take priority over commands when both exist for the same name.
 
-**Current skills (15 total):**
+**Current skills (19 total):**
 
 | Skill | What It Does |
 |-------|-------------|
@@ -911,6 +913,8 @@ Skills take priority over commands when both exist for the same name.
 | **`/deep-research`** | Multi-source deep research using Exa, Firecrawl, and WebSearch with citations. |
 | **`/game-dev`** | Game development team orchestration and project automation. |
 | **`/gws`** | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more. |
+| **`/homenet-device-profile`** | Device-first LAN behavior profile combining UniFi client state and Pi-hole DNS data (read-only). |
+| **`/homenet-document`** | Generate or refresh comprehensive UniFi network documentation with NotebookLM publication. |
 | **`/memory-architecture`** | Two-tier memory architecture and vector memory configuration for Claude sessions. |
 | **`/multi-agent-orchestration`** | Patterns for structuring multi-agent teams with phase gating and sandbox constraints. |
 | **`/multi-repo-status`** | Quick dashboard showing git status across all project repos in parallel. |
@@ -919,6 +923,8 @@ Skills take priority over commands when both exist for the same name.
 | **`/skill-catalog`** | Full inventory of all agents, skills, commands, and hooks with descriptions. |
 | **`/sync`** | Bidirectional configuration sync across repos, mirrors local state to git backups. |
 | **`/wrap-up`** | End-of-session agent: updates docs, persists to memory systems, commits and pushes all repos. |
+| **`/memory-capture-patterns`** | Operational patterns for continuous vector memory capture using hooks and save cadence rules. |
+| **`/vercel-nextjs-debugging`** | Debugging patterns for Next.js MDX content and Vercel deployment failures. |
 
 ---
 
@@ -941,6 +947,7 @@ Each command file is a markdown document with YAML frontmatter and detailed inst
 | **`/kb-article`** | `kb-article.md` | KB article authoring workflow for structured knowledge base entries. |
 | **`/Knowledge-Graph-Sync`** | `Knowledge-Graph-Sync.md` | Reconciles the knowledge graph (MCP memory server) against actual files on disk. Finds missing, stale, and orphaned entities. |
 | **`/memory-audit`** | `memory-audit.md` | Scan vector memory for contradictions, stale entries, and duplicate clusters. |
+| **`/refine`** | `refine.md` | Evidence-based component refinement: edit existing skills, agents, commands, instincts based on session transcripts. |
 | **`/smart-compact`** | `smart-compact.md` | Pre-compact context preservation: saves session state before compaction. |
 | **`/storage-cleanup`** | `storage-cleanup.md` | Scan Mac storage, identify cleanup opportunities, and move safe files to external drive. |
 

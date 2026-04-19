@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 32 agents, 17 invocable skills, 42 learned skills, 18 scripts, 10 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 19 invocable skills, 42 learned skills, 20 scripts, 11 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -61,7 +61,7 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
-**Core Agents** (16):
+**Core Agents** (18):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -76,6 +76,8 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `notebooklm-assistant` | sonnet | Orchestrates NotebookLM workflows: notebooks, sources, content generation, research, downloads |
 | `notebooklm-content` | sonnet | Creates branded infographics and slide decks from blog posts using Google NotebookLM |
 | `pre-commit-checker` | inherit | Unified pre-commit security and code quality gate |
+| `refine-captain` | opus | /refine orchestrator: evidence-based component refinement from session transcripts |
+| `refine-reader` | haiku | /refine evidence reader: extracts relevant transcript excerpts for component editing |
 | `session-analyzer` | sonnet | Captain agent: parallel session transcript analysis with synthesis |
 | `session-checkpoint` | haiku | Lightweight mid-session state preservation before context compaction |
 | `skill-extractor` | sonnet | Captain agent: parallel instinct extraction from transcripts |
@@ -149,6 +151,8 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/cross-platform-parsing` | Safe text and CLI output parsing patterns across Windows and Unix |
 | `/game-dev` | Game development team orchestration and project automation |
 | `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
+| `/homenet-device-profile` | Device-first LAN behavior profile combining UniFi client state and Pi-hole DNS data (read-only) |
+| `/homenet-document` | Generate or refresh comprehensive UniFi network documentation with NotebookLM publication |
 | `/memory-architecture` | Two-tier memory architecture and vector memory configuration for Claude sessions |
 | `/multi-agent-orchestration` | Patterns for structuring multi-agent teams with phase gating and sandbox constraints |
 | `/multi-repo-status` | Git status dashboard across all project repos in parallel |
@@ -175,7 +179,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (16 files)
+### Scripts (18 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -199,6 +203,8 @@ Automation scripts in `scripts/` for common operations:
 | `firecrawl-wrapper.sh` | Wrapper to launch the Firecrawl MCP server with secrets loaded from environment |
 | `memory-toggle.ps1` | Toggle vector memory MCP server on and off (Windows) |
 | `obsidian-wrapper.sh` | Wrapper to launch the Obsidian MCP server with secrets loaded from environment (macOS) |
+| `pihole-wrapper.sh` | Wrapper to launch the Pi-hole MCP server with secrets loaded from environment |
+| `refine-snapshot.sh` | Preserve pre-edit copies of components before /refine applies changes |
 | `unifi-wrapper.sh` | Wrapper to launch the UniFi MCP server with secrets loaded from environment (macOS) |
 | `gmail-metrics-export` | Export Gmail assistant run metrics and session archive to the cryptoflexllc /analytics dashboard |
 
@@ -319,10 +325,10 @@ This configuration supports both **macOS** and **Windows**:
 ```
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
-  agents/                        # 32 custom agent definitions
-  skills/                        # 17 invocable skills + 42 learned skills
-  commands/                      # 10 commands
-  scripts/                       # 18 automation scripts
+  agents/                        # 34 custom agent definitions
+  skills/                        # 19 invocable skills + 42 learned skills
+  commands/                      # 11 commands
+  scripts/                       # 20 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
