@@ -809,7 +809,7 @@ The fix or workaround
 Trigger conditions — how to recognize this situation
 ```
 
-**Current skills (18 total, organized in 6 categories via INDEX.md):**
+**Current skills (23 total, organized in 6 categories via INDEX.md):**
 
 | # | Skill File | What It Catches |
 |---|-----------|----------------|
@@ -902,7 +902,7 @@ Custom skills are user-invocable workflows (similar to slash commands) that prov
 
 Skills take priority over commands when both exist for the same name.
 
-**Current skills (19 total):**
+**Current skills (26 total):**
 
 | Skill | What It Does |
 |-------|-------------|
@@ -913,8 +913,15 @@ Skills take priority over commands when both exist for the same name.
 | **`/deep-research`** | Multi-source deep research using Exa, Firecrawl, and WebSearch with citations. |
 | **`/game-dev`** | Game development team orchestration and project automation. |
 | **`/gws`** | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more. |
+| **`/homenet-allow-mac`** | Add a MAC address to a UniFi SSID's allowlist (preview by default, --apply to commit). |
+| **`/homenet-deny-mac`** | Remove a MAC address from a UniFi SSID's allowlist (preview by default, --apply to commit). |
 | **`/homenet-device-profile`** | Device-first LAN behavior profile combining UniFi client state and Pi-hole DNS data (read-only). |
 | **`/homenet-document`** | Generate or refresh comprehensive UniFi network documentation with NotebookLM publication. |
+| **`/homenet-filter`** | Toggle mac_filter_enabled on a UniFi SSID (auto-snapshots before change, refuses empty-allowlist enables). |
+| **`/homenet-ppsk-add`** | Add a Private Pre-Shared Key (PPSK) entry to a PPSK-enabled SSID (preview by default, --apply to commit). |
+| **`/homenet-ppsk-remove`** | Remove a PPSK entry from an SSID (preview by default, --apply to commit, refuses to brick SSID). |
+| **`/homenet-review`** | Reconcile each SSID's MAC allowlist against actually-seen clients (active + historical). |
+| **`/homenet-snapshot`** | Snapshot all UniFi wlanconf (SSID) state to HomeNetwork/backups for rollback. |
 | **`/memory-architecture`** | Two-tier memory architecture and vector memory configuration for Claude sessions. |
 | **`/multi-agent-orchestration`** | Patterns for structuring multi-agent teams with phase gating and sandbox constraints. |
 | **`/multi-repo-status`** | Quick dashboard showing git status across all project repos in parallel. |
@@ -922,6 +929,7 @@ Skills take priority over commands when both exist for the same name.
 | **`/openclaw-ops`** | Configuration gotchas and operational patterns for OpenClaw multi-agent systems. |
 | **`/skill-catalog`** | Full inventory of all agents, skills, commands, and hooks with descriptions. |
 | **`/sync`** | Bidirectional configuration sync across repos, mirrors local state to git backups. |
+| **`/ui-ux`** | UI/UX design and quality system: aesthetic direction, component architecture, performance, and visual QA. |
 | **`/wrap-up`** | End-of-session agent: updates docs, persists to memory systems, commits and pushes all repos. |
 | **`/memory-capture-patterns`** | Operational patterns for continuous vector memory capture using hooks and save cadence rules. |
 | **`/vercel-nextjs-debugging`** | Debugging patterns for Next.js MDX content and Vercel deployment failures. |

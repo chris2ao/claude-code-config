@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 19 invocable skills, 42 learned skills, 20 scripts, 11 commands, 17 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 26 invocable skills, 23 learned skills, 27 scripts, 11 commands, 12 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -57,7 +57,7 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (32 files)
+### Agents (34 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
@@ -138,7 +138,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (17 invocable + 42 learned)
+### Skills (26 invocable + 23 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -151,8 +151,15 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/cross-platform-parsing` | Safe text and CLI output parsing patterns across Windows and Unix |
 | `/game-dev` | Game development team orchestration and project automation |
 | `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
+| `/homenet-allow-mac` | Add a MAC address to a UniFi SSID's allowlist (preview by default, --apply to commit) |
+| `/homenet-deny-mac` | Remove a MAC address from a UniFi SSID's allowlist (preview by default, --apply to commit) |
 | `/homenet-device-profile` | Device-first LAN behavior profile combining UniFi client state and Pi-hole DNS data (read-only) |
 | `/homenet-document` | Generate or refresh comprehensive UniFi network documentation with NotebookLM publication |
+| `/homenet-filter` | Toggle mac_filter_enabled on a UniFi SSID (auto-snapshots before change, refuses empty-allowlist enables) |
+| `/homenet-ppsk-add` | Add a Private Pre-Shared Key (PPSK) entry to a PPSK-enabled SSID (preview by default, --apply to commit) |
+| `/homenet-ppsk-remove` | Remove a PPSK entry from an SSID (preview by default, --apply to commit, refuses to brick SSID) |
+| `/homenet-review` | Reconcile each SSID's MAC allowlist against actually-seen clients (active + historical) |
+| `/homenet-snapshot` | Snapshot all UniFi wlanconf (SSID) state to HomeNetwork/backups for rollback |
 | `/memory-architecture` | Two-tier memory architecture and vector memory configuration for Claude sessions |
 | `/multi-agent-orchestration` | Patterns for structuring multi-agent teams with phase gating and sandbox constraints |
 | `/multi-repo-status` | Git status dashboard across all project repos in parallel |
@@ -166,7 +173,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/memory-capture-patterns` | Operational patterns for continuous vector memory capture using hooks and save cadence rules |
 | `/vercel-nextjs-debugging` | Debugging patterns for Next.js MDX content and Vercel deployment failures |
 
-**Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 42 unique skills organized into 6 categories:
+**Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 23 unique skills organized into 6 categories:
 
 | Category | Count | Examples |
 |----------|-------|---------|
@@ -179,7 +186,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (18 files)
+### Scripts (27 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -254,7 +261,7 @@ cd mcp-servers/project-tools && npm install
 
 See [mcp-servers/README.md](./mcp-servers/README.md) for detailed configuration, JSON snippets, and troubleshooting.
 
-## Hooks (17 lifecycle hooks)
+## Hooks (12 lifecycle hooks)
 
 Hooks in `hooks/` are shell scripts that fire automatically at different points in the Claude Code lifecycle. Configure them in your project's `.claude/settings.local.json` using the template at `hooks/settings.local.json.template`.
 
