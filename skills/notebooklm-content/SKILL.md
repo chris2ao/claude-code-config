@@ -121,3 +121,8 @@ The blog-post captain does not call this skill. You invoke it independently when
 - Uses reverse-engineered Google APIs via notebooklm-mcp-cli (may break without notice)
 - Maximum 50 sources per notebook
 - Free tier rate limit: approximately 50 queries per day
+
+## Known stall patterns
+
+- **Slide decks can appear stuck at `in_progress` for 25+ minutes** before completing. This is the expected pattern, not a failure. Do not cancel or retry. Keep polling. Most common on first-time or large notebook runs; subsequent requests tend to complete faster.
+- **`download_artifact` can succeed while `studio_status` still reports `in_progress`.** Observed on a 71+ minute wait (and a separate 75 minute case). Do not gate the download on a completed status. Call `download_artifact` periodically; if it returns bytes, accept the artifact and move on. If it errors, keep polling and retry. Have a manual fallback (custom SVG diagram component) ready so a post can ship even without the NotebookLM asset.

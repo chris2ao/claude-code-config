@@ -41,6 +41,10 @@ Apply and override the PPSK's VLAN to a specific network:
 - **Idempotent**: if an entry with the same password already exists, exits without changes.
 - **VLAN lookup**: if you pass a VLAN name, it must exist. Otherwise the SSID's current `networkconf_id` is reused.
 
+## Security property: SSID-level PSK is hidden on PPSK SSIDs
+
+When `private_preshared_keys_enabled: true` on an SSID, UniFi auto-generates the SSID-level `x_passphrase` and does not surface it to the admin (UI shows PPSK list only; REST returns an opaque value). Effectively, all access is forced through per-device PPSK entries. This is a desirable property: revoking a device means removing its PPSK row, not rotating a shared secret. When this skill adds a PPSK it relies on that property, so the SSID-level passphrase is never logged, previewed, or written to `HomeNetwork/`.
+
 ## Audit logging
 
 Passwords are never written to `HomeNetwork/investigations.md` in plaintext. Each addition logs:

@@ -37,6 +37,8 @@ All images and diagrams in blog posts MUST support click-to-zoom:
 - **Diagrams**: Use custom SVG diagram components (in `src/components/mdx/diagrams-*.tsx`) wrapped with `DiagramLightbox`, not Mermaid code blocks. Create a new `diagrams-<post-slug>.tsx` file for each post that needs diagrams. Register new components in `src/components/mdx/index.ts` and both MDX registries (`src/app/blog/[slug]/page.tsx` and `src/app/backlog/[slug]/page.tsx`).
 - **Images**: The `img` tag is globally mapped to `ImageLightbox` in both MDX registries, so all `<img>` tags and markdown images automatically get click-to-zoom behavior. No special handling needed for infographics or screenshots.
 - **Infographic/slide images**: Place in `public/blog/` and reference with `/blog/filename.png`. The ImageLightbox wrapper handles zoom automatically.
+- **Why custom SVG over Mermaid**: Custom TSX SVG components deliver the professional, on-brand look we want for published posts. Mermaid is only acceptable for transient or ephemeral documentation (design scratchpads, ADR drafts). For anything going to `src/content/blog/` or `src/content/backlog/`, custom SVG is the rule.
+- **Global image handler**: `ImageLightbox` is registered as the global `img` handler in both MDX registries. Every `<img>` and markdown image automatically gets click-to-zoom (100% -> 300%) with keyboard controls. You do not add a per-image wrapper.
 
 ## File Ownership
 
@@ -203,3 +205,7 @@ After completion, return this JSON:
 - Blog files live at `$HOME/GitProjects/cryptoflexllc/src/content/blog/` (production) and `src/content/backlog/` (backlog).
 - Use `model: "haiku"` for Explore research agents to save tokens.
 - Maximize parallel agent spawning. Phases 1 and 3 both have parallel opportunities.
+
+## Known CSS pitfalls
+
+- **Gradient-clip-text is fragile.** The pattern `linear-gradient(...) + background-clip: text + color: transparent` can render as a solid-color rectangle in Chromium 147 (observed on `.ed-hero-title .accent span`). When a reviewer reports a "solid teal/brand rectangle where gradient text should be", fall back to `color: var(--primary)` with no background-clip, and treat the gradient as a nice-to-have decoration, not the source of truth. Add a validation check or screenshot compare before shipping any new gradient-clip-text usage.

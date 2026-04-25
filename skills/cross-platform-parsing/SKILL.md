@@ -58,8 +58,28 @@ const lines = output.replace(/[\r\n]+$/, '').split(/\r?\n/).filter(Boolean)
 
 Formats with positional whitespace: `git status --porcelain`, `git diff --stat`, `column`-aligned output.
 
+### 4. `set -a` Before Sourcing Secrets in MCP Wrapper Scripts
+
+MCP wrapper scripts that launch `npx` or `uv run` against a sourced `secrets.env` must export every variable to child processes, not just set them in the current shell. Without `set -a`, the variables are assigned but not exported, and the MCP subprocess sees nothing.
+
+```bash
+#!/usr/bin/env bash
+# Wrong: vars set in shell scope only; npx child sees nothing
+source "$HOME/.claude/secrets/secrets.env"
+exec npx -y @org/mcp-server
+
+# Correct: set -a marks every subsequent assignment for export
+set -a
+source "$HOME/.claude/secrets/secrets.env"
+set +a
+exec npx -y @org/mcp-server
+```
+
+Rule: every MCP wrapper under `~/.claude/scripts/` that sources `secrets.env` must bracket the source with `set -a` / `set +a` (or equivalent `export VAR=...` assignments). If a fresh MCP says it cannot read its key, check the wrapper first.
+
 ## Source Instincts
 
 - `use-crlf-safe-regex`: "when writing regex to match line endings in cross-platform code"
 - `use-execfilesync-on-windows`: "when using execSync with format strings containing %, ^, !, or & on Windows"
 - `no-trim-on-structured-cli-output`: "when parsing structured CLI output where whitespace has semantic meaning"
+- `set-a-before-source-secrets`: "when writing an MCP wrapper script that sources secrets.env before launching npx or uv run"

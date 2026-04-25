@@ -49,3 +49,7 @@ Apply:
 
 - Before flipping **on** for `The LAN of the Free` or `Silence of the LANS`: confirm you're operating from a wired connection (ethernet), not the Wi-Fi you're about to filter.
 - This skill does NOT modify `mac_filter_list`. Use `/homenet-allow-mac` for that.
+
+## Validated rollout pattern
+
+The preview-then-apply flow with auto-snapshot is the vetted idiom for any destructive UniFi change, not a suggestion. During the 2026-04 MAC-allowlist rollout across three SSIDs, the lockout guard here (refuses `on` with an empty allowlist) and the matching guard in `/homenet-ppsk-remove` (refuses a remove that would brick the SSID) each caught real operator mistakes before they hit the wire. Do not bypass `--force-empty` or `--apply` without a preview unless you have rollback-from-snapshot steps already typed out.

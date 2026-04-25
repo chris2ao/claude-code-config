@@ -43,6 +43,8 @@ Result: one markdown report grouped by device type, with trust tier + cadence + 
 - `mcp__unifi__list_wlans` — SSID map
 - `mcp__unifi__get_client_history` — per-device session history (only when `--device` is set)
 
+Envelope gotcha: UniFi Network API v2 list endpoints return a bare JSON list, not the `{meta, data}` envelope used by v1 endpoints. Code that does `response['data']` uniformly will hit `AttributeError` on v2 results. When consuming raw JSON here, check the shape before indexing (`isinstance(resp, list)` vs `dict`) or route v1 and v2 through separate extractors.
+
 ### Pi-hole MCP
 - `mcp__pihole__get_stats` — LAN-wide baseline (total queries, total blocked)
 - `mcp__pihole__get_top_clients count=50` — volume per client IP
@@ -65,6 +67,7 @@ Result: one markdown report grouped by device type, with trust tier + cadence + 
    - Trust tier from `list_mac_filter` + network assignment.
    - Cadence from `uptime_human` + wired vs wireless (long uptime wired = infrastructure-like).
    - DNS behavior = `volume_quintile` (vs LAN baseline) + `blocked_pct` + top 3 matched `dns_categories`.
+   - **Identity key.** UniFi `dev_id` is a DHCP fingerprint cluster, not a 1:1 device identifier. Multiple physical devices with similar DHCP fingerprints map to one `dev_id`. Always key profiles on the stable MAC plus hostname, never on `dev_id`.
 5. **Diff** against `~/.claude/state/device-profiles/last.json`:
    - New MACs since last run.
    - New top-10 domains per device.
@@ -127,3 +130,5 @@ The first run has no `~/.claude/state/device-profiles/last.json`, so the **Drift
 - `homenet-document` — full UniFi state dump. This skill reuses its snapshot if fresh, else fetches live.
 - `homenet-review` — allowlist reconciliation. This skill may inform a review but never mutates.
 - `homenet-allow-mac` / `homenet-deny-mac` / `homenet-filter` — mutation skills for any action the profile recommends.
+
+Note on destructive siblings: every mutating homenet-* skill (`homenet-filter`, `homenet-ppsk-add`, `homenet-ppsk-remove`, `homenet-allow-mac`, `homenet-deny-mac`) uses a preview-then-apply flow with auto-snapshot and lockout guards (refuse empty-allowlist enables, refuse ppsk-remove that would brick the SSID). If the profile surfaces a recommendation, hand off to the relevant skill rather than calling the MCP directly, so the safety rails apply.
