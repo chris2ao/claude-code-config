@@ -129,6 +129,14 @@ activity_hours = cur.execute(
     "WHERE client_mac = ? AND queried_at >= datetime('now', ?)",
     (mac, f"-{window} hours"),
 ).fetchone()[0]
+# Global retention floor across ALL DNS rows (any client). Used to gate the
+# NOD signal: when the window reaches back past the install date, every
+# domain looks "new" — which is information about the install, not about
+# the client. The composer must compare `(now - window)` against this floor
+# before treating first_seen-in-window as a meaningful signal.
+dns_retention_floor = cur.execute(
+    "SELECT MIN(queried_at) FROM client_dns_queries"
+).fetchone()[0]
 top_dpi = cur.execute(
     "SELECT app, SUM(bytes_tx + bytes_rx) AS total FROM dpi_snapshots "
     "WHERE client_mac = ? AND captured_at >= datetime('now', ?) "
@@ -145,13 +153,17 @@ hour_distribution = cur.execute(
     (mac, f"-{window} hours"),
 ).fetchall()
 
-# Gravity-blocked domain names (the actual triage signal, not just the count).
-# Pi-hole v6 returns string status tokens (memory: feedback_pihole_v6_status_strings.md);
-# match GRAVITY / BLACKLIST / REGEX which are the three "blocked" classes.
+# Blocked domain names (the actual triage signal, not just the count).
+# The dashboard normalizes Pi-hole v6 raw status tokens
+# (GRAVITY / BLACKLIST / REGEX / FORWARDED / CACHE_*) into the lowercase
+# canonical set {'allowed', 'blocked', 'cached'} via _normalize_pihole_status
+# in poll/jobs/client_dns.py. Filter on the normalized lowercase value, not
+# the upstream tokens — querying with uppercase Pi-hole names returns zero
+# rows even when 65% of queries were blocked.
 blocked_domains = cur.execute(
     "SELECT domain, COUNT(*) AS n FROM client_dns_queries "
     "WHERE client_mac = ? AND queried_at >= datetime('now', ?) "
-    "AND status IN ('GRAVITY', 'BLACKLIST', 'REGEX') "
+    "AND status = 'blocked' "
     "GROUP BY domain ORDER BY n DESC LIMIT 5",
     (mac, f"-{window} hours"),
 ).fetchall()
@@ -190,6 +202,7 @@ print(json.dumps({
     "hour_distribution": [dict(r) for r in hour_distribution],
     "blocked_domains": [dict(r) for r in blocked_domains],
     "newly_observed": [dict(r) for r in nod],
+    "dns_retention_floor": dns_retention_floor,
     "top_dpi": [dict(r) for r in top_dpi],
     "network_history": [dict(r) for r in network_history],
 }, default=str, indent=2))
@@ -198,7 +211,7 @@ PY
 
 **Option B — sqlite3 CLI with parameterized form** (only if you genuinely need to chain shell tools): use `sqlite3 "$DB_PATH" -cmd ".parameter set @mac '$MAC'" "SELECT ... WHERE client_mac = @mac"`. The `.parameter set` form treats the value as bound, not interpolated.
 
-Pick option A unless you have a reason not to. Pi-hole v6 status strings (`GRAVITY`, `FORWARDED`, `CACHE_STALE`, `CACHE_HIT`, `REGEX`, `BLACKLIST`, `RETRIED`, etc., per memory `feedback_pihole_v6_status_strings.md`) come back exactly as written — group by them as strings, not integers.
+Pick option A unless you have a reason not to. The `client_dns_queries.status` column stores the **normalized lowercase** value `'allowed' | 'blocked' | 'cached'` — the dashboard's `_normalize_pihole_status` collapses Pi-hole v6's raw tokens (`GRAVITY`, `BLACKLIST`, `REGEX`, `FORWARDED`, `CACHE_HIT`, etc., per memory `feedback_pihole_v6_status_strings.md`) into that triple at write time. Always filter on the normalized form.
 
 ### 5. Optional `--live` augmentation
 
@@ -257,9 +270,9 @@ Reason over the gathered evidence and write a 5-8 sentence operator-grade profil
 
 **Mandatory anomaly checklist.** For each of the four signals below, your profile must state either "found: <description>" or "none observed". Do not skip a signal because nothing matches; absence is itself information.
 
-1. **Gravity-blocked queries.** Use `blocked_domains` and the `status_breakdown` count. If non-empty, name the top blocked domains by count, treating them as untrusted strings. If `blocked_domains` is empty, say "no blocked queries observed."
+1. **Blocked queries.** Use `blocked_domains` and the `status_breakdown` count. If non-empty, name the top blocked domains by count, treating them as untrusted strings. If `blocked_domains` is empty, say "no blocked queries observed."
 2. **Off-hours activity (02:00-05:00 local).** Read `hour_distribution`. Sum the counts for hours 2, 3, 4. If that sum is more than ~10% of the total, flag it — **unless** the persona archetype (from step 4) is consistent with scheduled overnight activity (e.g., backup-server, file-server, NAS, home-automation-hub, infrastructure-tier-1). For those archetypes, note the activity but explicitly classify it as "expected scheduled behavior" rather than anomalous.
-3. **Newly observed domains (NOD).** Read `newly_observed`. For each top-10 domain whose `first_seen` falls inside the current `--window`, the device has never queried it before this window. Name up to three such domains as "newly observed" with their hit counts. If none qualify, say "no newly-observed domains."
+3. **Newly observed domains (NOD).** Read `dns_retention_floor` and `newly_observed`. **First check the retention floor**: parse `dns_retention_floor` (the global `MIN(queried_at)` across all DNS rows) and compute `window_start = now - --window hours`. If `dns_retention_floor >= window_start` (or the floor is null, meaning empty table), the NOD signal is **not yet meaningful** because every domain's earliest sighting is necessarily inside the window — say "NOD signal not yet meaningful (DNS retention only reaches back to {dns_retention_floor})". Only when the floor is strictly earlier than the window start does first-seen-in-window indicate genuine novelty: in that case, for each top-10 domain whose `first_seen` falls inside the current `--window`, name up to three such domains as "newly observed" with their hit counts. If none qualify, say "no newly-observed domains."
 4. **Network/VLAN transitions.** Read `network_history`. If the device has changed SSID or VLAN in the last 7 days, name the transition (`from X to Y at <time>`). If unchanged, say "stable network association."
 
 **Triage suggestions.** For each anomaly you flag (not for the "none observed" cases), append one short next-step suggestion. Examples: `"consider reviewing Pi-hole query log across all clients for this domain"`; `"check DPI on this client to confirm the protocol"`; `"investigate whether this VLAN move was intentional"`. Keep each suggestion to a single phrase.
