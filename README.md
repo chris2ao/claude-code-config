@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 26 invocable skills, 23 learned skills, 27 scripts, 11 commands, 12 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 28 invocable skills, 23 learned skills, 27 scripts, 11 commands, 12 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -138,7 +138,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (26 invocable + 23 learned)
+### Skills (28 invocable + 23 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -152,6 +152,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/game-dev` | Game development team orchestration and project automation |
 | `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
 | `/homenet-allow-mac` | Add a MAC address to a UniFi SSID's allowlist (preview by default, --apply to commit) |
+| `/homenet-client-profile` | LLM-composed intelligence profile for a single client device joining UniFi state, persona, and Pi-hole DNS evidence (read-only against external systems, writes only to local override table) |
 | `/homenet-deny-mac` | Remove a MAC address from a UniFi SSID's allowlist (preview by default, --apply to commit) |
 | `/homenet-device-profile` | Device-first LAN behavior profile combining UniFi client state and Pi-hole DNS data (read-only) |
 | `/homenet-document` | Generate or refresh comprehensive UniFi network documentation with NotebookLM publication |

@@ -914,6 +914,7 @@ Skills take priority over commands when both exist for the same name.
 | **`/game-dev`** | Game development team orchestration and project automation. |
 | **`/gws`** | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more. |
 | **`/homenet-allow-mac`** | Add a MAC address to a UniFi SSID's allowlist (preview by default, --apply to commit). |
+| **`/homenet-client-profile`** | LLM-composed intelligence profile for a single client device joining UniFi state, persona, and Pi-hole DNS evidence from the dashboard's local SQLite (read-only against external systems, writes only to local override table). |
 | **`/homenet-deny-mac`** | Remove a MAC address from a UniFi SSID's allowlist (preview by default, --apply to commit). |
 | **`/homenet-device-profile`** | Device-first LAN behavior profile combining UniFi client state and Pi-hole DNS data (read-only). |
 | **`/homenet-document`** | Generate or refresh comprehensive UniFi network documentation with NotebookLM publication. |
