@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 28 invocable skills, 23 learned skills, 27 scripts, 11 commands, 12 hooks, 7 MCP servers, and 50 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 28 invocable skills, 42 learned skills, 27 scripts, 11 commands, 12 hooks, 7 MCP servers, and 60 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -308,7 +308,7 @@ homunculus/
 3. Instincts start at 0.4 confidence and increase with repeated evidence
 4. When 3+ instincts cluster in a domain, they can be graduated into learned skills
 
-Currently contains 50 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
+Currently contains 60 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
 
 ## Templates
 
@@ -334,13 +334,13 @@ This configuration supports both **macOS** and **Windows**:
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
   agents/                        # 34 custom agent definitions
-  skills/                        # 19 invocable skills + 42 learned skills
+  skills/                        # 28 invocable skills + 42 learned skills
   commands/                      # 11 commands
   scripts/                       # 20 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
-  homunculus/                    # Continuous learning system (50 instincts)
+  homunculus/                    # Continuous learning system (60 instincts)
   COMPLETE-GUIDE.md              # Comprehensive beginner walkthrough
 ```
 
