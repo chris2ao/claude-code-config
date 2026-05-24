@@ -57,6 +57,36 @@ For always-on machines with full MCP infrastructure (vector memory, Obsidian, Gi
 | Remote Control | Full (local interactive) | Interactive session from remote device |
 | Dispatch | None (isolated VM) | Fire-and-forget, no local tool needs |
 
+### 5. Structural Test Gaps in Dispatch Waves
+
+When dispatch waves include smoke checklists, ensure they exercise the full user-facing surface, not just low-level tests:
+
+**Common omission:** waves include `pytest` and `vitest` but skip `npm run build` / `tsc`. TypeScript type errors, missing component exports, and broken import paths only surface at build time. Including unit tests without a build step is a structural gap that allows soak-blocker bugs to survive wave review.
+
+**Minimum smoke checklist per wave:**
+1. `npm run build` (or `tsc --noEmit`) -- catches type errors and missing exports
+2. Unit tests (`pytest`, `vitest`, etc.) -- catches logic errors
+3. Integration smoke (`curl` to key endpoints) -- catches runtime wiring errors
+
+Silently-failing bugs caught in Phase 2 sleepy-forging-gosling that build coverage would have caught earlier: `ChWriteFailed` not exported, double-hashed payload, silent ClickHouse auth failure returning 200 with empty result, unreachable fallback branch.
+
+### 6. Fail-Loudly Assertions in Observability and Reconciliation Scripts
+
+Reconciliation scripts, parity gates, and observability checks that run in scheduled/cron environments must use `os.environ["KEY"]` (raises `KeyError` on missing) rather than `os.environ.get("KEY", default)`. The silent-default pattern masks misconfigured cron environments: the script runs, emits no findings, and the operator has no idea whether the environment was healthy or simply unconfigured.
+
+**Pattern:**
+```python
+# Good: fails loudly on misconfiguration
+ch_host = os.environ["CLICKHOUSE_HOST"]
+ch_user = os.environ["CLICKHOUSE_USER_CLAUDE"]
+
+# Bad: silent auth failure masks misconfig
+ch_host = os.environ.get("CLICKHOUSE_HOST", "localhost")
+ch_user = os.environ.get("CLICKHOUSE_USER_CLAUDE", "")
+```
+
+Apply this to all scripts that gate a soak period, emit drift findings, or serve as health signals. If the environment is wrong, a loud crash + non-zero exit is far more useful than a successful-looking run with no data.
+
 ## Source Instincts
 
 - `parallel-scaffolding`: "when scaffolding large monolithic projects (50+ files)"

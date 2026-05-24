@@ -100,3 +100,4 @@ Display to the user:
 - Memory status: MEMORY.md delta applied, vector memory stored (yes/no), KG entities updated (count)
 - Gmail metrics: exported (yes/no)
 - Config drift: if `config_drift.detected` is true, suggest running `/claude-config-sync`
+- Installer sync: if `~/.claude` config changed this session, remind the user to run `~/GitProjects/CJClaudin_Setup/refresh.sh` and commit the diff in CJClaudin_Setup so the installer stays current.

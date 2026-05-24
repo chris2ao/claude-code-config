@@ -91,6 +91,26 @@ for f in <orphan-uuid>.jsonl; do mv "$f" "$f.deleted.$TS"; done
 
 `--fix-missing` is needed in addition to `--enforce`; without it, `cleanup` only handles age/count retention. Renaming to `*.deleted.<ts>` matches the pattern doctor itself uses, keeps the data recoverable, and clears the orphan count.
 
+## Vector 0.40 VRL Gotchas
+
+These gotchas apply when authoring VRL transforms for Vector 0.40 pipelines (SIEM log-lake and similar):
+
+1. **Regex named-capture type**: named captures return `string | null` (not `string`). Always cast: `string!(.captures.name)` before passing to `contains()`, `starts_with()`, etc. The linter error is `E110 unexpected type`.
+
+2. **`.timestamp` is non-nullable**: `.timestamp` on an event is always present; `?? now()` fallback is a no-op and the VRL parser rejects it. Access `.timestamp` directly.
+
+3. **`to_int(null)` returns 0, not error**: `to_int(null)` silently returns `0` instead of raising. If you need to distinguish "field missing" from "field is 0", check `exists(.field)` first.
+
+4. **No first-class functions (closures)**: VRL has no lambda/closure support. Map and filter operations must be written as loops with explicit `push`/mutation.
+
+5. **HTTP request headers format**: use the `[[sources.foo.headers]]` TOML array-of-tables format, not inline `headers = {}`. Inline format silently drops headers.
+
+6. **`encoding.codec` rejected in sinks**: `encoding.codec` is not a valid key in most sink encoding blocks. Use `encoding.only_fields`, `encoding.except_fields`, and `encoding.timestamp_format` only.
+
+7. **Disk buffer minimum size**: Vector disk buffer requires at least 268,435,488 bytes (256 MiB + 32 bytes). Values below this crash Vector at startup with a confusing "invalid configuration" error. Set `max_size = 268435456` (256 MiB) as the practical floor -- Vector rounds up the 32-byte header internally.
+
+8. **syslog source emits 12 non-schema fields**: the `syslog` source emits `appname`, `facility`, `hostname`, `message`, `msgid`, `procid`, `severity`, `source_ip`, `timestamp`, `version`, plus `structured_data` and `source_type`. If your downstream sink expects a clean schema, add `encoding.only_fields = ["appname", "facility", "hostname", "message", "severity", "timestamp"]` (adjust to your schema) to avoid sending surprise fields to ClickHouse/Kafka.
+
 ## Source Instincts
 
 - `openclaw-doctor-revert`: "when running openclaw doctor after manual config edits"

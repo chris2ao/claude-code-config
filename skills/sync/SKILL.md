@@ -79,3 +79,7 @@ Pass to the agent:
 2. Instruction: "Read README.md and COMPLETE-GUIDE.md in ~/GitProjects/claude-code-config/. Update both to reflect the synced changes: add new agents/hooks/scripts/skills to the relevant tables, update counts, remove entries for deleted items. Keep edits minimal and match existing style. Never use em dashes. Commit and push to master with message: docs: update README and COMPLETE-GUIDE for synced changes"
 
 After the agent returns, report which sections were updated.
+
+## Step 7: Refresh Installer Payload
+
+After syncing config, run `~/GitProjects/CJClaudin_Setup/refresh.sh` on this Mac to re-snapshot `~/.claude` into the installer's `payload/` directory. Then review the resulting diff in the CJClaudin_Setup repo and commit it so the installer stays current with the config that was just synced.

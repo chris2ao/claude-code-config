@@ -122,6 +122,25 @@ Summary: `done enriched=N rdap_unavailable=M ipinfo_unavailable=K failures=F`.
 - **Refuse to run if `MISSION_CONTROL_MODE=A` AND the operator passed `--apply`** (no `--apply` flag exists today; this is a guard for future scope creep). Mode A is read-only against UniFi / Pi-hole; the skill's external feeds are public, so the local-write path is allowed in any mode.
 - **Skill is idempotent.** A re-run within 7 days touches no rows unless `--force`.
 
+## Known Gotchas
+
+### Duplicate anomaly rows and stale enrichment target
+
+The heuristics-rescore job may create a higher-score duplicate row for the same `etld1` (e.g., id=393 score=6 and id=439 score=9 for `lic.drmtoday.com`). The enrichment query uses `ORDER BY score DESC, id DESC` which correctly picks the highest-score row, but the UPDATE uses `WHERE id = :id`. If the earlier lower-score row still exists in the candidate window, enrichment can land on the stale row while the dashboard's `/api/threat-intel/anomalies` returns only the newer higher-score row (un-enriched).
+
+Symptoms: enrichment log shows "enriched etld1=X" but the dashboard inline-expand panel shows no registrar/ASN for that domain.
+
+Workaround: after enrichment, verify with:
+```sql
+SELECT etld1, id, score, enrichment_fetched_at
+FROM threat_intel_anomalies
+WHERE etld1 = 'lic.drmtoday.com'
+ORDER BY score DESC;
+```
+If the highest-score row has `enrichment_fetched_at IS NULL`, re-run with `--force` (which rebulids the candidate list from score-desc order, touching the correct row).
+
+Long-term fix: add a dedup step to the candidate query or use `(etld1, score)` as the enrichment lookup key instead of `id`.
+
 ## Operator-facing failure modes
 
 - `RDAP unavailable for {etld1}`: 404 / 400 / timeout / non-JSON. Recorded as `rdap_unavailable: true`; the dashboard inline-expand panel renders this state explicitly.
