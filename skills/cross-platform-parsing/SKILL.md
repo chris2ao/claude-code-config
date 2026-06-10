@@ -77,9 +77,36 @@ exec npx -y @org/mcp-server
 
 Rule: every MCP wrapper under `~/.claude/scripts/` that sources `secrets.env` must bracket the source with `set -a` / `set +a` (or equivalent `export VAR=...` assignments). If a fresh MCP says it cannot read its key, check the wrapper first.
 
+### 5. Bash Tool Shell Is zsh — Word-Splitting Differs
+
+The Claude Code Bash tool executes commands in **zsh**, not bash. This creates two silent failure modes:
+
+**Mode A: Unquoted variable word-splitting.** In bash, `for f in $list` splits `$list` on IFS. In zsh, unquoted variables are NOT word-split by default, so the loop iterates once over the entire string as a single token. A payload copy loop that silently processed a single bogus path instead of many files is the classic symptom.
+
+```bash
+# Appears to work in bash, silently broken in zsh (Bash tool):
+for f in $FILES; do cp "$f" "$DEST/"; done
+
+# Safe in both: pass through bash explicitly or use an array
+bash -c 'for f in '"$FILES"'; do cp "$f" "$DEST/"; done'
+# Or, in scripts with a bash shebang, arrays work correctly:
+for f in "${FILES[@]}"; do cp "$f" "$DEST/"; done
+```
+
+**Mode B: Interactive-shell errors are red herrings for bash-shebang scripts.** `source`-ing a bash library in the Bash tool's zsh shell may produce errors (e.g., zsh-style `read -A` failures) even though the script runs correctly under its `#!/usr/bin/env bash` shebang. bats test suites also run under real bash. Before diagnosing a "broken" script from interactive output, re-run it under the target shell:
+
+```bash
+bash -c 'source ./lib.sh && test_function'
+# Or run the script directly so the shebang takes effect:
+./scripts/my-script.sh
+```
+
+Evidence: CJClaudin_Setup session 3f16f8dd (2026-05-24). "The copy loop didn't word-split (the tool's shell is zsh, which doesn't split unquoted vars like bash). / My `source` ran under the tool's interactive shell (zsh-style `read -a` failure), not bash. The bats suite (10/10) runs under real bash."
+
 ## Source Instincts
 
 - `use-crlf-safe-regex`: "when writing regex to match line endings in cross-platform code"
 - `use-execfilesync-on-windows`: "when using execSync with format strings containing %, ^, !, or & on Windows"
 - `no-trim-on-structured-cli-output`: "when parsing structured CLI output where whitespace has semantic meaning"
 - `set-a-before-source-secrets`: "when writing an MCP wrapper script that sources secrets.env before launching npx or uv run"
+- `verify-under-target-shell`: "when a shell script misbehaves in the harness shell or an interactive shell"

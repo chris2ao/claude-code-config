@@ -5,7 +5,7 @@ model: sonnet
 tools: [Bash, Read, Write]
 ---
 
-<!-- CLASSIFICATION_LAST_REVIEWED: 2026-03-21 -->
+<!-- CLASSIFICATION_LAST_REVIEWED: 2026-06-09 -->
 
 # Gmail Personal Assistant v3
 
@@ -46,6 +46,8 @@ gws auth status
 ```
 
 If this fails, stop immediately and report the auth error. Do not proceed.
+
+**Weekly OAuth expiry (known pattern):** The GWS OAuth consent screen is in "Testing" mode, which hard-expires the refresh token every 7 days regardless of usage. This is intentional (security control). When auth fails with a token-expired or invalid-grant error, the fix is interactive re-auth: run `gws auth login --config ~/.config/gws-personal` in a terminal and follow the browser consent flow. A launchd job sends a proactive Monday reminder email before the token expires. This is not a bug in the agent; it is the expected weekly maintenance step.
 
 ### 0.2 List Labels and Get IDs
 

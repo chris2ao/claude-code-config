@@ -4,7 +4,7 @@ platform: portable
 
 # Learned Skills Index
 
-23 skills organized by domain. Original files remain at `learned/` root for backward compatibility.
+24 skills organized by domain. Original files remain at `learned/` root for backward compatibility.
 Organized copies in subdirectories for browsing.
 
 ## Platform (3 skills)
@@ -34,11 +34,12 @@ Organized copies in subdirectories for browsing.
 ## Testing (1 skill)
 - `vitest-class-mock-constructor.md` — Class-based factory mock for SDK constructors in vitest
 
-## Next.js (4 skills)
+## Next.js (5 skills)
 - `nextjs/nextjs-client-component-metadata.md` — Client component metadata workaround
 - `nextjs/mdx-same-date-sort-order.md` — Same-date MDX sort fix
 - `nextjs/mdx-blog-design-system.md` — MDX callouts and product badges
 - `nextjs/vercel-json-waf-syntax.md` — vercel.json WAF route syntax
+- `nextjs/mdx-yaml-colon-in-scalar.md` — Prose frontmatter values with `: ` break gray-matter; use `>-` folded scalar
 
 ## Workflow (2 skills)
 - `blog-post-production-pipeline.md` — Repeatable 8-step blog post production workflow

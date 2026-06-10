@@ -100,7 +100,7 @@ if git diff --cached --quiet; then
 else
   git commit -m "chore: update gmail metrics and session archive
 
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
   # Push unless --no-push
   if [ "$1" != "--no-push" ] && [ "$1" != "--dry-run" ]; then
