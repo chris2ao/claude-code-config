@@ -133,7 +133,7 @@ chore: sync config from live ~/.claude/
 
 N new, M modified, D deleted files
 
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
