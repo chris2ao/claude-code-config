@@ -23,23 +23,60 @@ echo "Target: $DATA_DIR"
 
 ### Step 2: Export Gmail Metrics
 
-Read `~/.cache/gmail-assistant/run-metrics.jsonl`. Each line is a JSON object with fields: `timestamp`, `account`, `duration_seconds`, `sync_mode`, `emails_processed`, `promotions_trashed`, `promotions_rescued`, `social_trashed`, `social_rescued`, `newsletters_trashed`, `newsletters_rescued`, `primary_kept`, `primary_archived`, `primary_trashed`, `primary_flagged`, `urgent_count`, `vip_overrides`, `security_threats_detected`, `drafts_generated`, `pending_replies`, `attention_email_sent`, `errors`, `circuit_breaker_triggered`.
+Read `~/.cache/gmail-agent/run-metrics.jsonl` (the v4 standalone Python agent; the old v3 bridge path `~/.cache/gmail-assistant/` is retired). Each line is a JSON object with fields: `run_id`, `started_at`, `ended_at`, `status` (success | error | circuit_broken | running), `messages_scanned`, `messages_trashed`, `messages_archived`, `messages_flagged`, `filters_suggested`, `filters_created`, `unsubscribes_attempted`, `unsubscribes_succeeded`, `cost_usd`, `circuit_breaker_tripped`, `agent_version`, `details` (map; may contain `attention_email_sent`, `draft_id`, `error`), `written_at`.
 
-Parse each line, collect into an array, sort by `timestamp` descending (newest first).
+The export normalizes each row for the frontend (`GmailRun` in `src/lib/analytics-types.ts`): computes `duration_seconds` from `started_at`/`ended_at`, flattens `details.attention_email_sent` to a boolean and `details.error` to a string, and sorts by `started_at` descending (newest first).
 
 ```bash
-METRICS_FILE="$HOME/.cache/gmail-assistant/run-metrics.jsonl"
-if [ -f "$METRICS_FILE" ]; then
-  python3 -c "
+METRICS_FILE="$HOME/.cache/gmail-agent/run-metrics.jsonl"
+python3 - "$METRICS_FILE" > "$DATA_DIR/gmail-metrics.json" <<'PY'
 import json, sys
-with open('$METRICS_FILE') as f:
-    rows = [json.loads(line) for line in f if line.strip()]
-rows.sort(key=lambda r: r.get('timestamp',''), reverse=True)
+from datetime import datetime
+
+try:
+    with open(sys.argv[1]) as f:
+        raw = [json.loads(line) for line in f if line.strip()]
+except FileNotFoundError:
+    raw = []
+
+rows = []
+for r in raw:
+    if "run_id" not in r:
+        continue  # legacy v3 bridge row (different schema); not exported
+    started, ended = r.get("started_at"), r.get("ended_at")
+    duration = 0
+    if started and ended:
+        try:
+            duration = round(
+                (datetime.fromisoformat(ended) - datetime.fromisoformat(started)).total_seconds()
+            )
+        except ValueError:
+            pass
+    details = r.get("details") or {}
+    rows.append({
+        "run_id": r.get("run_id", ""),
+        "started_at": started or "",
+        "ended_at": ended,
+        "status": r.get("status", "unknown"),
+        "duration_seconds": duration,
+        "messages_scanned": r.get("messages_scanned", 0),
+        "messages_trashed": r.get("messages_trashed", 0),
+        "messages_archived": r.get("messages_archived", 0),
+        "messages_flagged": r.get("messages_flagged", 0),
+        "filters_created": r.get("filters_created", 0),
+        "unsubscribes_succeeded": r.get("unsubscribes_succeeded", 0),
+        "cost_usd": r.get("cost_usd", 0.0),
+        "circuit_breaker_tripped": r.get("circuit_breaker_tripped", False),
+        "agent_version": r.get("agent_version", ""),
+        "attention_email_sent": details.get("attention_email_sent") == "true",
+        # Public page: export only the exception class, never the message text,
+        # which can embed sender addresses or subject fragments from gws errors.
+        "error": details["error"].split(":")[0] if details.get("error") else None,
+    })
+
+rows.sort(key=lambda r: r.get("started_at", ""), reverse=True)
 print(json.dumps(rows, indent=2))
-" > "$DATA_DIR/gmail-metrics.json"
-else
-  echo "[]" > "$DATA_DIR/gmail-metrics.json"
-fi
+PY
 ```
 
 Write to: `$DATA_DIR/gmail-metrics.json`
