@@ -36,7 +36,7 @@ Run the full network-documentation pipeline ad-hoc. Pulls live UniFi state, refr
    - `network-research` runs `/deep-research` threads and writes cited findings to `research/`.
 3. **Phase 3: Diagram generation.** Architect runs `~/.claude/scripts/homenet-render-diagrams.py` (Python `diagrams` library + Graphviz). Generates `diagrams/logical-network.{svg,png}` and `diagrams/physical-topology.{svg,png}`.
 4. **Phase 4: Synthesis.** Architect writes the README executive summary, cross-links research into security recommendations, updates the maintenance log.
-5. **Phase 5: Redaction + NotebookLM.** Architect runs `~/.claude/scripts/homenet-redact.py` to scrub PSKs, PPSK passwords, RADIUS shared secrets, API keys, and bearer tokens from a copy of HomeNetwork/. Creates or updates the "Johnson Home Network" notebook in NotebookLM, brand-primes it, and uploads every redacted markdown plus diagram PNGs as sources.
+5. **Phase 5: Redaction + NotebookLM.** Architect runs `~/.claude/scripts/homenet-redact.py` to scrub PSKs, PPSK passwords, RADIUS shared secrets, API keys, and bearer tokens from a copy of HomeNetwork/. Creates or updates the "Johnson Home Network" notebook in NotebookLM (uses the unified `source_add` tool, `source_type=text` for markdown and `source_type=file` for diagram PNGs), brand-primes it, and uploads every redacted markdown plus diagram PNGs as sources. Tags the notebook for later retrieval via `tag(action=add, notebook_id=..., tags="homenet,unifi,network")` so it is findable with `tag(action=select, query="home network")`. Because the upload spans many sources (inventory, topology, security, configurations, research), it also runs `label(action=auto, notebook_id=...)` to AI-categorize the sources into thematic groups inside the notebook (notebooklm-mcp-cli 0.7.2+).
 6. **Phase 6: Final report.** You get a structured summary with file lists, stats, and suggested next actions.
 
 ## Prerequisites
@@ -96,4 +96,4 @@ This skill is **read-only** against the UniFi MCP. It documents the network and 
 - Per-flow traffic data is not exposed by the UniFi API on Network 10.2; DPI per-app aggregates are the closest substitute.
 - LLDP / physical cable-run topology is not exposed; physical diagram uses switch port indices, not cable labels.
 - NotebookLM generation has no guaranteed time; large notebooks take 5+ minutes to ingest sources.
-- Cookie auth for NotebookLM expires every 2-4 weeks. If publication fails, run `nlm login` and re-invoke with `--no-notebooklm` first to verify everything else, then re-run with NotebookLM enabled.
+- Cookie auth for NotebookLM expires every 2-4 weeks. If publication fails, run `nlm login` and re-invoke with `--no-notebooklm` first to verify everything else, then re-run with NotebookLM enabled. The MCP's `auth_status` (0.7.1+) distinguishes `stale` (re-auth needed) from `unverified` (transient network error, retry); only `stale` requires `nlm login`.

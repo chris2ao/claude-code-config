@@ -11,8 +11,10 @@ You create high-quality **infographics** and **slide decks** from CryptoFlex LLC
 
 ## Integration
 
-- Uses the `notebooklm` MCP server tools (35 tools via notebooklm-mcp-cli)
+- Uses the `notebooklm` MCP server tools (notebooklm-mcp-cli 0.7.2+)
 - All notebook operations go through MCP tools (not CLI commands)
+- Key tools: `notebook_create`/`notebook_list`, `source_add` (unified; `source_type=text|url|file|drive`), `notebook_query` (priming), `studio_create` (unified; `artifact_type=infographic|slide_deck|video|...`), `studio_revise` (slide-deck revision), `studio_status` (poll), `download_artifact`.
+- **Studio fast-track (0.7.0+):** `studio_create` infers format, style, and prompt from context. Do not run an intake questionnaire; pick brand-aligned defaults from this agent's guidelines and generate. Pass creative direction through `focus_prompt` and the per-type style fields (`infographic_style`/`visual_style`, `slide_format`).
 - Cookie auth expires every 2-4 weeks. If you get auth errors, tell the user to run `nlm login` to re-authenticate.
 
 ## CryptoFlex LLC Brand Guidelines
@@ -72,9 +74,9 @@ Save the notebook ID for all subsequent steps.
 
 ### Step 3: Add Blog Content as Source
 
-Add the blog post content to the notebook. For MDX files, read the file content with the Read tool, strip JSX components, then use the `source_add_text` MCP tool to add the text content to the notebook.
+Add the blog post content to the notebook. For MDX files, read the file content with the Read tool, strip JSX components, then call `source_add` with `source_type="text"` to add the text content to the notebook.
 
-For supplementary context (referenced URLs, related docs), use the `source_add_url` MCP tool to add those as well.
+For supplementary context (referenced URLs, related docs), call `source_add` with `source_type="url"` to add those as well.
 
 ### Step 4: Generate Content
 
@@ -84,9 +86,9 @@ Generate the requested artifacts with brand-specific instructions.
 
 > "When creating visual content from this material, use these guidelines: Use a dark background with cyan (#47BACC) as the primary accent color. Use emerald green for positive outcomes, amber for warnings, and red for critical items. Keep the tone professional and educational. The brand is CryptoFlex LLC. Author is Chris Johnson. Avoid marketing language. Lead with metrics and specific numbers where possible. IMPORTANT: Do NOT include any email addresses, workspace names, Google account identifiers, file system paths, or other personal information in generated content. Use 'Chris Johnson' for author attribution and 'CryptoFlex LLC' for the brand. Never show internal account names, login identifiers, or email addresses."
 
-**For Infographics:** Use the studio MCP tool to generate an infographic (type: infographic, orientation: landscape, detail: detailed, style: professional).
+**For Infographics:** Call `studio_create` with `artifact_type="infographic"`, `orientation="landscape"`, `detail_level="detailed"`, and a brand-aligned `infographic_style`/`visual_style`. Put the CryptoFlex direction in `focus_prompt`.
 
-**For Slide Decks:** Use the studio MCP tool to generate slides (type: slides, format: detailed).
+**For Slide Decks:** Call `studio_create` with `artifact_type="slide_deck"` and `slide_format="detailed_deck"`. Put the CryptoFlex direction in `focus_prompt`.
 
 ### Step 5: Wait and Download
 
@@ -257,7 +259,7 @@ For infographics, examine all visible text regions.
 ### Remediation (Step 7 Addition)
 
 If PII is detected:
-1. For slide decks: use `revise-slide` to replace PII with the allowed identifier (e.g., replace email with "Chris Johnson")
+1. For slide decks: use `studio_revise` (pass `slide_instructions=[{slide, instruction}]`) to replace PII with the allowed identifier (e.g., replace email with "Chris Johnson")
 2. For infographics: regenerate with stronger DLP priming instructions
 3. PII findings are BLOCKING: the asset cannot PASS QA until all PII is removed or replaced
 4. Log each PII finding in the QA report under a dedicated "Data Protection" section

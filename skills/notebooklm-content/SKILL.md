@@ -40,6 +40,8 @@ Create high-quality infographics and slide decks from your blog posts using Goog
 - `--type infographic` (default): Generate a branded infographic (PNG)
 - `--type slides`: Generate a branded slide deck (PDF + PPTX)
 - `--type both`: Generate both infographic and slide deck
+
+> **Video Overviews (new in notebooklm-mcp-cli 0.7.0)** are also available, including the `cinematic` format driven by a full creative brief. This skill's brand-QA pipeline is tuned for static assets (infographics, slides), so video generation is not wired into `--type` here. To produce a Video Overview from a notebook, use the general `notebooklm-assistant` agent (`studio_create` with `artifact_type="video"`, `video_format="cinematic"`, brief via `focus_prompt`).
 - `--orientation landscape|portrait|square`: Infographic orientation (default: landscape)
 - `--detail concise|standard|detailed`: Infographic detail level (default: detailed)
 - `--style professional|editorial|scientific`: Infographic visual style (default: professional)
@@ -117,8 +119,8 @@ The blog-post captain does not call this skill. You invoke it independently when
 
 - NotebookLM generation takes 5-15 minutes per asset
 - Infographic style is influenced but not fully controlled by instructions (NotebookLM makes its own design choices)
-- Cookie auth expires every 2-4 weeks (run `nlm login` to refresh)
-- Uses reverse-engineered Google APIs via notebooklm-mcp-cli (may break without notice)
+- Cookie auth expires every 2-4 weeks (run `nlm login` to refresh; `nlm login --check` verifies the current session). If the MCP reports `auth_status: stale`, re-auth; `unverified` is a transient network error, not an auth failure.
+- Uses reverse-engineered Google APIs via notebooklm-mcp-cli (may break without notice). Keep current with `uv tool upgrade notebooklm-mcp-cli`, then reconnect the `notebooklm` MCP server.
 - Maximum 50 sources per notebook
 - Free tier rate limit: approximately 50 queries per day
 
