@@ -103,6 +103,31 @@ bash -c 'source ./lib.sh && test_function'
 
 Evidence: CJClaudin_Setup session 3f16f8dd (2026-05-24). "The copy loop didn't word-split (the tool's shell is zsh, which doesn't split unquoted vars like bash). / My `source` ran under the tool's interactive shell (zsh-style `read -a` failure), not bash. The bats suite (10/10) runs under real bash."
 
+### 6. Bootstrap and Installer Step Loops Require set -ue
+
+When a bootstrap or installer script iterates over numbered step scripts, use `set -ue` (not just `set -uo pipefail`). Without `-e`, a failing step does not halt the loop, so later steps run against a blank or broken environment.
+
+```bash
+#!/usr/bin/env bash
+# Wrong: a failure in step 02 lets steps 03-08 run against a broken environment
+set -uo pipefail
+
+for step in steps/*.sh; do
+  bash "$step"
+done
+
+# Correct: exit immediately on any step failure
+set -ueo pipefail
+
+for step in steps/*.sh; do
+  bash "$step"
+done
+```
+
+Also test the partial-run path (`--only <step>`) to confirm it exits nonzero when the targeted step fails. Both the full run and the partial run must fail fast.
+
+Evidence: CJClaudin_Setup `bootstrap.sh` used `set -uo pipefail` without `-e`. A failure in step 02 (repo clone) would have let steps 03-08 configure MCP servers and verify against an empty checkout. Caught in Phase 5 code review.
+
 ## Source Instincts
 
 - `use-crlf-safe-regex`: "when writing regex to match line endings in cross-platform code"
@@ -110,3 +135,4 @@ Evidence: CJClaudin_Setup session 3f16f8dd (2026-05-24). "The copy loop didn't w
 - `no-trim-on-structured-cli-output`: "when parsing structured CLI output where whitespace has semantic meaning"
 - `set-a-before-source-secrets`: "when writing an MCP wrapper script that sources secrets.env before launching npx or uv run"
 - `verify-under-target-shell`: "when a shell script misbehaves in the harness shell or an interactive shell"
+- `bootstrap-step-loop-set-e`: "when writing bootstrap/installer scripts that run numbered steps in a loop"
