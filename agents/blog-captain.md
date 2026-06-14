@@ -82,7 +82,8 @@ Wait for the writer to complete. Note the output file path.
 Determine the 2 most recent post paths from the inventory for calibration. Then launch **all four reviewers in parallel** (single message):
 
 **Agent 1: Editor**
-- Pass: draft file path, 2 recent post paths, tone setting
+- Pass: draft file path, 2 recent post paths, tone setting, and the **"AI-Slop Tells: The De-Slop Check"** section from the voice profile (paste its full text; the agent cannot read `~/.claude/skills/` itself)
+- Instruct the editor to **run the de-slop check explicitly**: walk the draft against the 10 named tells and the structural-evenness test, and report every hit as a finding (fragment-triplet/staccato drama, hype-labels, thesis-announcement/over-signposting, bolded-lead-in Lessons-callout stacks, tricolon/triptych closers, too-clean antithesis, fake precision, telling-the-reader-how-to-feel, grand-summary closers, cross-container restatement). Classify a bolded-card Lessons stack, a thesis-announcement opener, and a grand-summary/thesis-restatement closer as **must-fix**; the rest as should-fix. The editor must also name any confessional or specific lines worth protecting so revision does not flatten them.
 
 **Agent 2: Voice Agent (post-draft mode)**
 - Pass: voice profile content, draft file path, 2 recent post paths
@@ -106,9 +107,11 @@ Consolidate all Phase 3 feedback into three categories:
 - Validation errors from `validate-mdx.sh` (em dashes, missing frontmatter, unclosed callouts, heading hierarchy, private repo links, duplicate GIFs)
 - Voice score below 3/5
 - Editor must-fix items
+- De-slop must-fix items (bolded-card Lessons stack, thesis-announcement opener, grand-summary/thesis-restatement closer)
 
 **SHOULD-FIX** (triggers revision if 3+ items):
 - Editor should-fix items
+- De-slop should-fix items (hype-labels, over-signposting, tricolon overload, fake precision, cross-container restatement)
 - UX structural warnings (callout clusters, content deserts)
 - Voice score 3-4/5 with specific deviations
 - Voice metric deviations marked should-fix
