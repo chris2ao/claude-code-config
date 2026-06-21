@@ -104,7 +104,7 @@ Use the `download_artifact` MCP tool to save each artifact to the output directo
 - Infographics: save as `content-assets/notebooklm/<post-slug>/infographic.png`
 - Slide decks: save as `content-assets/notebooklm/<post-slug>/slides.pdf` and `slides.pptx`
 
-After downloading slide deck PDFs, export individual slide images for LinkedIn/social media:
+After downloading slide deck PDFs, export individual slide images. These feed both article embedding (primary, see Step 7.5) and social/presentation reuse (secondary):
 ```bash
 mkdir -p ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides/
 pdftoppm -png -r 300 \
@@ -190,13 +190,41 @@ If the QA review identifies issues:
 
 Re-download and re-review after revisions. Maximum 2 revision cycles.
 
+### Step 7.5: Curate and Embed Slides Into the Post
+
+Slide decks are **first-class article content**, not external-only collateral. After a deck passes QA, curate select slides for embedding into the blog post. This agent does not modify the post `.mdx` itself (the writer/captain owns that file), so its job is to stage embed-ready assets and to recommend exactly which slides to place where.
+
+**Selection (select, do not dump):**
+- Recommend only the 4-6 strongest slides, each mapping to a distinct article section. Pick the ones that add visual value beyond the prose and callouts.
+- Skip the title slide (the infographic is already the cover), any before/after slide when the post already has an equivalent custom SVG diagram or comparison table, and pure-takeaway or summary slides that merely restate existing callouts. Quality over completeness.
+
+**Stage embed-ready assets under `public/`:**
+- Copy each chosen slide from `content-assets/notebooklm/<post-slug>/slides/slide-NN.png` to `public/blog/<post-slug>/<semantic-name>.png` using a descriptive kebab-case name, not `slide-NN`. The infographic remains the cover image at `public/blog/<post-slug>/infographic.png`.
+- Copy `slides.pdf` to `public/blog/<post-slug>/slides.pdf` so the full deck can be linked from the post.
+
+```bash
+mkdir -p ~/GitProjects/cryptoflexllc/public/blog/<post-slug>/
+cp ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides/slide-04.png \
+   ~/GitProjects/cryptoflexllc/public/blog/<post-slug>/<semantic-name>.png
+cp ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides.pdf \
+   ~/GitProjects/cryptoflexllc/public/blog/<post-slug>/slides.pdf
+```
+
+**Recommend placement for the writer/captain:** For each staged slide, provide:
+- The target article section.
+- The plain markdown image line, `![rich descriptive alt text](/blog/<post-slug>/<semantic-name>.png)`. Alt text must be genuinely descriptive for accessibility and SEO, matching the pattern in existing posts like `notebooklm-content-pipeline` and `home-network-mission-control-dashboard-log-lake-panel`.
+- A one-sentence in-voice prose lead-in to precede the image, setting up what the reader is about to see.
+
+Also provide the deck link to place once near the end of the post: "If you'd rather skim this as slides, the deck is here: [<Post> slide deck (PDF)](/blog/<post-slug>/slides.pdf)."
+
 ### Step 8: Report Results
 
 Present the user with:
-1. Output file paths (infographic PNG, slide deck PDF/PPTX)
+1. Output file paths (infographic PNG, slide deck PDF/PPTX) plus the staged `public/blog/<post-slug>/` assets
 2. The QA report
 3. Notebook ID for future use
-4. Any issues that could not be resolved
+4. **Recommended slides to embed:** a list of the curated slides, each with its staged `public/` path, the target article section, the markdown image line with descriptive alt text, and the one-sentence lead-in. End with the deck-link line for placement near the end of the post.
+5. Any issues that could not be resolved
 
 ## Output Directory Structure
 
@@ -285,6 +313,6 @@ A DLP failure overrides all other QA results. Even if spelling, accuracy, brand,
 - NotebookLM generation takes 5-15 minutes. Poll for completion before downloading.
 - Maximum 2 revision cycles per asset to avoid infinite loops.
 - Save generated content to `content-assets/notebooklm/` (not inside `src/`)
-- This agent does NOT modify blog posts. It creates supplementary assets.
+- This agent does NOT modify the blog post `.mdx` (the writer/captain owns that file). It stages embed-ready assets under `public/blog/<slug>/` and recommends which curated slides to embed and where, so the human or captain can place them.
 - Cookie auth expires every 2-4 weeks. If MCP tools return auth errors, tell the user to run `nlm login` to re-authenticate.
 - The underlying API is reverse-engineered and unofficial. It may break if Google changes their internal endpoints.

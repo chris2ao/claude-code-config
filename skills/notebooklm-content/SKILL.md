@@ -68,6 +68,8 @@ Create high-quality infographics and slide decks from your blog posts using Goog
 
 ## Output Location
 
+Generation output lands in the gitignored working area:
+
 ```
 ~/GitProjects/cryptoflexllc/content-assets/notebooklm/
   <post-slug>/
@@ -79,6 +81,8 @@ Create high-quality infographics and slide decks from your blog posts using Goog
       slide-02.png
       ...
 ```
+
+Curated, embed-ready assets are then copied into the published tree under `public/blog/<slug>/`. See "Embedding Slides Into the Post" below.
 
 ## Implementation
 
@@ -107,13 +111,22 @@ This opens a Chromium browser window for Google sign-in with `chrisjohnson@crypt
 
 ## Relationship to Blog Post Pipeline
 
-This skill is **separate from** the `/blog-post` command. It does not run as part of the blog production pipeline. Instead, invoke it after a blog post is published (or drafted) to create supplementary visual assets for:
-- Embedding in the blog post as images
-- LinkedIn posts and social media
-- Presentation materials
-- Internal documentation
+This skill is **separate from** the `/blog-post` command. It does not run as part of the blog production pipeline. You invoke it independently after a blog post is drafted or published.
 
-The blog-post captain does not call this skill. You invoke it independently when you want visual content derived from a post.
+The slide deck is **first-class article content**, not external-only collateral. The primary use is to curate select slides and embed them directly into the post (see "Embedding Slides Into the Post" below). Social and presentation reuse is secondary:
+- **Primary:** Embed curated slides into the blog post as in-line article visuals, and link the full deck near the end of the post.
+- **Secondary:** LinkedIn posts and social media, presentation materials, internal documentation.
+
+The blog-post captain does not call this skill. You invoke it independently when you want visual content derived from a post. When a post has a companion deck, the captain incorporates the curated slides per this skill's convention rather than treating them as external-only.
+
+## Embedding Slides Into the Post
+
+After generation and QA, curate select slides into the article. Slides are primary article content: choose the few that add visual value beyond the prose and callouts.
+
+1. **Select, do not dump.** Embed only the 4-6 strongest slides, each mapping to a distinct article section. Skip the title slide (the infographic is already the cover), any before/after slide when the post already has an equivalent custom SVG diagram or comparison table, and pure-takeaway or summary slides that merely restate existing callouts. Quality over completeness.
+2. **Semantic filenames in public/.** Copy each chosen slide from `content-assets/notebooklm/<slug>/slides/slide-NN.png` to `public/blog/<slug>/<semantic-name>.png` using a descriptive kebab-case name, not `slide-NN`. The infographic remains the cover image at `public/blog/<slug>/infographic.png`.
+3. **Embed with a lead-in.** In the post `.mdx`, place each slide as a plain markdown image `![rich descriptive alt text](/blog/<slug>/<semantic-name>.png)` in its relevant section, preceded by a one-sentence in-voice prose lead-in that sets up what the reader is about to see. Alt text must be genuinely descriptive for accessibility and SEO, matching the pattern in existing posts like `notebooklm-content-pipeline` and `home-network-mission-control-dashboard-log-lake-panel`.
+4. **Link the full deck.** Copy `slides.pdf` to `public/blog/<slug>/slides.pdf` and link it once near the end of the post: "If you'd rather skim this as slides, the deck is here: [<Post> slide deck (PDF)](/blog/<slug>/slides.pdf)."
 
 ## Limitations
 
