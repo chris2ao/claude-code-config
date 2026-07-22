@@ -50,7 +50,7 @@ Read `src/content/blog/*.mdx` filenames and parse the frontmatter (first 10 line
 Do NOT maintain a hardcoded post list. Always discover at runtime.
 
 ### Repository paths
-- cryptoflexllc: `$HOME/Github_Projects/cryptoflexllc` (on this Mac; older notes may say `GitProjects`, which does not exist)
+- cryptoflexllc: `$HOME/GitProjects/cryptoflexllc` (some machines use `$HOME/Github_Projects`; use whichever exists)
 - CJClaude_1: `$HOME/GitProjects/CJClaude_1`
 - cryptoflex-ops: `$HOME/GitProjects/cryptoflex-ops`
 - claude-code-config: `~/.claude`
@@ -133,7 +133,7 @@ Every post gets a cover infographic. **Default pipeline: custom HTML brand graph
 
 ### Build Verification
 ```bash
-cd "$HOME/Github_Projects/cryptoflexllc" && npx next build
+cd "$HOME/GitProjects/cryptoflexllc" && npx next build
 ```
 
 ### User Review
