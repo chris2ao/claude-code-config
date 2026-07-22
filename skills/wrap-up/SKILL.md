@@ -27,14 +27,18 @@ After getting user answers, spawn a Task agent:
 Pass to the agent:
 1. The survey JSON output from above
 2. The user's answers
-3. Instruction: "You are a wrap-up orchestrator agent. Follow the instructions in ~/.claude/agents/wrap-up-orchestrator.md"
+3. The primary project: name and absolute path of the project this session is running in (your current working directory)
+4. Excluded paths: any files the user has said not to commit this session (state "none" if there are none)
+5. Instruction: "You are a wrap-up orchestrator agent. Follow the instructions in ~/.claude/agents/wrap-up-orchestrator.md"
+
+If the user excluded files this session, list them EXPLICITLY in item 4. The agent definition enforces exclusions, but they must be named in the input.
 
 ## After Agent Returns
 
 The agent returns JSON with `memory_delta`, `changelog_entry`, `commits`, `component_changes`, and `summary`.
 
 ### Step 1: Apply MEMORY.md delta
-Apply `memory_delta` by editing the project's MEMORY.md file.
+Apply `memory_delta` by editing the project's MEMORY.md file. The delta is structured: add each entry in `memory_delta.index_lines` to the right section of MEMORY.md (one line each), and write each item in `memory_delta.topic_files` as a separate file in the same memory directory. Do not paste paragraphs into MEMORY.md.
 
 ### Step 2: Store session to vector memory
 Call `mcp__vector-memory__memory_store` with:
@@ -51,18 +55,8 @@ Call `mcp__vector-memory__memory_store` with:
 
 If the MCP call fails, log a warning and continue. Do not block wrap-up.
 
-### Step 3: Targeted Knowledge Graph update
-If `component_changes` array is non-empty:
-
-1. For each component in the array, call `mcp__memory__search_nodes` with the component name to check if an entity already exists.
-2. **Batch new entities:** Collect all components that DON'T exist in KG. Call `mcp__memory__create_entities` once with all new entities:
-   - `name`: The component name (e.g., "bridge-launcher.sh")
-   - `entityType`: The type from survey (Agent, Skill, Hook, Command, Script)
-   - `observations`: Read the file briefly and generate 2-3 observations (file path, purpose, creation date)
-3. **Batch observation updates:** For components that DO exist, call `mcp__memory__add_observations` once with updated observations noting what changed.
-4. **Add obvious relations:** If a new agent is used by a skill, or a new script supports an agent, call `mcp__memory__create_relations`.
-
-If the MCP call fails, log a warning and continue. Do not block wrap-up.
+### Step 3: (retired)
+The knowledge graph layer was retired 2026-07-20 (P1 simplification). Component changes are covered by MEMORY.md topic files and vector memory; no KG update is performed.
 
 ### Step 4: Touch marker file
 Run: `touch ~/.claude/.last-wrap-up-timestamp`
@@ -87,17 +81,16 @@ If the count is greater than 0, include this line in the Step 5 summary:
 
 > **Evolution ready:** N new instinct(s) since last evolution. Run `/evolve` to generate skill/agent/command candidates.
 
-### Step 4c: Gmail Metrics Export
+### Step 4c: Session archive export
 
-After all commits are pushed, run `/gmail-metrics-export --no-push` to refresh `src/data/gmail-metrics.json` and `src/data/session-archive.json` in the cryptoflexllc repo. The cryptoflexllc commit from Step 4 will push the data along with any other changes.
+Gmail metrics publish automatically after every agent run (`launch_agent.sh` runs `gmail-metrics-export.sh` at 08:08/20:08), so wrap-up does not need to export them for freshness.
 
-If the cryptoflexllc repo was not modified in this session, run `/gmail-metrics-export` (with push) to trigger a standalone Vercel rebuild with fresh data.
+After the orchestrator returns, run `/gmail-metrics-export` in its default push mode. It regenerates `src/data/gmail-metrics.json` and `src/data/session-archive.json` in cryptoflexllc and commits and pushes them itself; the main value at wrap-up time is refreshing `session-archive.json`, which agent runs do not touch. If the export or its push fails, log a warning and continue. Do not block wrap-up.
 
 ### Step 5: Display summary
 Display to the user:
 - Commits made (repo names, pushed status)
 - If any commits failed, alert the user
-- Memory status: MEMORY.md delta applied, vector memory stored (yes/no), KG entities updated (count)
+- Memory status: MEMORY.md delta applied, vector memory stored (yes/no)
 - Gmail metrics: exported (yes/no)
 - Config drift: if `config_drift.detected` is true, suggest running `/claude-config-sync`
-- Installer sync: if `~/.claude` config changed this session, remind the user to run `~/GitProjects/CJClaudin_Setup/refresh.sh` and commit the diff in CJClaudin_Setup so the installer stays current.

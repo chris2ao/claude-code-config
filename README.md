@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 35 agents, 30 invocable skills, 43 learned skills, 27 scripts, 11 commands, 12 hooks, 7 MCP servers, and 63 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 35 agents, 31 invocable skills, 43 learned skills, 31 scripts, 10 commands, 12 hooks, 7 MCP servers, and 63 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -138,13 +138,14 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (28 invocable + 43 learned)
+### Skills (31 invocable + 43 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
 | Skill | What It Does |
 |-------|-------------|
 | `/blog-post` | Multi-agent blog post production pipeline with research and MDX generation |
+| `/brand-graphics` | Cover infographics and inline branded graphics for cryptoflexllc.com blog posts |
 | `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
 | `/content-validation` | Validate content integrity beyond HTTP status codes: media, API responses, data contracts |
 | `/deep-research` | Multi-source deep research using Exa, Firecrawl, and WebSearch with citations |
@@ -187,7 +188,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (27 files)
+### Scripts (31 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -214,7 +215,10 @@ Automation scripts in `scripts/` for common operations:
 | `pihole-wrapper.sh` | Wrapper to launch the Pi-hole MCP server with secrets loaded from environment |
 | `refine-snapshot.sh` | Preserve pre-edit copies of components before /refine applies changes |
 | `unifi-wrapper.sh` | Wrapper to launch the UniFi MCP server with secrets loaded from environment (macOS) |
-| `gmail-metrics-export` | Export Gmail assistant run metrics and session archive to the cryptoflexllc /analytics dashboard |
+| `gmail-metrics-export.sh` | Export Gmail assistant run metrics and session archive to the cryptoflexllc /analytics dashboard |
+| `memory-health-canary.sh` | Weekly vector memory health check: Ollama embeddings, SSE server, consolidation freshness |
+| `memory-p0-cutover.sh` | Memory P0 reliability cutover: Ollama 768d embedding migration and verification |
+| `memory-p2-apply.sh` | Memory P2 capability upgrades: consolidation schedule, quality scoring, entity links |
 
 ## MCP Servers (7 configured)
 
@@ -334,9 +338,9 @@ This configuration supports both **macOS** and **Windows**:
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
   agents/                        # 34 custom agent definitions
-  skills/                        # 28 invocable skills + 43 learned skills
-  commands/                      # 11 commands
-  scripts/                       # 20 automation scripts
+  skills/                        # 31 invocable skills + 43 learned skills
+  commands/                      # 10 commands
+  scripts/                       # 31 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates

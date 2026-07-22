@@ -32,4 +32,4 @@ Before compacting, ensure critical context is preserved:
 - Active task state and progress
 - Key architectural decisions made in session
 - File paths and patterns being worked on
-- Use MEMORY.md or knowledge graph to persist essential context
+- Use MEMORY.md or vector memory to persist essential context

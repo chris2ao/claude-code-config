@@ -8,26 +8,13 @@ platform: portable
 
 When context has been compacted (you notice missing details about the current task):
 
-1. Check for a session scratchpad: read the most recent file in `~/.claude/session-state/` that matches the current project name
-2. Query vector memory with keywords related to the current task
-3. Present the recovered context to the user and confirm before acting on it: "I recovered the following context from your session scratchpad. Does this look right before I continue?" Then list the key items: current task, status, and next steps.
+1. Query vector memory with keywords related to the current task
+2. Check MEMORY.md and its topic files for project conventions (loaded automatically)
+3. Present the recovered context to the user and confirm before acting on it: "I recovered the following context from memory. Does this look right before I continue?" Then list the key items: current task, status, and next steps.
 4. Only proceed with the recovered next steps after user confirmation
 
-## When Nudged by Hook
-
-When you see a "SESSION CONTEXT" reminder, write or update `~/.claude/session-state/{project-name}-{timestamp}.md` with:
-
-- Project name and working directory
-- Current task description and progress
-- Key decisions made so far
-- Files being actively worked on
-- Next steps remaining
-- Any important context that would be lost in compaction
-
-NEVER include secret values (API keys, tokens, passwords, credentials). Reference env var names only, never values.
-
-Keep the scratchpad concise (under 80 lines). It is ephemeral working state.
+(The session-state scratchpad machinery was removed 2026-07-20 in the P1 simplification: the directory sat empty for months while the rule text loaded into every session. Claude Code's own compaction handling plus vector memory cover recovery.)
 
 ## Durable Context
 
-For information that should persist beyond this session (completed tasks, bug fixes, architectural decisions), store to vector memory instead. The scratchpad is for in-flight work only.
+For information that should persist beyond this session (completed tasks, bug fixes, architectural decisions), store to vector memory as the work happens. Do not wait for session end; hard kills skip exit hooks. NEVER include secret values (API keys, tokens, passwords, credentials) in any stored context. Reference env var names only, never values.

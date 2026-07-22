@@ -4,16 +4,18 @@ platform: portable
 
 # Memory Management
 
-## Five Memory Systems, One Rule
+## Four Memory Systems, One Rule
 
 Claude Code has multiple memory systems. Each serves a different purpose. Do not duplicate information across them.
+
+(The knowledge graph MCP layer was retired 2026-07-20 in the P1 simplification: two silent data-loss incidents and no multi-hop query workload. Entity-style facts now live in auto-memory topic files, e.g. project-inventory.md. Rationale: docs/research/memory-system-evaluation-2026-07-20.md in CJClaudin_Mac.)
 
 ### System Boundaries
 
 **Auto memory** (`MEMORY.md` files, built-in):
 - Scope: per-project, loaded automatically (first 200 lines)
-- Use for: stable facts that apply every session in this project
-- Examples: build commands, deploy scripts, file structure conventions, tool preferences
+- Use for: stable facts that apply every session in this project, including component inventory and relationships that used to go to the knowledge graph
+- Examples: build commands, deploy scripts, file structure conventions, tool preferences, project inventory
 - Keep it short and factual. If it changes often, it does not belong here.
 
 **Vector memory** (MCP `vector-memory`):
@@ -21,21 +23,18 @@ Claude Code has multiple memory systems. Each serves a different purpose. Do not
 - Use for: detailed context that is relevant when a topic comes up
 - Examples: bug resolutions (root cause, fix), architectural decisions (reasoning, tradeoffs), workarounds (what failed, what worked), error patterns (message, cause, solution)
 - Always include project name as a tag for filtering.
-
-**Knowledge graph** (MCP `memory`):
-- Scope: global, queried on demand via `create_entities`, `search_nodes`
-- Use for: explicit relationships between named entities
-- Examples: service dependencies, data flow between systems, team/role structures
-- Only use when you need to model connections, not for general facts.
+- Keep each memory under 8000 characters: the Ollama embedding endpoint rejects longer inputs at store time.
+- The server deduplicates semantically at storage time (harvest evolution, v10.31+), so near-duplicate saves are handled automatically.
 
 **Homunculus** (`observations.jsonl` + instincts):
 - Scope: global, captured automatically by hooks
 - Use for: behavioral pattern extraction (handled by observer agent, not by you)
 - Do not write to this system directly. Hooks capture it.
+- Observations older than 90 days are periodically archived to compressed files alongside the live jsonl.
 
-**Session archive** (`.claude/session_archive/`):
-- Scope: per-project, saved on clean exit
-- Use for: full transcript backup for later analysis
+**Session archive** (`~/.claude/session_archive/`):
+- Scope: global (all projects), saved on clean session end
+- Use for: full transcript backup for later analysis or re-derivation
 - Do not write to this system directly. The SessionEnd hook handles it.
 
 ## When to Save to Vector Memory (Triggers)
@@ -61,16 +60,7 @@ Update MEMORY.md only for stable, project-specific facts:
 - Naming conventions and patterns unique to this project
 - Tool and framework versions
 - Preferences confirmed across multiple sessions
-
-## How to Save to Vector Memory
-
-Include these fields in every memory:
-
-- What: concise description of what happened
-- Why: the reasoning or root cause
-- Tags: relevant keywords (project name, technology, pattern type)
-
-Use 3-5 tags per memory. Always include the project name as a tag.
+- Project and component inventory (formerly knowledge-graph territory)
 
 ## Fact Versioning Protocol
 
@@ -106,11 +96,6 @@ At the beginning of each session, if the user describes a task related to previo
 
 Save memories continuously throughout the session as events occur. Do not wait until session end, as hard kills skip exit hooks and lose unsaved context.
 
-## Knowledge Graph Maintenance
+## Session Ingestion Cadence
 
-When you create, modify, or delete any Claude Code component (agent, skill, hook, command, script, or MCP server config), update the knowledge graph:
-- New component: create entity with type, file path, and description. Add relations to related entities.
-- Modified component: add observations reflecting the change.
-- Deleted component: delete the entity (which removes its relations).
-
-Run /Knowledge-Graph-Sync periodically (during wrap-up or config-sync) to catch drift.
+`/ingest-sessions` is on-demand only, not scheduled. Run it after long stretches of un-wrapped work or before a retrospective. Routine capture is covered by wrap-up saves plus the server's storage-time semantic dedup; historical runs found roughly 85 percent duplicates when run on a cadence.

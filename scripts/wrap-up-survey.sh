@@ -3,33 +3,52 @@
 # wrap-up-survey.sh - Pre-compute git state of all repos + session artifacts before wrap-up
 # Outputs valid JSON to stdout, errors to stderr
 # No external dependencies (no jq, no python)
+#
+# Repos are AUTO-DISCOVERED: every directory under $PROJECTS_DIR (default
+# ~/GitProjects) that contains a .git directory is surveyed. To skip a repo,
+# add its directory name to wrap-up-exclude.txt in this script's directory
+# (one name per line, # comments allowed).
 
 set -euo pipefail
 
 # Start timing
 START_TIME=$SECONDS
 
-# Source environment variables
+# Source environment variables (may set PROJECTS_DIR)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -f "$SCRIPT_DIR/env.sh" ]]; then
     source "$SCRIPT_DIR/env.sh"
 fi
 
-# Repository paths (using env.sh variables with fallbacks)
-CJCLAUDE="${REPO_CJCLAUDE:-$HOME/GitProjects/CJClaude_1}"
-CJCLAUDIN_MAC="${REPO_CJCLAUDIN_MAC:-$HOME/GitProjects/CJClaudin_Mac}"
-CJCLAUDIN_HOME="${REPO_CJCLAUDIN_HOME:-$HOME/GitProjects/CJClaudin_home}"
-CRYPTOFLEX="${REPO_CRYPTOFLEX:-$HOME/GitProjects/cryptoflexllc}"
-CRYPTOFLEX_OPS="${REPO_OPS:-$HOME/GitProjects/cryptoflex-ops}"
-CLAUDE_CONFIG="${REPO_CONFIG:-$HOME/GitProjects/claude-code-config}"
-MISSION_CONTROL="${REPO_MISSION_CONTROL:-$HOME/GitProjects/Openclaw_MissionControl}"
-JCLAW_CONFIG="${REPO_JCLAW_CONFIG:-$HOME/GitProjects/JClaw_Config}"
-THIRD_CONFLICT="${REPO_THIRD_CONFLICT:-$HOME/GitProjects/Third-Conflict}"
-CANN_CANN="${REPO_CANN_CANN:-$HOME/GitProjects/Cann-Cann}"
+PROJECTS_DIR="${PROJECTS_DIR:-$HOME/GitProjects}"
+EXCLUDE_FILE="$SCRIPT_DIR/wrap-up-exclude.txt"
 
-# Function to escape JSON strings
+# get_repo_info runs in a command-substitution subshell, so it reports health
+# facts through a temp file instead of shell globals. This keeps the git
+# queries single-pass (the old script re-ran status and rev-list per repo in
+# a second health loop).
+HEALTH_TMP=$(mktemp)
+trap 'rm -f "$HEALTH_TMP"' EXIT
+
+# Function to escape JSON strings (strips control chars; BSD sed lacks \t)
 json_escape() {
-    printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n'
+    printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\000-\037'
+}
+
+# Check the exclude list for a repo directory name.
+# Single-pass read (no grep pipeline: pipefail + grep -q can SIGPIPE),
+# tolerant of CRLF endings and surrounding whitespace.
+is_excluded() {
+    local name="$1" line
+    [[ -f "$EXCLUDE_FILE" ]] || return 1
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        line="${line%$'\r'}"
+        line="${line#"${line%%[![:space:]]*}"}"
+        line="${line%"${line##*[![:space:]]}"}"
+        if [[ -z "$line" || "$line" == \#* ]]; then continue; fi
+        if [[ "$line" == "$name" ]]; then return 0; fi
+    done < "$EXCLUDE_FILE"
+    return 1
 }
 
 # Function to get repo info
@@ -42,13 +61,16 @@ get_repo_info() {
         return
     fi
 
-    cd "$path" 2>/dev/null || return
+    # return 0 so a cd failure cannot abort the whole survey under set -e
+    cd "$path" 2>/dev/null || return 0
 
-    # Get branch
+    # Get branch (empty on detached HEAD, so fall back explicitly)
     local branch
     branch=$(git branch --show-current 2>/dev/null || echo "unknown")
+    if [[ -z "$branch" ]]; then branch="detached"; fi
 
-    # Get status
+    # Get status. Any non-empty porcelain line means the repo is dirty:
+    # ?? is untracked, everything else (M/A/D/R/C/T/U combos) counts as modified.
     local modified_files=()
     local untracked_files=()
     local clean=true
@@ -58,11 +80,11 @@ get_repo_info() {
         local status="${line:0:2}"
         local file="${line:3}"
 
-        if [[ "$status" =~ ^[MAD].$ ]] || [[ "$status" =~ ^.[MAD]$ ]]; then
-            modified_files+=("$file")
-            clean=false
-        elif [[ "$status" == "??" ]]; then
+        if [[ "$status" == "??" ]]; then
             untracked_files+=("$file")
+            clean=false
+        else
+            modified_files+=("$file")
             clean=false
         fi
     done < <(git status --porcelain 2>/dev/null)
@@ -83,6 +105,9 @@ get_repo_info() {
         commits_ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null || echo 0)
         commits_behind=$(git rev-list --count HEAD..@{u} 2>/dev/null || echo 0)
     fi
+
+    # Report health facts to the parent shell (subshell-safe)
+    printf '%s %s %s\n' "$clean" "$commits_ahead" "$commits_behind" >> "$HEALTH_TMP"
 
     # Build modified_files JSON array
     local modified_json="["
@@ -116,9 +141,9 @@ get_repo_info() {
 
     # Output JSON object
     printf '    {\n'
-    printf '      "name":"%s",\n' "$name"
-    printf '      "path":"%s",\n' "$path"
-    printf '      "branch":"%s",\n' "$branch"
+    printf '      "name":"%s",\n' "$(json_escape "$name")"
+    printf '      "path":"%s",\n' "$(json_escape "$path")"
+    printf '      "branch":"%s",\n' "$(json_escape "$branch")"
     printf '      "clean":%s,\n' "$clean"
     printf '      "modified_files":%s,\n' "$modified_json"
     printf '      "untracked_files":%s,\n' "$untracked_json"
@@ -129,11 +154,6 @@ get_repo_info() {
     printf '    }'
 }
 
-# Health check accumulators
-ALL_CLEAN=true
-ANY_AHEAD=false
-ANY_BEHIND=false
-
 # Get timestamp
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
@@ -141,38 +161,40 @@ TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 printf '{\n'
 printf '  "timestamp":"%s",\n' "$TIMESTAMP"
 
-# Collect repo info into temp files so we can also track health
+# Auto-discover and survey repos
 REPO_OUTPUT=""
-for repo_pair in "CJClaude_1|$CJCLAUDE" "CJClaudin_Mac|$CJCLAUDIN_MAC" "CJClaudin_home|$CJCLAUDIN_HOME" "cryptoflexllc|$CRYPTOFLEX" "cryptoflex-ops|$CRYPTOFLEX_OPS" "claude-code-config|$CLAUDE_CONFIG" "Openclaw_MissionControl|$MISSION_CONTROL" "JClaw_Config|$JCLAW_CONFIG" "Third-Conflict|$THIRD_CONFLICT" "Cann-Cann|$CANN_CANN"; do
-    name="${repo_pair%%|*}"
-    path="${repo_pair#*|}"
+for path in "$PROJECTS_DIR"/*/; do
+    path="${path%/}"
+    [[ -d "$path/.git" ]] || continue
+    name="$(basename "$path")"
 
-    repo_json=$(get_repo_info "$name" "$path")
+    if is_excluded "$name"; then
+        echo "wrap-up-survey: skipping excluded repo $name" >&2
+        continue
+    fi
+
+    repo_json=$(get_repo_info "$name" "$path") || repo_json=""
     if [[ -n "$repo_json" ]]; then
         if [[ -n "$REPO_OUTPUT" ]]; then
             REPO_OUTPUT+=$',\n'
         fi
         REPO_OUTPUT+="$repo_json"
     fi
-
-    # Check health from the repo
-    if [[ -d "$path/.git" ]]; then
-        cd "$path" 2>/dev/null || continue
-        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-            ALL_CLEAN=false
-        fi
-        if git rev-parse @{u} >/dev/null 2>&1; then
-            local_ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null || echo 0)
-            local_behind=$(git rev-list --count HEAD..@{u} 2>/dev/null || echo 0)
-            if [[ "$local_ahead" -gt 0 ]]; then ANY_AHEAD=true; fi
-            if [[ "$local_behind" -gt 0 ]]; then ANY_BEHIND=true; fi
-        fi
-    fi
 done
 
 echo '  "repos":['
 printf '%s\n' "$REPO_OUTPUT"
 echo '  ],'
+
+# Compute health checks from the single-pass data
+ALL_CLEAN=true
+ANY_AHEAD=false
+ANY_BEHIND=false
+while IFS=' ' read -r r_clean r_ahead r_behind; do
+    if [[ "$r_clean" == "false" ]]; then ALL_CLEAN=false; fi
+    if [[ "$r_ahead" -gt 0 ]]; then ANY_AHEAD=true; fi
+    if [[ "$r_behind" -gt 0 ]]; then ANY_BEHIND=true; fi
+done < "$HEALTH_TMP"
 
 # Session artifacts
 TRANSCRIPT_COUNT=0
@@ -185,9 +207,10 @@ if [[ -d "$HOME/.claude/todos" ]]; then
     TODO_COUNT=$(find "$HOME/.claude/todos" -name "*.json" 2>/dev/null | wc -l)
 fi
 
+ACTIVITY_LOG="${ACTIVITY_LOG:-$PROJECTS_DIR/CJClaude_1/activity_log.txt}"
 ACTIVITY_LOG_LINES=0
-if [[ -f "$CJCLAUDE/activity_log.txt" ]]; then
-    ACTIVITY_LOG_LINES=$(wc -l < "$CJCLAUDE/activity_log.txt" 2>/dev/null || echo 0)
+if [[ -f "$ACTIVITY_LOG" ]]; then
+    ACTIVITY_LOG_LINES=$(wc -l < "$ACTIVITY_LOG" 2>/dev/null || echo 0)
 fi
 
 printf '  "session_artifacts":{\n'
@@ -232,7 +255,7 @@ printf '\n  ],\n'
 
 # Config drift detection
 DRIFT_COUNT=0
-CONFIG_REPO="${CLAUDE_CONFIG:-$HOME/GitProjects/claude-code-config}"
+CONFIG_REPO="${REPO_CONFIG:-$PROJECTS_DIR/claude-code-config}"
 for check_dir in agents skills hooks commands scripts rules; do
     if [[ -d "$HOME/.claude/$check_dir" ]] && [[ -d "$CONFIG_REPO/$check_dir" ]]; then
         dir_drift=$(diff -rq "$HOME/.claude/$check_dir" "$CONFIG_REPO/$check_dir" 2>/dev/null | wc -l) || true

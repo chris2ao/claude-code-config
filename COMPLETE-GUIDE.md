@@ -954,7 +954,6 @@ Each command file is a markdown document with YAML frontmatter and detailed inst
 | **`/evolve`** | `evolve.md` | Cluster instincts into evolved agents, skills, and commands via the Homunculus system. |
 | **`/ingest-sessions`** | `ingest-sessions.md` | Ingests session archives into vector memory for long-term context. |
 | **`/kb-article`** | `kb-article.md` | KB article authoring workflow for structured knowledge base entries. |
-| **`/Knowledge-Graph-Sync`** | `Knowledge-Graph-Sync.md` | Reconciles the knowledge graph (MCP memory server) against actual files on disk. Finds missing, stale, and orphaned entities. |
 | **`/memory-audit`** | `memory-audit.md` | Scan vector memory for contradictions, stale entries, and duplicate clusters. |
 | **`/refine`** | `refine.md` | Evidence-based component refinement: edit existing skills, agents, commands, instincts based on session transcripts. |
 | **`/smart-compact`** | `smart-compact.md` | Pre-compact context preservation: saves session state before compaction. |

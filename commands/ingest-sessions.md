@@ -6,6 +6,8 @@ platform: portable
 
 Process session archive transcripts to extract valuable context and store it in vector memory and Homunculus instincts. This command handles the full pipeline: discovery, analysis, deduplication, and storage.
 
+**Cadence: on-demand only (P1 simplification, 2026-07-20).** Do not run this on a schedule. Run it only after long stretches of un-wrapped work or before a retrospective. Routine capture is covered by wrap-up saves, and mcp-memory-service 10.31+ deduplicates semantically at storage time; cadence-based runs historically found roughly 85 percent duplicates.
+
 ## Arguments
 
 - `$ARGUMENTS` (optional): path to a specific session archive directory or "all" to scan all projects. Defaults to scanning all known project directories.
