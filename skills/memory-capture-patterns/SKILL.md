@@ -37,6 +37,15 @@ Implement a PostToolUse hook that tracks edit count and injects a nudge at thres
 
 This enforces memory persistence without requiring manual discipline.
 
+### 4. Data Integrity for Mutating Scripts
+
+Any script that rewrites or archives a memory/observation data file must:
+
+1. **Back up before rewrite** — save a copy of the file before modifying it, so a bad rewrite can be rolled back
+2. **Refuse on parse failure** — if the existing data fails to parse (corrupted JSON, truncated file, schema mismatch), stop and report the error rather than silently continuing with a best-effort rewrite
+
+Two incidents made this mandatory: an observation-archival script silently lost roughly 47,000 raw records during a rewrite with no detection mechanism, and the (now-retired) knowledge-graph layer silently lost 80 of 84 entities down to 4, also undetected.
+
 ## Source Instincts
 
 - `memory-save-cadence`: "when work accumulates past 50 units without explicit vector memory save"

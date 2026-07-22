@@ -35,12 +35,23 @@ MDX files compiled via `next-mdx-remote` have two common authoring errors that d
 - Register components via the `components` prop on `<MDXRemote>` in page.tsx instead
 - Must register in BOTH `blog/[slug]/page.tsx` AND `backlog/[slug]/page.tsx` (separate MDX component registries)
 
+**Nested Double Quotes in JSX Attributes (runtime-only error)**
+- A nested, unescaped double quote inside a JSX string attribute in MDX passes build and lint with no warning at all
+- It fails only at runtime in production, crashing to an error boundary (500)
+- Fix: use HTML entities (e.g. `&quot;`) instead of literal nested quotes inside JSX attribute strings
+
 ### 3. Stale Deploy: Code Not Updating
 
 When a Vercel deploy shows old code despite new commits being pushed:
 - The build cache is the likely culprit (Vercel aggressively caches build artifacts)
 - Fix: uncheck "Build Cache" in project Settings > General, or trigger a clean deploy from the dashboard
 - Re-enable the cache after the clean deploy succeeds
+
+### 4. Cached Error Pages
+
+Vercel's CDN edge caches error pages separately from successful responses. After deploying a fix, the previous error page can persist on the edge:
+- Hard-refresh (Cmd+Shift+R) and check in incognito/private browsing before concluding a fix didn't work
+- Without this, you're likely viewing a cached error page, not the current deploy
 
 ## Source Instincts
 

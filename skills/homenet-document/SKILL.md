@@ -34,7 +34,7 @@ Run the full network-documentation pipeline ad-hoc. Pulls live UniFi state, refr
    - `network-tech-writer` rewrites every HomeNetwork/ markdown file (README, inventory, topology, investigations, devices/, configurations/) using house style and the tiered client strategy.
    - `network-security-engineer` scores risks and writes `devices/security-recommendations.md` with MCP-actionable fixes only, ranked by Severity − Usability Impact.
    - `network-research` runs `/deep-research` threads and writes cited findings to `research/`.
-3. **Phase 3: Diagram generation.** Architect runs `~/.claude/scripts/homenet-render-diagrams.py` (Python `diagrams` library + Graphviz). Generates `diagrams/logical-network.{svg,png}` and `diagrams/physical-topology.{svg,png}`.
+3. **Phase 3: Diagram generation.** Architect runs `HomeNetwork/scripts/build_diagrams.py` (hand-rolled SVG generator, declarative data tables), then converts to PNG via `rsvg-convert`. Generates `diagrams/logical-network.{svg,png}` and `diagrams/physical-topology.{svg,png}`. (mingrammer/diagrams was replaced 2026-04-19, commit `61d59f1`: it silently dropped every node past the gateway and rendered only two generic router icons instead of the full topology.)
 4. **Phase 4: Synthesis.** Architect writes the README executive summary, cross-links research into security recommendations, updates the maintenance log.
 5. **Phase 5: Redaction + NotebookLM.** Architect runs `~/.claude/scripts/homenet-redact.py` to scrub PSKs, PPSK passwords, RADIUS shared secrets, API keys, and bearer tokens from a copy of HomeNetwork/. Creates or updates the "Johnson Home Network" notebook in NotebookLM (uses the unified `source_add` tool, `source_type=text` for markdown and `source_type=file` for diagram PNGs), brand-primes it, and uploads every redacted markdown plus diagram PNGs as sources. Tags the notebook for later retrieval via `tag(action=add, notebook_id=..., tags="homenet,unifi,network")` so it is findable with `tag(action=select, query="home network")`. Because the upload spans many sources (inventory, topology, security, configurations, research), it also runs `label(action=auto, notebook_id=...)` to AI-categorize the sources into thematic groups inside the notebook (notebooklm-mcp-cli 0.7.2+).
 6. **Phase 6: Final report.** You get a structured summary with file lists, stats, and suggested next actions.
@@ -43,8 +43,8 @@ Run the full network-documentation pipeline ad-hoc. Pulls live UniFi state, refr
 
 - UniFi MCP server (`unifi`) configured in `~/.claude.json` and reachable
 - NotebookLM MCP server (`notebooklm`) authenticated (`nlm login` if expired)
-- Python 3 with the `diagrams` package installed: `pip3 install diagrams`
-- Graphviz: `brew install graphviz`
+- Python 3 for the diagram rendering script (stdlib only, no packages required)
+- `rsvg-convert` for SVG-to-PNG conversion: `brew install librsvg`
 - macOS with `~/.claude/scripts/homenet-*.sh` already in place (matches existing /homenet-* skill family)
 
 ## Output

@@ -91,6 +91,19 @@ for f in <orphan-uuid>.jsonl; do mv "$f" "$f.deleted.$TS"; done
 
 `--fix-missing` is needed in addition to `--enforce`; without it, `cleanup` only handles age/count retention. Renaming to `*.deleted.<ts>` matches the pattern doctor itself uses, keeps the data recoverable, and clears the orphan count.
 
+### 7. OpenClaw Sessions Cache the System Prompt
+
+Sessions are sticky: `sessions.json` caches `systemSent: true` once a session has sent its system prompt. Editing `SOUL.md` or `AGENTS.md` does not take effect until that session is cleared:
+
+1. Send `/restart` to the agent via Telegram DM
+2. Only then test the updated configuration
+
+Without this, you'll see the old cached behavior and incorrectly conclude your edit didn't work.
+
+### 8. Guard Memory File Reads in Agent Configuration
+
+If `AGENTS.md` unconditionally reads a date-stamped memory file (e.g. `memory/2026-05-09.md`) that doesn't exist yet, the resulting ENOENT drives the model into tool-error-recovery: it treats the error as transcript corruption and emits a duplicate canned fallback greeting alongside the legitimate reply. Guard the read with an existence check (`ls`) first, or provide a fallback value, rather than reading unconditionally.
+
 ## Vector 0.40 VRL Gotchas
 
 These gotchas apply when authoring VRL transforms for Vector 0.40 pipelines (SIEM log-lake and similar):

@@ -64,3 +64,23 @@ The captain returns a JSON report with post details, scores, revision history, a
 1. Display the post details and scores to the user
 2. If the captain did not commit (user approval pending), offer to commit and push
 3. Update MEMORY.md blog post list with the new entry if appropriate
+
+## Known Gotchas
+
+### Tailwind v4 Dynamic Class Purging
+
+Tailwind v4's build-time scanner only detects statically-analyzable class strings. A dynamically interpolated class name (e.g. `` `bg-${accent}-600` ``) gets purged silently: the component renders completely unstyled with no build error, no lint warning, and no runtime error.
+
+Fix: define a static class-map object typed `keyof typeof` instead of interpolating into a template string:
+
+```typescript
+const ACCENTS = {
+  amber: 'bg-amber-600',
+  blue: 'bg-blue-600',
+} as const satisfies Record<string, string>;
+
+type Accent = keyof typeof ACCENTS;
+// use ACCENTS[accent], never `bg-${accent}-600`
+```
+
+Hit in `TerminalPromo.tsx` (2026-07-21): every amber class was silently absent until it was moved to a static `ACCENTS` map.

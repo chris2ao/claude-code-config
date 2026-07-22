@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 35 agents, 31 invocable skills, 43 learned skills, 31 scripts, 10 commands, 12 hooks, 7 MCP servers, and 63 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 35 agents, 30 invocable skills, 43 learned skills, 31 scripts, 10 commands, 12 hooks, 7 MCP servers, and 64 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -57,7 +57,7 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (34 files)
+### Agents (35 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
@@ -95,7 +95,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `game-ux` | sonnet | Game UX/UI designer: menus, HUD, player feedback, accessibility |
 | `game-writer` | haiku | Game writer: story, dialogue, world-building, lore, tutorial text |
 
-**Blog Production Team** (5):
+**Blog Production Team** (6):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -104,6 +104,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `blog-ux` | haiku | Blog UX/UI agent: build verification and structural analysis of MDX |
 | `blog-voice` | sonnet | Blog voice agent: maintains living voice profile, produces voice briefs |
 | `blog-writer` | sonnet | Blog post writer: drafts and revises MDX posts for CryptoFlex LLC |
+| `brand-graphics` | sonnet | Builds branded blog graphics (cover infographics, inline panels) as HTML rendered with headless Chrome |
 
 **UI/UX Team** (5):
 
@@ -138,7 +139,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (31 invocable + 43 learned)
+### Skills (30 invocable + 43 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -298,7 +299,7 @@ The `homunculus/` directory contains the continuous learning system that extract
 homunculus/
   identity.json.template    # User identity profile template
   instincts/
-    personal/                # 50 learned instincts (auto-extracted)
+    personal/                # 64 learned instincts (auto-extracted)
     inherited/.gitkeep       # Instincts shared from other users
   evolved/
     agents/.gitkeep          # Agents evolved from instinct clusters
@@ -312,7 +313,7 @@ homunculus/
 3. Instincts start at 0.4 confidence and increase with repeated evidence
 4. When 3+ instincts cluster in a domain, they can be graduated into learned skills
 
-Currently contains 63 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
+Currently contains 64 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
 
 ## Templates
 
@@ -337,14 +338,14 @@ This configuration supports both **macOS** and **Windows**:
 ```
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
-  agents/                        # 34 custom agent definitions
-  skills/                        # 31 invocable skills + 43 learned skills
+  agents/                        # 35 custom agent definitions
+  skills/                        # 30 invocable skills + 43 learned skills
   commands/                      # 10 commands
   scripts/                       # 31 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
-  homunculus/                    # Continuous learning system (63 instincts)
+  homunculus/                    # Continuous learning system (64 instincts)
   COMPLETE-GUIDE.md              # Comprehensive beginner walkthrough
 ```
 
