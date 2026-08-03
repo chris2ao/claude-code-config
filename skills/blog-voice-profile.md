@@ -1,8 +1,8 @@
 # Voice Profile: cryptoflexllc.com Blog
 
 **Author:** Chris Johnson
-**Last Updated:** 2026-06-14
-**Posts Analyzed:** 46
+**Last Updated:** 2026-07-22
+**Posts Analyzed:** 84
 
 ---
 
@@ -165,21 +165,22 @@ This blog is read by people who can smell LLM-assisted writing. The technical co
 - End a Lessons Learned section as a stack of bolded callout cards (use prose; see the de-slop check)
 - Close on a grand-summary aphorism that restates the thesis a third time
 
-## Metric Baselines (from 4-post sample, 2026-03-29)
+## Metric Baselines (84-post corpus, 2026-07-22; ranges are P10-P90)
 
 | Metric | Range | Notes |
 |--------|-------|-------|
-| Total words | 2,700-6,700 | Scales with post type |
-| Avg paragraph length | 14-31 words | Narrative: higher; technical: lower |
-| Avg sentence length | 12-15 words | Consistent across types |
-| Contractions per 1000 | 12-20 | Higher in narrative posts |
-| First-person per 1000 | 11-33 | Higher in journey posts |
-| Questions per 1000 | 0-4 | Used sparingly |
-| Callouts per post | 3-25 | Scales with length |
-| Headings (H2) per post | 10-28 | More in longer posts |
-| Headings (H3) per post | 8-35 | Used for subsections |
+| Total words | 2,029-5,500 | Recent-15 median: 3,556 |
+| Avg paragraph length | 23-50 words | Recent-15 median: 40 words, up sharply from the 2026-03-29 baseline (14-31). Prefer the lower half of the range; long uniform paragraphs read as drift, not style |
+| Avg sentence length | 14-18 words | Recent-15 median: 16 words |
+| Contractions per 1000 | TARGET: 10-20 | Corpus P10-P90 is 0-18 and the recent-15 median is 0. That zero is DRIFT toward AI-monotone, not the voice. Drafts with near-zero contractions fail voice review; write like the 2026-03-29 baseline (12-20) |
+| First-person per 1000 | 4-21 | Recent-15 median: 10 |
+| Questions per 1000 | TARGET: 1-4 | Recent-15 median of 0 is the same declarative drift. Use questions to set up explanations, as the profile has always specified |
+| Callouts per post | 4-19 | Recent-15 median: 8 |
+| Headings (H2) per post | 8-17 | Recent-15 median: 9 |
+| Headings (H3) per post | 0-21 | Recent-15 median: 3. Bimodal: a few deeply nested technical posts run 10-14 while most run 0-6 |
 
 ## Evolution Log
 
 - **2026-03-29 (initial)**: Profile seeded from analysis of 46 posts. Baseline metrics established from 4-post sample (iMessage channels, Gmail agent, 90% context, First 24 hours). No GIFs detected in recent posts (may have shifted away from GIF usage in newer content).
 - **2026-06-14 (AI-slop check)**: Added the "AI-Slop Tells: The De-Slop Check" section after reader feedback that posts felt AI-generated. Derived from a four-agent editorial review (human-editor + skeptical-reader lenses) across three June 2026 backlog drafts (squash-vs-granular-trap, from-bug-report-to-release, keep-your-mcps-updated). Reconciled the conflict where "Characteristic Phrases" and "Closing Style" previously encoded patterns (formulaic "The thing about X", bolded Lessons-callout stacks) that now read as tells. Net guidance: the deepest tell is structural evenness, not any single phrase; let sections run uneven and protect the confessional/specific lines.
+- **2026-07-22 (full-corpus re-baseline)**: Ran `blog-voice-diff.sh` against all 84 published posts in `src/content/blog/` (all 84 parsed cleanly, no failures). Computed P10-P90 and median across the full corpus, plus a separate median across the 15 most recent posts by frontmatter date (2026-05-14 through 2026-07-19), since the old 4-post baseline from 2026-03-29 was too small and too narrative-skewed to represent current output. Two real drifts stand out. First, paragraph length has grown well past the old 14-31 word range: the full corpus now runs 23-50 words (P10-P90), and the recent-15 median is 40 words, driven by the longer technical/homelab series (custom SIEM, Wazuh, Mission Control dashboard). Second, contraction use has fallen off: the old baseline was 12-20 per 1000 words, but the recent-15 median is 0, with 8 of the last 15 posts registering zero contractions. Questions per 1000 show the same pattern, dropping from the old 0-4 range to a recent-15 median of 0. Sentence length ticked up slightly (12-15 old vs. 14-18 full corpus, 16 recent median). Total word count now spans a much wider range (2,029-5,500 P10-P90) than the original narrow 4-post sample (2,700-6,700), simply because the corpus has grown far beyond that initial set. Worth flagging: the contraction and question drift may be an unintended side effect of the technical/homelab series leaning more declarative, not a deliberate voice choice, so it is worth a manual read-through rather than treating the new lower numbers as the new target.

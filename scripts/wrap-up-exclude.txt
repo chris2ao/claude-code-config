@@ -1,0 +1,7 @@
+# wrap-up-exclude.txt
+# Repos to SKIP during /wrap-up survey and commit sweep.
+# One directory name per line (as it appears under ~/GitProjects).
+# Lines starting with # are ignored.
+#
+# Example:
+# SANS_Training

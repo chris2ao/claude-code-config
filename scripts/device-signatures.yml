@@ -1,0 +1,276 @@
+# device-signatures.yml — rules used by homenet-device-profile
+# Device-first classification: OUI prefix and DNS-domain substrings.
+# Each rule is explicit and reviewable. No ML.
+# Unknown matches are OK — reported with top domains for manual labeling.
+
+oui:
+  # First 3 bytes (uppercase, colon-separated). Matched case-insensitively.
+  apple:
+    vendor: Apple
+    hint_type: apple-*
+    prefixes:
+      - "c0:17:54"   # Apple
+      - "c4:c1:7d"   # Apple
+      - "28:a0:6b"   # Apple
+      - "d0:11:e5"   # Apple
+      - "d0:03:4b"   # Apple (often wired Apple TV)
+  raspberry_pi:
+    vendor: Raspberry Pi Foundation
+    hint_type: network-gear-or-server
+    prefixes:
+      - "b8:27:eb"
+  ubiquiti:
+    vendor: Ubiquiti Networks
+    hint_type: network-gear-or-camera
+    prefixes:
+      - "28:70:4e"   # UniFi cameras (G5 PTZ, dome)
+      - "8c:30:66"   # UniFi camera (G6 turret)
+      - "a8:9c:6c"   # UniFi switch
+  nest:
+    vendor: Nest Labs
+    hint_type: iot-appliance
+    prefixes:
+      - "cc:a7:c1"
+  ring:
+    vendor: Ring
+    hint_type: camera
+    prefixes:
+      - "c8:df:84"
+  vizio:
+    vendor: Vizio
+    hint_type: smart-tv
+    prefixes:
+      - "2c:64:1f"
+  canon:
+    vendor: Canon
+    hint_type: printer
+    prefixes:
+      - "10:98:c3"
+  amazon:
+    vendor: Amazon Technologies
+    hint_type: streaming-stick-or-echo
+    prefixes:
+      - "f0:27:2d"
+      - "9c:5a:44"
+  u_bolt:
+    vendor: U-tec (U-Bolt smart lock)
+    hint_type: iot-appliance
+    prefixes:
+      - "54:32:04"
+  hp:
+    vendor: Hewlett Packard
+    hint_type: windows-desktop-or-laptop
+    prefixes:
+      - "9c:29:76"
+      - "e4:8a:93"
+      - "dc:90:09"
+  dell:
+    vendor: Dell (or OUI-overlap)
+    hint_type: corporate-laptop-likely
+    prefixes:
+      - "c8:53:09"
+      - "f8:ac:65"
+      - "d4:e9:8a"
+  samsung:
+    vendor: Samsung Electronics
+    hint_type: android-or-appliance
+    prefixes:
+      - "94:2a:6f"
+  sony:
+    vendor: Sony
+    hint_type: consumer-electronics
+    prefixes:
+      - "98:e2:55"
+  intel:
+    vendor: Intel
+    hint_type: generic-compute
+    prefixes:
+      - "50:de:06"
+
+# Locally-administered bit = privacy MAC. Second-character rule:
+# if the second hex digit of the first byte is in {2, 6, a, e} the MAC is
+# randomized (Apple privacy MAC or Android MAC randomization). These are
+# aggregated into a pool rather than profiled per-MAC.
+privacy_mac:
+  detect: "locally-administered bit set (2nd hex nibble in {2,6,a,e})"
+  example_prefixes_observed:
+    - "7a:e6:d4"   # Apple privacy iPad
+    - "fe:9e:52"   # Apple privacy iPad
+    - "9e:f9:f4"   # Apple privacy iPhone
+    - "72:ce:1f"   # Apple privacy iPhone
+    - "26:18:7b"   # Apple privacy iPad
+    - "9a:ac:8d"   # Apple privacy (Mac)
+    - "02:29:6b"   # privacy
+
+# Domain clusters for DNS behavior classification.
+# Order matters — first-match wins. Use registrable-domain substring matches.
+dns_categories:
+  apple-services:
+    patterns:
+      - "apple.com"
+      - "icloud.com"
+      - "mzstatic.com"
+      - "apple-dns.net"
+      - "cdn-apple.com"
+  microsoft-services:
+    patterns:
+      - "microsoft.com"
+      - "office.com"
+      - "office365.com"
+      - "azure.com"
+      - "live.com"
+      - "msedge.net"
+      - "msftconnecttest.com"
+      - "msftncsi.com"
+      - "windowsupdate.com"
+      - "outlook.com"
+  google-services:
+    patterns:
+      - "google.com"
+      - "googleapis.com"
+      - "gstatic.com"
+      - "1e100.net"
+      - "googleusercontent.com"
+  meta-services:
+    patterns:
+      - "facebook.com"
+      - "fbcdn.net"
+      - "instagram.com"
+      - "whatsapp.net"
+  video-streaming:
+    patterns:
+      - "netflix.com"
+      - "youtube.com"
+      - "hulu.com"
+      - "disneyplus.com"
+      - "prime-video.com"
+      - "max.com"
+      - "a2z.com"
+      - "amazon-adsystem.com"
+      - "tiktok.com"
+  gaming:
+    patterns:
+      - "xboxlive.com"
+      - "playstation.net"
+      - "steamserver.net"
+      - "ea.com"
+      - "roblox.com"
+      - "epicgames.com"
+  iot-telemetry:
+    patterns:
+      - "ring.com"
+      - "tplinkcloud.com"
+      - "meethue.com"
+      - "nest.com"
+      - "ecobee.com"
+      - "wyzecam.com"
+      - "u-tec.com"
+  dev-tools:
+    patterns:
+      - "github.com"
+      - "githubstatus.com"
+      - "anthropic.com"
+      - "claude.com"
+      - "openai.com"
+      - "chatgpt.com"
+      - "cursor.com"
+      - "gitpod.io"
+      - "docker.com"
+      - "pypi.org"
+      - "npmjs.com"
+      - "factory.ai"
+  corporate-work:
+    # Observed in-environment. Expand as new employers/orgs appear.
+    patterns:
+      - "ssa.gov"                  # Social Security Admin engagement
+      - "bx.com"                   # Blackstone
+      - "blackstone.service-now.com"
+      - "bx.okta.com"
+      - "cookiecloud.ai"
+      - "nexthink.cloud"
+      - "observeit.net"
+      - "zscalerthree.net"
+      - "zdxcloud.net"
+      - "norm.ai"
+  ads-trackers-blocked:
+    patterns:
+      - "doubleclick.net"
+      - "adservice.google.com"
+      - "googletagmanager.com"
+      - "criteo.com"
+      - "events.data.microsoft.com"
+      - "telemetry.insights.video.a2z.com"
+      - "app-analytics-services.com"
+      - "browser-intake-datadoghq.com"
+      - "events.launchdarkly.com"
+      - "sentry.io"
+      - "amplitude.com"
+      - "applovin.com"
+      - "rayjump.com"
+      - "unity3d.com"
+      - "braze.com"
+
+# Type-inference rules combining OUI and DNS signal.
+# Each rule: if (oui matches group) AND (dns_categories include any of listed) then type.
+# Evaluated top-down, first match wins. "unclassified" is the fallback.
+type_rules:
+  - type: apple-mobile
+    oui_groups: [apple]
+    dns_any: [apple-services]
+    hostname_hints: ["iPhone", "iPad", "Melinda-iphone"]
+  - type: apple-desktop
+    oui_groups: [apple]
+    dns_any: [apple-services, dev-tools]
+    hostname_hints: ["Mac-mini", "MacBook", "MelindaLaptop", "Mac"]
+  - type: streaming-appletv
+    oui_groups: [apple]
+    dns_any: [video-streaming, apple-services]
+    hostname_hints: ["Living-Room", "living"]
+  - type: smart-tv
+    oui_groups: [vizio]
+    dns_any: [video-streaming]
+  - type: streaming-firetv
+    oui_groups: [amazon]
+    dns_any: [video-streaming]
+    hostname_hints: ["amazon-", "fire"]
+  - type: iot-nest
+    oui_groups: [nest]
+  - type: iot-ring-camera
+    oui_groups: [ring]
+  - type: iot-smart-lock
+    oui_groups: [u_bolt]
+  - type: unifi-camera
+    oui_groups: [ubiquiti]
+    hostname_hints: ["g5-", "g6-"]
+  - type: unifi-switch
+    oui_groups: [ubiquiti]
+    hostname_hints: ["USW", "OfficeUSW"]
+  - type: printer
+    oui_groups: [canon]
+  - type: corporate-laptop
+    dns_any: [corporate-work]
+  - type: dev-workstation
+    dns_any: [dev-tools]
+    min_dns_weight: 2
+  - type: raspberry-pi-server
+    oui_groups: [raspberry_pi]
+  - type: windows-desktop
+    oui_groups: [hp, dell, samsung]
+    dns_any: [microsoft-services]
+    hostname_hints: ["DESKTOP-", "localdomain"]
+
+# Trust tiers — read from UniFi state at runtime.
+trust_tiers:
+  - allowlist-member   # MAC in any SSID allowlist (list_mac_filter)
+  - ppsk-holder        # MAC bound to PPSK record
+  - default-access     # on unrestricted Default network
+  - iot-vlan           # on designated IoT VLAN (topology-defined)
+  - guest              # on guest/roaming-quarantine network
+
+# Cadence bins, computed from UniFi uptime_human + first/last seen.
+cadence_bins:
+  continuous: "online > 90% of window"
+  long-uptime: "uptime > 7 days (wired infra-like)"
+  daily: "online 10-90% of window"
+  sporadic: "intermittent, < 10% of window"
+  offline: "not seen in window"

@@ -28,7 +28,7 @@ Your deliverable is a rendered PNG plus its editable HTML source. Future edits r
 | HTML source destination | `<repo>/content-assets/covers/<slug>/cover.html` (gitignored, kept for future edits) |
 | Frontmatter | `coverImage: /blog/<slug>/infographic.png` plus a thorough `coverImageAlt` describing panels and content |
 
-Repo path: `$HOME/Github_Projects/cryptoflexllc`. Inline graphics follow the same pipeline at whatever canvas size fits the content, output to `public/images/blog/<slug>/<name>.png`.
+Repo path: `$HOME/GitProjects/cryptoflexllc` (some machines use `$HOME/Github_Projects/cryptoflexllc`; use whichever exists). Inline graphics follow the same pipeline at whatever canvas size fits the content, output to `public/images/blog/<slug>/<name>.png`.
 
 `<slug>` is the MDX filename minus its extension (`persistent-memory-for-claude-code.mdx` gives `persistent-memory-for-claude-code`), never derived from an existing image filename. Older posts may carry a `coverImage` under the legacy flat scheme (`/images/blog/<name>.png`): write the new cover to the per-slug path above and point the frontmatter `coverImage` at it, leaving the post's inline body images wherever they already live.
 

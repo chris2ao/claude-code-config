@@ -115,6 +115,7 @@ echo "  \"posts\": ["
 
 # Process each MDX file
 all_tags_list=""
+series_list=""
 total_word_count=0
 latest_date=""
 latest_post=""
@@ -135,6 +136,37 @@ while IFS= read -r file; do
     date="${date:0:10}"
     description=$(parse_frontmatter "$file" "description")
     tags_raw=$(parse_frontmatter "$file" "tags")
+    series=$(parse_frontmatter "$file" "series")
+    series_order=$(parse_frontmatter "$file" "seriesOrder")
+    cover_image=$(parse_frontmatter "$file" "coverImage")
+    featured_raw=$(parse_frontmatter "$file" "featured")
+
+    # JSON representations for optional fields
+    if [[ -n "$series" ]]; then
+        series_json="\"$(json_escape "$series")\""
+    else
+        series_json="null"
+    fi
+    if [[ "$series_order" =~ ^[0-9]+$ ]]; then
+        order_json="$series_order"
+    else
+        order_json="null"
+    fi
+    if [[ -n "$cover_image" ]]; then
+        cover_json="true"
+    else
+        cover_json="false"
+    fi
+    if [[ "$featured_raw" == "true" ]]; then
+        featured_json="true"
+    else
+        featured_json="false"
+    fi
+
+    # Collect series data for the summary (name|order)
+    if [[ -n "$series" ]]; then
+        series_list="${series_list:-}${series}|${series_order:-0}"$'\n'
+    fi
 
     # Get word and line counts
     word_count=$(wc -w < "$file" 2>/dev/null || echo 0)
@@ -168,7 +200,7 @@ while IFS= read -r file; do
     fi
 
     # Write to temp file for sorting (date|filename|single-line-json)
-    json_line="{\"filename\":\"$(json_escape "$filename")\",\"title\":\"$(json_escape "$title")\",\"date\":\"$date\",\"description\":\"$(json_escape "$description")\",\"tags\":$tags_json,\"word_count\":$word_count,\"line_count\":$line_count}"
+    json_line="{\"filename\":\"$(json_escape "$filename")\",\"title\":\"$(json_escape "$title")\",\"date\":\"$date\",\"description\":\"$(json_escape "$description")\",\"tags\":$tags_json,\"series\":$series_json,\"seriesOrder\":$order_json,\"featured\":$featured_json,\"has_cover\":$cover_json,\"word_count\":$word_count,\"line_count\":$line_count}"
     printf "%s|%s\n" "$date" "$json_line" >> "$tmpfile"
 
 done < <(find "$BLOG_ROOT" -maxdepth 1 -name "*.mdx" -type f 2>/dev/null)
@@ -187,6 +219,30 @@ while IFS='|' read -r sort_date json_obj; do
 done <<< "$sorted"
 
 echo ""
+echo "  ],"
+
+# Series summary: per-series post count and highest seriesOrder (always emitted;
+# this is the single source of truth for computing the next seriesOrder)
+echo "  \"series_summary\": ["
+if [[ -n "$series_list" ]]; then
+    echo "$series_list" | grep -v '^$' | awk -F'|' '
+        {
+            count[$1]++
+            if (($2 + 0) > max[$1]) max[$1] = $2 + 0
+        }
+        END {
+            n = 0
+            for (name in count) {
+                name_esc = name
+                gsub(/\\/, "\\\\", name_esc)
+                gsub(/"/, "\\\"", name_esc)
+                if (n > 0) printf ",\n"
+                printf "    {\"name\":\"%s\",\"count\":%d,\"max_order\":%d}", name_esc, count[name], max[name]
+                n++
+            }
+            if (n > 0) printf "\n"
+        }'
+fi
 echo "  ]"
 
 # Output metadata unless --minimal

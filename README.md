@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 35 agents, 30 invocable skills, 43 learned skills, 31 scripts, 10 commands, 12 hooks, 7 MCP servers, and 64 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 35 agents, 30 invocable skills, 43 learned skills, 40 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -313,7 +313,7 @@ homunculus/
 3. Instincts start at 0.4 confidence and increase with repeated evidence
 4. When 3+ instincts cluster in a domain, they can be graduated into learned skills
 
-Currently contains 64 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
+Currently contains 65 instincts in `instincts/personal/`, covering patterns from MCP configuration to OpenClaw agent management.
 
 ## Templates
 
@@ -340,12 +340,12 @@ claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
   agents/                        # 35 custom agent definitions
   skills/                        # 30 invocable skills + 43 learned skills
-  commands/                      # 10 commands
+  commands/                      # 9 commands
   scripts/                       # 31 automation scripts
   hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
-  homunculus/                    # Continuous learning system (64 instincts)
+  homunculus/                    # Continuous learning system (65 instincts)
   COMPLETE-GUIDE.md              # Comprehensive beginner walkthrough
 ```
 

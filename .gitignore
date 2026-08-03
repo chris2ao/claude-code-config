@@ -23,8 +23,17 @@
 !commands/*.md
 
 # Scripts (cleanup, automation)
+# NOTE: this file is allowlist-style (line 2 is `*`), so it fails CLOSED on any new
+# extension. A script added with an unlisted extension is silently untracked and never
+# syncs. Add the extension here when introducing one. Verify with:
+#   git check-ignore -v scripts/<file>
 !scripts/
 !scripts/*.sh
+!scripts/*.py
+# Data files that scripts/skills depend on at runtime (device-signatures.yml is read by
+# homenet-device-profile; wrap-up-exclude.txt is read by wrap-up).
+!scripts/*.yml
+!scripts/*.txt
 
 # Hooks (PreToolUse, PostToolUse, Stop, SessionEnd)
 !hooks/

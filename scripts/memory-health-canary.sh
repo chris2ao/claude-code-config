@@ -54,7 +54,8 @@ q = [r[0] for r in rows]
 qmean = sum(q)/len(q) if q else 0.0
 qsd = (sum((x-qmean)**2 for x in q)/len(q))**0.5 if q else 0.0
 graph = conn.execute("SELECT count(*) FROM memory_graph").fetchone()[0]
-print(f"{mem} {emb} {dim} {len(q)} {qsd:.4f} {graph}")
+ents = conn.execute("SELECT count(*) FROM memory_graph WHERE relationship_type='has_entity'").fetchone()[0]
+print(f"{mem} {emb} {dim} {len(q)} {qsd:.4f} {graph} {ents}")
 PYEOF
     )
     if [ -z "$stats" ]; then
@@ -79,6 +80,14 @@ PYEOF
         fi
         [ "$graph_count" -lt $((prev_graph_hwm - COUNT_TOLERANCE)) ] && \
             check_fail "memory_graph shrank: $graph_count vs high-water $prev_graph_hwm"
+        # CJ-PATCH: entity-link tracking. Upstream 10.74.1 consolidation deletes every
+        # has_entity row each run (target_hash holds an entity name, not a memory hash).
+        # com.chris2ao.memory-entity-relink rebuilds them Sun 04:00; if that job stops
+        # working this fires instead of hiding inside the total graph count.
+        entity_count=$(echo "$stats" | awk '{print $7}')
+        if [ "${entity_count:-0}" -lt 100 ]; then
+            check_fail "entity links collapsed: $entity_count (expected ~1000+); check com.chris2ao.memory-entity-relink"
+        fi
     fi
 fi
 
@@ -91,11 +100,11 @@ else
     [ "$arch_age_days" -gt 7 ] && check_fail "newest session archive is ${arch_age_days}d old"
 fi
 
-# 6. WAL size under 50MB
+# 6. WAL size under 25MB
 WAL="$DB-wal"
 if [ -f "$WAL" ]; then
     wal_mb=$(( $(stat -f %z "$WAL") / 1048576 ))
-    [ "$wal_mb" -ge 50 ] && check_fail "WAL is ${wal_mb}MB (limit 50MB)"
+    [ "$wal_mb" -ge 25 ] && check_fail "WAL is ${wal_mb}MB (limit 25MB); run memory-maintenance.sh"
 fi
 
 # 7. Ollama reachable (hard dependency of vector-memory since the 768d migration)

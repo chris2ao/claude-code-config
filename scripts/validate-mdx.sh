@@ -43,7 +43,7 @@ ERRORS=()
 frontmatter_present=false
 frontmatter_complete=false
 missing_fields=()
-required_fields=("title" "date" "description" "tags")
+required_fields=("title" "date" "description" "tags" "author" "readingTime")
 
 line_num=0
 in_frontmatter=false
@@ -159,10 +159,15 @@ while IFS= read -r line; do
     done
 done < "$FILE"
 
-# Check 5: Callout count threshold
+# Strip fenced code blocks once; JSX-aware checks must not count component
+# tags that appear as documentation examples inside code fences
+NONCODE_FILE=$(mktemp)
+awk '/^```/{inblock=!inblock; next} !inblock {gsub(/`[^`]*`/, ""); print}' "$FILE" > "$NONCODE_FILE"
+
+# Check 5: Callout count threshold (outside code fences)
 callout_count=0
 for ctype in Tip Info Warning Stop Security; do
-    count=$(grep -c "<${ctype}" "$FILE" 2>/dev/null || true)
+    count=$(grep -c "<${ctype}" "$NONCODE_FILE" 2>/dev/null || true)
     count=${count:-0}
     callout_count=$((callout_count + count))
 done
@@ -183,24 +188,89 @@ while IFS= read -r line; do
     fi
 done < "$FILE"
 
-# Check 7: Private repo link detection
+# Check 7: Private repo reference detection
+# Mirrors CI content-security tests: HIGH-1 bans private repo names anywhere;
+# HIGH-3 bans 'chris2ao' inside code examples unless in an allowed URL/repo form.
+# Unknown chris2ao/<repo> references in prose become warnings (verify repo is public).
 private_repo_links=()
+chris2ao_warnings=()
+in_code_block=false
 line_num=0
+
+# Strip the chris2ao forms CI's HIGH-3 lookarounds allow, leaving only violations
+strip_allowed_chris2ao() {
+    local s="$1"
+    s="${s//github.com\/chris2ao/URLOK}"
+    s="${s//linkedin.com\/chris2ao/URLOK}"
+    s="${s//com.chris2ao/RDNSOK}"
+    s="${s//@chris2ao/ATOK}"
+    s="${s//chris2ao\/cryptoflexllc/REPOOK}"
+    s="${s//chris2ao\/CJClaude_1/REPOOK}"
+    s="${s//chris2ao\/unifi-mcp/REPOOK}"
+    s="${s//chris2ao\/pihole-mcp/REPOOK}"
+    s="${s//chris2ao\/claude-code-config/REPOOK}"
+    s="${s//chris2ao\/home-network-mission-control-dashboard/REPOOK}"
+    s="${s//chris2ao-unifi-mcp/NAMEOK}"
+    s="${s//chris2ao-pihole-mcp/NAMEOK}"
+    s="${s//chris2ao-claude-code-config/NAMEOK}"
+    s="${s//chris2ao-homenet/NAMEOK}"
+    s="${s//chris2ao-home-network/NAMEOK}"
+    s="${s//chris2ao\"/TRAILOK}"
+    s="${s//chris2ao\'/TRAILOK}"
+    s="${s//chris2ao)/TRAILOK}"
+    s="${s//chris2ao]/TRAILOK}"
+    echo "$s"
+}
+
 while IFS= read -r line; do
     line_num=$((line_num + 1))
-    # Match github.com/chris2ao/ links that are NOT the public repos
-    if echo "$line" | grep -qE 'github\.com/chris2ao/' ; then
-        if ! echo "$line" | grep -qE 'github\.com/chris2ao/(cryptoflexllc|claude-code-config|unifi-mcp|pihole-mcp)(\s|/|"|'"'"'|\)|$)'; then
-            private_repo_links+=($line_num)
+
+    if [[ "$line" =~ ^\`\`\` ]]; then
+        if $in_code_block; then in_code_block=false; else in_code_block=true; fi
+        continue
+    fi
+
+    # HIGH-1 (anywhere): private repo name cryptoflex-ops (the domain cryptoflex-ops.com is allowed)
+    stripped_ops="${line//cryptoflex-ops.com/}"
+    if [[ "$stripped_ops" == *cryptoflex-ops* ]]; then
+        private_repo_links+=("$line_num:cryptoflex-ops")
+    fi
+
+    # HIGH-1 (anywhere): CJAI Assistant repo name variants
+    if echo "$line" | grep -qE 'CJAI_?Assistant|chris2ao/CJAI'; then
+        private_repo_links+=("$line_num:CJAI")
+    fi
+
+    if $in_code_block; then
+        # HIGH-3: chris2ao inside code examples, minus the allowed forms
+        remaining=$(strip_allowed_chris2ao "$line")
+        if [[ "$remaining" == *chris2ao* ]]; then
+            private_repo_links+=("$line_num:chris2ao-in-code-example")
         fi
+    else
+        # Prose: warn on chris2ao/<repo> outside the known-public set so the
+        # captain verifies the repo is actually public before publishing
+        matches=$(echo "$line" | grep -oE 'chris2ao/[A-Za-z0-9_-]+' || true)
+        for m in $matches; do
+            repo="${m#chris2ao/}"
+            case "$repo" in
+                cryptoflexllc|claude-code-config|unifi-mcp|pihole-mcp|CJClaude_1|home-network-mission-control-dashboard) ;;
+                *) chris2ao_warnings+=("$line_num:$m") ;;
+            esac
+        done
     fi
 done < "$FILE"
 
-# Check 8: Callout component closure
+if [[ ${#chris2ao_warnings[@]} -gt 0 ]]; then
+    WARNINGS+=("Unverified chris2ao repo references (confirm public before publish): ${chris2ao_warnings[*]:-}")
+fi
+
+# Check 8: Callout component closure (outside code fences)
 unclosed_callouts=()
 for ctype in Tip Info Warning Stop Security; do
-    open_count=$(grep -c "<${ctype}" "$FILE" 2>/dev/null || true); open_count=${open_count:-0}
-    close_count=$(grep -c "</${ctype}>" "$FILE" 2>/dev/null || true); close_count=${close_count:-0}
+    # Opening tags: "<Tip" occurrences ("</Tip>" never matches "<Tip[ >]")
+    open_count=$( (grep -o "<${ctype}[ >]" "$NONCODE_FILE" 2>/dev/null || true) | wc -l | tr -d ' '); open_count=${open_count:-0}
+    close_count=$(grep -c "</${ctype}>" "$NONCODE_FILE" 2>/dev/null || true); close_count=${close_count:-0}
     if [[ $open_count -ne $close_count ]]; then
         unclosed_callouts+=("${ctype}:open=${open_count},close=${close_count}")
     fi
@@ -223,6 +293,50 @@ while IFS= read -r line; do
         line="${line#*\]\(}"
     done
 done < "$FILE"
+
+# Check 10: Bare <digit sequences outside code (MDX parses "<100ms" as a JSX
+# tag start; renders as an error boundary with HTTP 200 and no build error)
+bare_digit_tags=()
+in_code_block=false
+line_num=0
+while IFS= read -r line; do
+    line_num=$((line_num + 1))
+    if [[ "$line" =~ ^\`\`\` ]]; then
+        if $in_code_block; then in_code_block=false; else in_code_block=true; fi
+        continue
+    fi
+    if $in_code_block; then continue; fi
+    # Strip inline code spans before checking
+    stripped=$(echo "$line" | sed 's/`[^`]*`//g')
+    if echo "$stripped" | grep -qE '<[0-9]'; then
+        bare_digit_tags+=($line_num)
+    fi
+done < "$FILE"
+
+# Check 11: Suspected nested quotes in JSX attribute values (renders as an
+# error boundary at runtime with no build or lint error). Heuristic; warning only.
+jsx_quote_suspects=()
+in_code_block=false
+line_num=0
+while IFS= read -r line; do
+    line_num=$((line_num + 1))
+    if [[ "$line" =~ ^\`\`\` ]]; then
+        if $in_code_block; then in_code_block=false; else in_code_block=true; fi
+        continue
+    fi
+    if $in_code_block; then continue; fi
+    stripped=$(echo "$line" | sed 's/`[^`]*`//g')
+    if echo "$stripped" | grep -qE '[a-zA-Z]+="[^"]*"[A-Za-z0-9]'; then
+        jsx_quote_suspects+=($line_num)
+    fi
+done < "$FILE"
+
+# Check 12: Slug charset (publish API and site routing require [a-z0-9-], no dots)
+slug="${FILENAME%.mdx}"
+slug_pass=true
+if [[ ! "$slug" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$ ]]; then
+    slug_pass=false
+fi
 
 # Metadata calculations
 total_lines=$(wc -l < "$FILE" 2>/dev/null || echo 0)
@@ -368,6 +482,42 @@ else
     VALID=false
 fi
 
+# bare_digit_tags
+if [[ ${#bare_digit_tags[@]} -eq 0 ]]; then
+    passed_checks=$((passed_checks + 1))
+    bare_digit_pass=true
+    bare_digit_msg="No bare <digit JSX traps"
+else
+    failed_checks=$((failed_checks + 1))
+    bare_digit_pass=false
+    bare_digit_msg="Bare <digit outside code on lines: ${bare_digit_tags[*]:-} (wrap in backticks)"
+    ERRORS+=("Bare <digit JSX trap on lines: ${bare_digit_tags[*]:-}")
+    VALID=false
+fi
+
+# jsx_quote_suspects (warning only; heuristic)
+if [[ ${#jsx_quote_suspects[@]} -eq 0 ]]; then
+    passed_checks=$((passed_checks + 1))
+    jsx_quote_pass=true
+    jsx_quote_msg="No suspected nested quotes in JSX attributes"
+else
+    passed_checks=$((passed_checks + 1))
+    jsx_quote_pass=true
+    jsx_quote_msg="Possible nested quotes in JSX attributes on lines: ${jsx_quote_suspects[*]:-}"
+    WARNINGS+=("Possible nested JSX attribute quotes on lines: ${jsx_quote_suspects[*]:-}")
+fi
+
+# slug charset
+if $slug_pass; then
+    passed_checks=$((passed_checks + 1))
+    slug_msg="Slug '$slug' is valid"
+else
+    failed_checks=$((failed_checks + 1))
+    slug_msg="Slug '$slug' violates [a-z0-9-] (no dots, no uppercase)"
+    ERRORS+=("Invalid slug: $slug")
+    VALID=false
+fi
+
 # Overall status
 if ! $VALID; then
     overall="FAIL"
@@ -485,6 +635,18 @@ cat <<EOF
     "callout_closure": {
       "pass": $(if $callout_closure_pass; then echo "true"; else echo "false"; fi),
       "message": "$(json_escape "$callout_closure_msg")"
+    },
+    "bare_digit_jsx": {
+      "pass": $(if $bare_digit_pass; then echo "true"; else echo "false"; fi),
+      "message": "$(json_escape "$bare_digit_msg")"
+    },
+    "jsx_attribute_quotes": {
+      "pass": $(if $jsx_quote_pass; then echo "true"; else echo "false"; fi),
+      "message": "$(json_escape "$jsx_quote_msg")"
+    },
+    "slug_charset": {
+      "pass": $(if $slug_pass; then echo "true"; else echo "false"; fi),
+      "message": "$(json_escape "$slug_msg")"
     }
   },
   "metadata": {
@@ -508,4 +670,5 @@ cat <<EOF
 }
 EOF
 
+rm -f "$NONCODE_FILE"
 exit 0
