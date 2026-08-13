@@ -1,6 +1,10 @@
 ---
 name: homenet-threat-enrich
-description: On-demand RDAP and IPinfo enrichment for the top anomalies in the Mission Control Threat Intel tab. Read-only against external feeds; the only write is to the local SQLite (threat_intel_anomalies.enrichment_json + threat_intel_domain_cache rdap/ipinfo entries). Default invocation: claude -p "/homenet-threat-enrich".
+description: >-
+  RETIRED 2026-08-09. The Mission Control dashboard was decommissioned and its SQLite
+  deleted, so this skill cannot run. Kept for reference only. It performed on-demand
+  RDAP and IPinfo enrichment for the top anomalies in the Mission Control Threat Intel
+  tab.
 ---
 
 # homenet-threat-enrich

@@ -1,6 +1,6 @@
 ---
 platform: portable
-description: "Safe Vector VRL patterns for parsing UDM-Pro syslog firewall events into ClickHouse"
+description: "RETIRED 2026-08-09 (SIEM decommissioned; no Vector or ClickHouse running). Reference only: safe Vector VRL patterns for parsing UDM-Pro syslog firewall events into ClickHouse"
 evolved_from: ["udmpro-doubled-hostname"]
 evolved_date: 2026-06-14
 avg_confidence: 0.85

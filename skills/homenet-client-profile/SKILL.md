@@ -1,6 +1,11 @@
 ---
 name: homenet-client-profile
-description: Generate an LLM-composed intelligence profile for a single client device on the home LAN by joining UniFi state, persona, and Pi-hole DNS evidence from the dashboard's local SQLite. Read-only against external systems. Writes only to the local client_profile_overrides table, which the dashboard reads on /api/clients/{mac}/intelligence with a 30-day TTL. Default invocation: claude -p "/homenet-client-profile <MAC>".
+description: >-
+  RETIRED 2026-08-09. The Mission Control dashboard was decommissioned and its SQLite
+  deleted, so this skill cannot run. Kept for reference only. It generated an
+  LLM-composed intelligence profile for a single client device on the home LAN by
+  joining UniFi state, persona, and Pi-hole DNS evidence from the dashboard's local
+  SQLite.
 ---
 
 # homenet-client-profile
