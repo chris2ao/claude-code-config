@@ -11,6 +11,7 @@ NEVER link to private GitHub repositories in blog posts. Readers cannot access t
 **Public repos (safe to link):**
 - `chris2ao/cryptoflexllc`
 - `chris2ao/claude-code-config`
+- `chris2ao/cramdex`
 
 **All other `chris2ao/*` repos are private.** Do not link to them.
 
