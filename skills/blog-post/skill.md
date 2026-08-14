@@ -90,6 +90,7 @@ The captain runs the full pipeline: research, draft, parallel review + diagram a
 
 ## Known Gotchas
 
+- **Diagram visual bar**: inline SVG diagrams follow the editorial diagram system, matching the cover-infographic aesthetic. Contract: `$BLOG_REPO/docs/editorial-diagram-standards.md`; primitives: `src/components/mdx/diagram-editorial.tsx`; exemplar: `ReviewPipelineDiagram` in `diagrams-security-review-round-two.tsx`. Plain outlined boxes joined by crossing diagonal lines are below the bar, and the diagram author must run the standards doc's screenshot verification loop before handing off.
 - **Tailwind v4 dynamic class purging** (matters for diagram TSX): never interpolate class fragments (`bg-${accent}-600`). Use a static `as const` class map. Hit in TerminalPromo.tsx 2026-07-21.
 - **MDX runtime traps** (caught by `~/.claude/scripts/validate-mdx.sh`, but know them): bare `<` before digits (`<100ms`) parses as a JSX tag and breaks at render with HTTP 200; nested double quotes inside JSX attribute values render as an error boundary with no build error; slugs are `[a-z0-9-]` only, no dots.
 - **Series data**: quoting is normalized to unquoted in frontmatter (`series: Claude Code Workflow`). The inventory script is the only source of truth for seriesOrder.

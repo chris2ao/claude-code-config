@@ -92,6 +92,18 @@ At the beginning of each session, if the user describes a task related to previo
 - Use retrieved memories to avoid re-learning or re-investigating
 - Check MEMORY.md for project conventions (loaded automatically)
 
+The `session-recall` SessionStart hook emits this as a directive on startup/clear/compact, so it should not depend on remembering.
+
+## Search Parameters (Quality Boost)
+
+Pass `quality_boost: 0.25` on every `memory_search` used for recall (looking up prior context, checking for an existing fact before storing, post-compaction recovery). The server-side `MCP_QUALITY_BOOST_ENABLED` / `MCP_QUALITY_BOOST_WEIGHT` env vars only reach the SSE/web API; the stdio MCP tool hardcodes a `quality_boost` default of 0.0 (`server/handlers/memory.py:1005`), so it has to be passed per call or it does not happen.
+
+Omit it (leave at 0.0, pure semantic) when:
+- Doing a fact-versioning duplicate check, where you want the nearest text match regardless of score
+- Searching for terse config values or command strings
+
+Caveat: the DeBERTa scorer is prose-biased (confirmed 2026-07-21), so a high weight favors wordy session summaries over short high-value gotchas. 0.25 is deliberately modest; do not raise it above 0.3 without re-checking that gotcha-type memories still rank.
+
 ## Save During, Not After
 
 Save memories continuously throughout the session as events occur. Do not wait until session end, as hard kills skip exit hooks and lose unsaved context.
