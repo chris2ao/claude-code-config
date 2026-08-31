@@ -34,13 +34,13 @@ Agent(
 )
 ```
 
-The agent reads the post, pulls live brand tokens from `src/app/globals.css`, authors HTML, renders with headless Chrome, runs its verification loop (view render, proofread, dimension and crop-safe checks), and writes:
+The agent reads the post and the repo contract `docs/cover-graphics-standards.md`, states a one-sentence concept for a composition unique to this post (checked against the composition register; the 2x2 stat-tile grid is retired), pulls live brand tokens from `src/app/globals.css`, authors HTML, renders with headless Chrome, runs its verification loop (art director review, proofread, dimension, crop-safe, and card-scale checks), appends the register row, and writes:
 
 - `public/blog/<slug>/infographic.png` (the deliverable)
 - `content-assets/covers/<slug>/cover.html` (editable source, gitignored)
 - `coverImage` + `coverImageAlt` frontmatter (cover type, unless `--no-frontmatter`)
 
-Review the returned render before committing. Edits go to the HTML source followed by a re-render; never regenerate from scratch.
+Review the returned render before committing, as an art director: is the composition unique to this post (compare against the two or three most recent covers in `public/blog/*/infographic.png`), is there one focal point, is the visual mass balanced, do the panels fill with legible type, does it still read at 560 px card width? Edits go to the HTML source followed by a re-render; never regenerate from scratch.
 
 ## Relationship to Other Pipelines
 

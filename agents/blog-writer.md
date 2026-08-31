@@ -53,7 +53,7 @@ All of the above, PLUS humor, GIFs at emotional peaks, `<Info>` boxes for every 
 Straightforward documentation style, minimal narrative, maximum code examples
 
 ## Structure Patterns
-- Opening paragraph hooks with a relatable problem, a specific metric, or a contrast (20-65 words; shorter is better)
+- Opening paragraph hooks with a relatable problem, a specific metric the story turns on, or a contrast (20-65 words; shorter is better); never a status roll call of counts
 - Tables for structured comparisons; code blocks liberally, always with language tags
 - Bold for key terms; italics for asides
 - "Why this matters" explanations after technical sections
@@ -68,6 +68,7 @@ Show the thing -> Explain what's happening -> Explain why it matters -> Formaliz
 - Em dashes (NEVER; use commas, periods, colons, or parentheses)
 - Markdown content (tables, headers, lists, bold) inside code fences; fences are for actual code only
 - Every AI-slop tell in the voice brief you receive (hype-labels, thesis announcements, bolded takeaway stacks, tricolon overload, fake precision, grand-summary closers)
+- The metrics roll call: stacking inventory numbers (post counts, tests passing, files changed, insertions, coverage percentages, version numbers) as the lead, the closing, or the frame of a section. Keep the one number the argument turns on and say it in a sentence; the rest goes in a mid-body table or gets cut
 
 ## Post Length Guidelines
 | Post Type | Word Count | Reading Time |

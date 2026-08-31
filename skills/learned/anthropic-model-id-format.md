@@ -17,8 +17,7 @@ Code reviewers and documentation may suggest `-latest` model aliases, but these 
 Use exact model IDs with date suffixes:
 - `claude-haiku-4-5-20251001` (correct)
 - `claude-haiku-4-5-latest` (404 error)
-- `claude-sonnet-4-5-20250929` (correct)
-- `claude-opus-4-6` (correct, no date needed for Opus)
+- `claude-sonnet-5`, `claude-opus-5` (correct, Claude 5 family uses no date suffix)
 
 Always verify model IDs against the Anthropic API documentation before deploying.
 

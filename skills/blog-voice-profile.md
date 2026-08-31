@@ -137,6 +137,7 @@ This blog is read by people who can smell LLM-assisted writing. The technical co
 8. **Telling the reader how to feel.** "you will be grateful", "the satisfying part", "infinitely more useful", "maddening". Fix: state the fact and let the reader feel it.
 9. **Grand-summary closers.** LinkedIn-aphorism endings: "That is the whole job of...", "turns a package upgrade into a capability upgrade", "That is the shape that worked." Fix: end on something concrete and specific to this story. The thesis should not appear for the third time at the close.
 10. **Restatement across containers.** The same point in body prose, then a callout, then a Lessons bullet (2-4 times). Fix: state each lesson once, in its strongest container, and cut the echoes.
+11. **The metrics roll call.** Scale and status numbers stacked as the frame: "91 posts, 812 tests passing, known vulns 17 to 12, Next.js 16.3.0" as a lead, a cover kicker or stat line, or a closing status report; "76 files, 10,850 insertions"; "test count went from 802 to 1,099"; "N agents, N tests, N files, N percent coverage". Test counts, post counts, files changed, lines, insertions, coverage percentages, and version numbers are inventory, not story, and a model reaches for them because they are easy to make sound like achievement. Fix: keep the one number the argument turns on (1,054 rows wrongly excluded; the migration that silently did nothing) and say it in a sentence; cut the rest or move it to a table mid-body where a reader who wants inventory can find it. Applies to the post's description, opening, and closing, and to every cover kicker, deck, or stat line.
 
 **The structural tell (most important).** Real war stories run uneven: the author goes long on the part that actually interested them, short on the parts that did not, and occasionally circles back or adds an aside they almost cut. AI-assisted drafts are metronomic: every section is problem -> insight -> callout, every section the same length. Before shipping, deliberately let one or two sections run uneven. Expand the part you genuinely found interesting; compress the boilerplate.
 
@@ -148,6 +149,7 @@ This blog is read by people who can smell LLM-assisted writing. The technical co
 - [ ] Lessons/recap is prose or one short paragraph, not a stack of bolded cards.
 - [ ] No point stated more than twice across body + callouts.
 - [ ] No triptych closer; the final line is concrete, not a thesis restatement.
+- [ ] No metrics roll call in the description, opening, closing, or cover copy; any number that survives is one the argument turns on.
 - [ ] At least one section runs deliberately longer or shorter than the rest.
 - [ ] The confessional and specific lines survived the edit.
 
@@ -164,6 +166,7 @@ This blog is read by people who can smell LLM-assisted writing. The technical co
 - Hype-label your own points ("the killer insight", "the win", "worth writing about")
 - End a Lessons Learned section as a stack of bolded callout cards (use prose; see the de-slop check)
 - Close on a grand-summary aphorism that restates the thesis a third time
+- Frame a lead, a closing, or a cover line as a metrics roll call (post counts, tests passing, files changed, insertions, coverage, version numbers as achievements)
 
 ## Metric Baselines (84-post corpus, 2026-07-22; ranges are P10-P90)
 
@@ -180,6 +183,8 @@ This blog is read by people who can smell LLM-assisted writing. The technical co
 | Headings (H3) per post | 0-21 | Recent-15 median: 3. Bimodal: a few deeply nested technical posts run 10-14 while most run 0-6 |
 
 ## Evolution Log
+
+- **2026-08-15 (metrics roll call added as tell 11)**: The owner rejected the "91 POSTS · 812 TESTS PASSING · KNOWN VULNS 17→12 · NEXT.JS 16.3.0" stat line on the Security Review: Round Two cover as "a common framing that AI does for lead" and said it had appeared on other posts too. Added tell 11 (the metrics roll call: inventory numbers stacked as the frame in leads, closings, and cover copy), a matching pre-ship checklist line, and a NEVER-do entry. Related to tell 1 (staccato number fragments) but distinct: tell 1 is about rhythm, tell 11 is about the numbers themselves being inventory rather than story. Cover-side enforcement lives in the repo's `docs/cover-graphics-standards.md` and the brand-graphics agent.
 
 - **2026-03-29 (initial)**: Profile seeded from analysis of 46 posts. Baseline metrics established from 4-post sample (iMessage channels, Gmail agent, 90% context, First 24 hours). No GIFs detected in recent posts (may have shifted away from GIF usage in newer content).
 - **2026-06-14 (AI-slop check)**: Added the "AI-Slop Tells: The De-Slop Check" section after reader feedback that posts felt AI-generated. Derived from a four-agent editorial review (human-editor + skeptical-reader lenses) across three June 2026 backlog drafts (squash-vs-granular-trap, from-bug-report-to-release, keep-your-mcps-updated). Reconciled the conflict where "Characteristic Phrases" and "Closing Style" previously encoded patterns (formulaic "The thing about X", bolded Lessons-callout stacks) that now read as tells. Net guidance: the deepest tell is structural evenness, not any single phrase; let sections run uneven and protect the confessional/specific lines.

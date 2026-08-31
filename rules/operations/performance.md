@@ -6,13 +6,13 @@ platform: portable
 
 ## Model Selection Strategy
 
-**Haiku 4.5** (90% of Sonnet capability, 3x cost savings):
+**Haiku 4.5** (fastest, cheapest tier):
 - Lightweight agents, background tasks, pair programming
 
-**Sonnet 4.5** (Best coding model):
+**Sonnet 5** (Best coding model):
 - Main development work, complex coding tasks
 
-**Opus 4.6** (Deepest reasoning):
+**Opus 5** (Deepest reasoning):
 - Architectural decisions, security analysis, research
 
 ## Subagent Model Routing

@@ -33,7 +33,7 @@ When spawning a team member, pass them their task and mode, all required input d
 
 ## Images, Diagrams, and Graphics
 
-- **Every post gets a cover infographic** via the brand-graphics agent (Phase 4.5). Default pipeline is custom HTML rendered with headless Chrome. NotebookLM is used ONLY if the user explicitly asked for it this session (its failure mode: garbled small text).
+- **Every post gets a cover infographic** via the brand-graphics agent (Phase 4.5). Default pipeline is custom HTML rendered with headless Chrome. NotebookLM is used ONLY if the user explicitly asked for it this session (its failure mode: garbled small text). Covers share branding only (tokens, type trio, hatch, glow, header chips, footer strip); the composition is bespoke per post and checked against the register in `docs/cover-graphics-standards.md`. Two covers on the same layout with swapped words is a rejection.
 - **Diagrams are custom SVG TSX components**, never Mermaid, for anything published to `src/content/blog/` or `src/content/backlog/`. New diagrams go in `src/components/mdx/diagrams-<slug>.tsx` and must be registered in THREE places: `src/components/mdx/index.ts`, the component map in `src/app/blog/[slug]/page.tsx`, and the component map in `src/app/backlog/[slug]/page.tsx`. Missing the backlog registry is a known failure.
 - **Diagrams follow the editorial diagram system.** They are built from the primitives in `src/components/mdx/diagram-editorial.tsx` (EditorialFrame, NodePanel, FlowLine, Chip, SectionLabel, StepBadge) and must match the cover-infographic aesthetic: workshop frame with eyebrow + chips + footer strip, orthogonal bus connectors (never crossing diagonals), heading/mono typography, semantic accent colors. The full contract, including the mandatory screenshot verification loop, is `docs/editorial-diagram-standards.md` in the repo; the canonical exemplar is `ReviewPipelineDiagram` in `diagrams-security-review-round-two.tsx`. Plain outlined boxes with thin diagonal lines are below the bar and get rejected.
 - Zoom: markdown images (`![alt](src)`) route through the global `img -> ImageLightbox` mapping in both registries and get click-to-zoom. Raw JSX `<img>` tags BYPASS the components map in next-mdx-remote/rsc and render as native HTML with no lightbox (verified 2026-05-13). Posts must always use markdown image syntax. Diagram components handle their own DiagramLightbox internally.
@@ -90,7 +90,7 @@ Decide first whether the post needs new diagrams: architecture, data flow, seque
 
 **Agent 4: Diagram author** (only if needed)
 - general-purpose, sonnet. Pass: draft path, `BLOG_REPO`, which concepts need diagrams
-- Instructions: read `$BLOG_REPO/docs/editorial-diagram-standards.md` (the contract), `src/components/mdx/diagram-editorial.tsx` (the primitives), and the exemplar `ReviewPipelineDiagram` in `diagrams-security-review-round-two.tsx` BEFORE designing. Reuse an existing component if one fits (restyling it to the editorial system if it predates it); otherwise author `src/components/mdx/diagrams-<slug>.tsx` built on the primitives: EditorialFrame with unique id + eyebrow + chips + footerRight, NodePanel nodes, orthogonal FlowLine/elbowPath connectors with bus fan-outs, accents only from DIAGRAM_ACCENTS, complete static Tailwind classes, heading/mono typography at or above the size minimums. It must run the standards doc's screenshot verification loop (dev gallery route + headless Chrome + inspect the PNG) until each diagram passes, then `npx tsc --noEmit`, register new components in all three registries, and return component names with suggested placement (section + line context) plus screenshot paths. It must NOT edit the MDX.
+- Instructions: read `$BLOG_REPO/docs/editorial-diagram-standards.md` (the contract), `src/components/mdx/diagram-editorial.tsx` (the primitives), and the exemplar `ReviewPipelineDiagram` in `diagrams-security-review-round-two.tsx` BEFORE designing. Reuse an existing component if one fits (restyling it to the editorial system if it predates it); otherwise author `src/components/mdx/diagrams-<slug>.tsx` built on the primitives: EditorialFrame with unique id + eyebrow + chips + footerRight, NodePanel nodes, orthogonal FlowLine/elbowPath connectors with bus fan-outs, accents only from DIAGRAM_ACCENTS, complete static Tailwind classes, heading/mono typography at or above the size minimums. It must run the standards doc's screenshot verification loop (dev gallery route + headless Chrome + inspect the PNG, including the art director pass: composition centered and balanced, type legible at the rendered 760 px width, panels filled rather than mostly empty) until each diagram passes, then `npx tsc --noEmit`, register new components in all three registries, and return component names with suggested placement (section + line context) plus screenshot paths. It must NOT edit the MDX.
 
 **Validation (run directly, no agent):**
 ```bash
@@ -105,7 +105,7 @@ Consolidate all Phase 3 feedback:
 
 **MUST-FIX** (triggers revision): build failures; validate-mdx.sh errors; content-security test failures; voice score below 3/5; editor must-fix items; de-slop must-fix items.
 
-**SHOULD-FIX** (triggers revision if 3+): editor should-fix; de-slop should-fix (hype-labels, over-signposting, tricolon overload, fake precision, cross-container restatement); UX structural warnings; voice score 3-4 with specific deviations.
+**SHOULD-FIX** (triggers revision if 3+): editor should-fix; de-slop should-fix (hype-labels, over-signposting, tricolon overload, fake precision, cross-container restatement, metrics roll call in a lead, closing, or cover line); UX structural warnings; voice score 3-4 with specific deviations.
 
 **NICE-TO-HAVE**: logged, not revised.
 
@@ -124,7 +124,7 @@ You decide which SHOULD-FIX items to accept. Log rationale for rejections.
 After the writer is completely done with the MDX:
 
 1. Spawn the **brand-graphics agent**: "Follow the instructions in ~/.claude/agents/brand-graphics.md. Blog post: <absolute-draft-path>. Type: cover. Output mode: repo."
-2. Verify its report: PNG is exactly 2752x1536 (`sips -g pixelWidth -g pixelHeight`), `coverImage`/`coverImageAlt` frontmatter present, crop-safe zone respected. View the PNG yourself before proceeding.
+2. Verify its report: PNG is exactly 2752x1536 (`sips -g pixelWidth -g pixelHeight`), `coverImage`/`coverImageAlt` frontmatter present, crop-safe zone respected, and a composition register row added to `$BLOG_REPO/docs/cover-graphics-standards.md`. View the PNG yourself before proceeding, as an art director: the composition must be unique to this post (open the two or three most recent `public/blog/*/infographic.png` and compare; a repeated grid with swapped words is a rejection, and the 2x2 stat-tile grid is retired), with one focal point, balanced visual mass, panels filled by legible type, and a read that survives 560 px card width. Send it back to the agent with specific direction if any check fails.
 3. If the user explicitly requested NotebookLM instead: use the notebooklm-content pipeline and expect manual QA for garbled text.
 
 ### Phase 5: Publish

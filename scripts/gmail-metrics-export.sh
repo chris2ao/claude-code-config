@@ -62,6 +62,8 @@ for r in raw:
         "circuit_breaker_tripped": r.get("circuit_breaker_tripped", False),
         "agent_version": r.get("agent_version", ""),
         "attention_email_sent": details.get("attention_email_sent") == "true",
+        # Quiet mode (2026-08-22) suppresses pending-only emails and records why.
+        "attention_suppressed": bool(details.get("attention_suppressed_reason")),
         # Public page: export only the exception class, never the message text,
         # which can embed sender addresses or subject fragments from gws errors.
         "error": details["error"].split(":")[0] if details.get("error") else None,
@@ -105,9 +107,7 @@ if "$GIT" diff --cached --quiet; then
     exit 0
 fi
 
-if "$GIT" commit -q -m "chore: update gmail metrics and session archive
-
-Co-Authored-By: Claude <noreply@anthropic.com>"; then
+if "$GIT" commit -q -m "chore: update gmail metrics and session archive"; then
     log "committed metric update"
 else
     log "ERROR: commit failed (changes left staged)"

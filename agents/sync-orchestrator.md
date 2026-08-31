@@ -100,7 +100,7 @@ chore: sync config (bidirectional)
 
 N new, M modified files synced
 
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
 EOF
 )"
 git push
