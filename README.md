@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 35 agents, 30 invocable skills, 43 learned skills, 40 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 30 invocable skills, 43 learned skills, 39 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -70,7 +70,6 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `context-health` | haiku | Monitor context window usage and suggest compaction points |
 | `deploy-verifier` | haiku | Captain agent: end-to-end deploy verification with parallel checks |
 | `evolve-synthesizer` | sonnet | Synthesizes instinct clusters into evolved agent, skill, and command candidates |
-| `gmail-assistant` | sonnet | Daily Gmail inbox cleanup: content-aware classification, auto-labeling, VIP detection, follow-up tracking |
 | `home-sync` | haiku | Harvest and sync config artifacts from all repos |
 | `multi-repo-orchestrator` | haiku | Captain agent: parallel git operations across all project repos |
 | `notebooklm-assistant` | sonnet | Orchestrates NotebookLM workflows: notebooks, sources, content generation, research, downloads |
@@ -208,7 +207,6 @@ Automation scripts in `scripts/` for common operations:
 | `env.sh` | Shared environment variables for repo paths and tool paths |
 | `memory-maintenance.py` | Memory database maintenance and cleanup |
 | `promote-evolved.sh` | Promote evolved agents, skills, and commands to live config |
-| `bridge-launcher.sh` | Launch the OpenClaw bridge server |
 | `exa-wrapper.sh` | Wrapper to launch the Exa MCP server with secrets loaded from environment |
 | `firecrawl-wrapper.sh` | Wrapper to launch the Firecrawl MCP server with secrets loaded from environment |
 | `memory-toggle.ps1` | Toggle vector memory MCP server on and off (Windows) |
