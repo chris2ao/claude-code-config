@@ -1,6 +1,7 @@
 ---
 platform: portable
-description: "Game mechanics designer: core loop, systems, balance, progression, and game data"
+name: game-designer
+description: "Game mechanics designer (read-only design specs). Used by the team-pipeline workflow behind /game-dev."
 model: sonnet
 tools: [Read, Grep, Glob]
 ---

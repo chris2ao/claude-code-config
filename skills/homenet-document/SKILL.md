@@ -74,8 +74,7 @@ Agent(
           Project root: /Users/chris2ao/GitProjects/CJClaudin_Mac.
           Options: <args from user>.",
   subagent_type="general-purpose",
-  model="opus",
-  name="network-architect"
+  model="opus"
 )
 ```
 

@@ -1,6 +1,7 @@
 ---
 platform: portable
-description: "Synthesizes instinct clusters into evolved agent/skill/command candidates"
+name: evolve-synthesizer
+description: "Synthesizes instinct clusters into evolved agent/skill/command candidates. Used only by the /evolve command."
 model: sonnet
 tools: [Read, Grep, Glob]
 ---

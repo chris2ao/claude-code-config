@@ -192,7 +192,7 @@ Re-download and re-review after revisions. Maximum 2 revision cycles.
 
 ### Step 7.5: Curate and Embed Slides Into the Post
 
-Slide decks are **first-class article content**, not external-only collateral. After a deck passes QA, curate select slides for embedding into the blog post. This agent does not modify the post `.mdx` itself (the writer/captain owns that file), so its job is to stage embed-ready assets and to recommend exactly which slides to place where.
+Slide decks are **first-class article content**, not external-only collateral. After a deck passes QA, curate select slides for embedding into the blog post. This agent does not modify the post `.mdx` itself (the blog-writer agent owns that file), so its job is to stage embed-ready assets and to recommend exactly which slides to place where.
 
 **Selection (select, do not dump):**
 - Recommend only the 4-6 strongest slides, each mapping to a distinct article section. Pick the ones that add visual value beyond the prose and callouts.
@@ -210,7 +210,7 @@ cp ~/GitProjects/cryptoflexllc/content-assets/notebooklm/<post-slug>/slides.pdf 
    ~/GitProjects/cryptoflexllc/public/blog/<post-slug>/slides.pdf
 ```
 
-**Recommend placement for the writer/captain:** For each staged slide, provide:
+**Recommend placement for the writer:** For each staged slide, provide:
 - The target article section.
 - The plain markdown image line, `![rich descriptive alt text](/blog/<post-slug>/<semantic-name>.png)`. Alt text must be genuinely descriptive for accessibility and SEO, matching the pattern in existing posts like `notebooklm-content-pipeline` and `home-network-mission-control-dashboard-log-lake-panel`.
 - A one-sentence in-voice prose lead-in to precede the image, setting up what the reader is about to see.
@@ -313,6 +313,6 @@ A DLP failure overrides all other QA results. Even if spelling, accuracy, brand,
 - NotebookLM generation takes 5-15 minutes. Poll for completion before downloading.
 - Maximum 2 revision cycles per asset to avoid infinite loops.
 - Save generated content to `content-assets/notebooklm/` (not inside `src/`)
-- This agent does NOT modify the blog post `.mdx` (the writer/captain owns that file). It stages embed-ready assets under `public/blog/<slug>/` and recommends which curated slides to embed and where, so the human or captain can place them.
+- This agent does NOT modify the blog post `.mdx` (the blog-writer agent owns that file). It stages embed-ready assets under `public/blog/<slug>/` and recommends which curated slides to embed and where, so the user or the blog-writer revision pass can place them.
 - Cookie auth expires every 2-4 weeks. If MCP tools return auth errors, tell the user to run `nlm login` to re-authenticate.
 - The underlying API is reverse-engineered and unofficial. It may break if Google changes their internal endpoints.

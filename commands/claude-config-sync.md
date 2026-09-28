@@ -106,6 +106,7 @@ Instructions for this agent:
 >    - Invocable skills: `find $HOME/.claude/skills -maxdepth 2 -name 'SKILL.md' | wc -l`
 >    - Learned skills: `find $HOME/.claude/skills/learned -name '*.md' ! -name 'INDEX.md' 2>/dev/null | wc -l`
 >    - Commands: `ls $HOME/.claude/commands/*.md 2>/dev/null | wc -l`
+>    - Workflows: `ls $HOME/.claude/workflows/*.js 2>/dev/null | wc -l`
 >    - Hooks (in repo): `ls $HOME/GitProjects/claude-code-config/hooks/*.sh 2>/dev/null | wc -l`
 >    - Instincts: `find $HOME/.claude/homunculus/instincts -name '*.md' ! -name '.gitkeep' 2>/dev/null | wc -l`
 > 2. Read `$HOME/GitProjects/claude-code-config/README.md`

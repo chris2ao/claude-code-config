@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 34 agents, 30 invocable skills, 43 learned skills, 39 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 33 agents, 31 invocable skills, 43 learned skills, 2 workflows, 40 scripts, 9 commands, 13 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -33,6 +33,17 @@ cp -r skills/ ~/.claude/skills/
 /plugin marketplace add affaan-m/everything-claude-code
 /plugin install everything-claude-code@everything-claude-code
 ```
+
+## Workflows
+
+Saved Workflow scripts (`workflows/*.js`) orchestrate multi-stage agent pipelines deterministically. Each `agent()` call returns schema-validated output, independent stages run concurrently, and runs resume from their run ID. A skill running in the main conversation gathers the inputs, calls the workflow, waits for its completion notification, then handles approval and commits.
+
+| Workflow | Called by | Stages |
+|----------|-----------|--------|
+| `blog-pipeline` | `/blog-post` | Draft (writer, plus inline images), Assets (cover, diagrams), Review (editor, voice), Revise (max 2 cycles, rechecked), Finalize (drift check, cover patch, frontmatter, validate, content-security, build) |
+| `team-pipeline` | `/game-dev`, `/ui-ux` | Team specs (game, uiux) are data. Plan, Build (parallel by file ownership), QA (viewports), Integrate (max 3 fix rounds), Review (gate loop) |
+
+These replaced the captain and director agents (blog-captain, game-director, ui-ux-director) in 2026-09. With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, a named orchestrator spawn becomes a teammate, and its subagents can't hand back their reports. A workflow `agentType` only resolves for agent files that have `name:` frontmatter.
 
 ## Component Inventory
 
@@ -71,11 +82,9 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `deploy-verifier` | haiku | Captain agent: end-to-end deploy verification with parallel checks |
 | `evolve-synthesizer` | sonnet | Synthesizes instinct clusters into evolved agent, skill, and command candidates |
 | `home-sync` | haiku | Harvest and sync config artifacts from all repos |
-| `multi-repo-orchestrator` | haiku | Captain agent: parallel git operations across all project repos |
 | `notebooklm-assistant` | sonnet | Orchestrates NotebookLM workflows: notebooks, sources, content generation, research, downloads |
 | `notebooklm-content` | sonnet | Creates branded infographics and slide decks from blog posts using Google NotebookLM |
 | `pre-commit-checker` | inherit | Unified pre-commit security and code quality gate |
-| `refine-captain` | opus | /refine orchestrator: evidence-based component refinement from session transcripts |
 | `refine-reader` | haiku | /refine evidence reader: extracts relevant transcript excerpts for component editing |
 | `session-analyzer` | sonnet | Captain agent: parallel session transcript analysis with synthesis |
 | `session-checkpoint` | haiku | Lightweight mid-session state preservation before context compaction |
@@ -90,18 +99,19 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `game-artist` | sonnet | Game visual artist: sprites, animations, CSS styling, canvas rendering |
 | `game-designer` | sonnet | Game mechanics designer: core loop, systems, balance, progression |
 | `game-developer` | sonnet | Game developer: engine logic, state management, game loop, physics, AI |
-| `game-director` | opus | Captain agent: orchestrates game development team |
+| `game-architect` | opus | Architecture, triage, investigation, and integration stage of the `team-pipeline` workflow (game) |
 | `game-ux` | sonnet | Game UX/UI designer: menus, HUD, player feedback, accessibility |
 | `game-writer` | haiku | Game writer: story, dialogue, world-building, lore, tutorial text |
 
-**Blog Production Team** (6):
+**Blog Production Team** (8). No captain agent: the saved workflow `workflows/blog-pipeline.js`, called by `/blog-post`, orchestrates them.
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| `blog-captain` | opus | Captain agent: orchestrates multi-agent blog post production pipeline |
-| `blog-editor` | sonnet | Senior blog editor: reviews posts for hooks, pacing, entertainment |
-| `blog-ux` | haiku | Blog UX/UI agent: build verification and structural analysis of MDX |
-| `blog-voice` | sonnet | Blog voice agent: maintains living voice profile, produces voice briefs |
+| `blog-diagram-author` | sonnet | Editorial SVG diagram components for a post, registered in all 3 registries |
+| `blog-editor` | sonnet | Senior blog editor: hooks, pacing, accuracy, de-slop, structural checks |
+| `blog-finalize` | haiku | Final gate: drift check, cover frontmatter (via script), validate, content-security, build |
+| `blog-inline-images` | sonnet | Inline comparison and screenshot images from real assets |
+| `blog-voice` | sonnet | Draft voice review (metrics, validate-mdx, content-security) and post-publish profile proposals |
 | `blog-writer` | sonnet | Blog post writer: drafts and revises MDX posts for CryptoFlex LLC |
 | `brand-graphics` | sonnet | Builds branded blog graphics (cover infographics, inline panels) as HTML rendered with headless Chrome |
 
@@ -111,7 +121,7 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 |-------|-------|---------|
 | `ui-component-architect` | sonnet | UI/UX Component Architect: design tokens, composition patterns, responsive design, semantic HTML, Tailwind |
 | `ui-performance-reviewer` | haiku | UI/UX Performance Reviewer: bundle size, Core Web Vitals, React/Next.js patterns, server vs client analysis |
-| `ui-ux-director` | sonnet | Captain agent: orchestrates UI/UX design team across design, build, review, and audit workflows |
+| `ui-ux-lead` | sonnet | Brief, triage, integration, and synthesis stage of the `team-pipeline` workflow (uiux) |
 | `ui-ux-reviewer` | sonnet | UI/UX Reviewer + QA: heuristics evaluation, TASTE scoring, anti-pattern detection, Playwright visual testing, final quality gate |
 | `ui-visual-designer` | sonnet | UI/UX Visual Designer: aesthetic direction, color systems, typography, layout composition, anti-AI-slop |
 

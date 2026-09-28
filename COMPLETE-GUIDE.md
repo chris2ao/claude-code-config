@@ -763,7 +763,6 @@ No user prompt needed:
 | context-health | Monitor context window | haiku |
 | deploy-verifier | Post-deploy verification | haiku |
 | home-sync | CJClaudin_home repo sync | haiku |
-| multi-repo-orchestrator | Parallel cross-repo operations | haiku |
 | pre-commit-checker | Pre-commit security and quality checks | haiku |
 | session-analyzer | Extract patterns from archives | sonnet |
 | session-checkpoint | Session context save/restore | sonnet |
@@ -857,9 +856,7 @@ Each agent file has YAML frontmatter specifying:
 | **context-health** | haiku | Monitors context window usage and suggests compaction points |
 | **deploy-verifier** | haiku | Verifies builds and live site after deployment |
 | **home-sync** | haiku | Syncs CJClaudin_home repo with current config state |
-| **multi-repo-orchestrator** | haiku | Runs parallel git operations across all project repos |
 | **pre-commit-checker** | haiku | Pre-commit security and quality validation |
-| **refine-captain** | opus | Orchestrates evidence-based component refinement from session transcripts |
 | **refine-reader** | haiku | Extracts relevant transcript excerpts for component editing |
 | **session-analyzer** | sonnet | Reads session archive transcripts and extracts actionable patterns |
 | **session-checkpoint** | sonnet | Saves and restores session context across compactions |

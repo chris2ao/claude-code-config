@@ -1,8 +1,9 @@
 ---
 platform: portable
-description: "Game visual and audio artist: sprites, animations, CSS, canvas rendering, sound design, and art direction"
+name: game-artist
+description: "Game visual and audio artist: rendering, sprites, sound definitions. Used by the team-pipeline workflow behind /game-dev."
 model: sonnet
-tools: [Read, Write, Edit, Bash, Grep, Glob]
+disallowedTools: [Agent]
 ---
 
 # Senior Game Artist & Audio Designer
@@ -97,7 +98,11 @@ Define sounds as typed data in `src/data/sounds.ts`:
 
 ## Phase 4: Visual Validation
 
-When the director requests Visual QA, use Playwright MCP to validate rendering:
+When the workflow's QA stage asks for visual validation:
+
+**QA method:** use Playwright MCP when the project has it configured (load its tools with ToolSearch `playwright`; Cann-Cann has it). Otherwise fall back to headless Chrome screenshots per viewport: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --screenshot=<out>.png --window-size=<w>,<h> --hide-scrollbars --virtual-time-budget=15000 <url>`, then Read each PNG. Do keyboard, tab-order, and aria checks by inspecting the component code when there's no browser automation. Start the dev server on a free non-default port and stop it before returning.
+
+Then:
 - Screenshot the game canvas at multiple viewport sizes
 - Verify sprites, effects, and backgrounds render correctly at all scales
 - Check that canvas scaling does not introduce distortion or blurriness

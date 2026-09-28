@@ -19,7 +19,7 @@ CJ1_REPO="${PROJECTS_DIR:-$HOME/GitProjects}/CJClaude_1"
 CONFIG_REPO="${PROJECTS_DIR:-$HOME/GitProjects}/claude-code-config"
 
 # Syncable directories (relative to each root)
-SYNC_DIRS="agents commands rules scripts skills"
+SYNC_DIRS="agents commands rules scripts skills workflows"
 
 json_escape() {
     printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g' | tr -d '\n'
@@ -34,6 +34,10 @@ get_platform_field() {
     if [[ "$ext" == "sh" || "$ext" == "ps1" || "$ext" == "py" ]]; then
         # Shell/Python: look for "# platform: <value>" in first 5 lines
         head -n5 "$file" 2>/dev/null | grep -m1 '^# platform:' | sed 's/^# platform:[[:space:]]*//' | tr -d '\n'
+    elif [[ "$ext" == "js" ]]; then
+        # Workflow scripts: meta must be the first statement, so the marker is a
+        # "// platform: <value>" comment placed anywhere in the first 30 lines
+        head -n30 "$file" 2>/dev/null | grep -m1 "^// platform:" | sed "s|^// platform:[[:space:]]*||" | tr -d "\n"
     elif [[ "$ext" == "md" ]]; then
         # Markdown: check for YAML frontmatter
         if head -n1 "$file" 2>/dev/null | grep -q '^---$'; then
@@ -85,8 +89,8 @@ scan_dir() {
                 "${size:-0}" \
                 "${mtime:-0}" \
                 "$(json_escape "${platform:-}")"
-        done < <(find "$full_dir" \( -name "*.md" -o -name "*.sh" -o -name "*.py" -o -name "*.ps1" \) \
-            -type f ! -name "*.backup" ! -path "*/.git/*" ! -path "*/node_modules/*" 2>/dev/null | sort)
+        done < <(find "$full_dir" \( -name "*.md" -o -name "*.sh" -o -name "*.py" -o -name "*.ps1" -o -name "*.js" \) \
+            -type f ! -name "*.backup" ! -path "*/skills/synced/*" ! -path "*/.git/*" ! -path "*/node_modules/*" 2>/dev/null | sort)
     done
 
     printf ']'

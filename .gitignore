@@ -60,6 +60,8 @@
 !homunculus/**
 
 # ===== NEVER TRACK (even if whitelisted above) =====
+# Anthropic-provided skills synced from the account (not ours; not licensed for redistribution)
+skills/synced/
 cache/
 plugins/cache/
 sessions/

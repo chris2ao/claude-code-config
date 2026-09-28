@@ -20,16 +20,15 @@ Ask the user (use AskUserQuestion):
 ## Orchestration
 
 After getting user answers, spawn a Task agent:
-- **subagent_type:** general-purpose
-- **model:** sonnet
-- **name:** wrap-up-orchestrator
+- **subagent_type:** wrap-up-orchestrator (registered; tools and model come from its frontmatter)
+- **Do not pass `name`.** Agent teams are on, so a named spawn becomes a teammate and any subagents it spawns cannot hand back their reports.
 
 Pass to the agent:
 1. The survey JSON output from above
 2. The user's answers
 3. The primary project: name and absolute path of the project this session is running in (your current working directory)
 4. Excluded paths: any files the user has said not to commit this session (state "none" if there are none)
-5. Instruction: "You are a wrap-up orchestrator agent. Follow the instructions in ~/.claude/agents/wrap-up-orchestrator.md"
+5. The task: run the wrap-up per your instructions
 
 If the user excluded files this session, list them EXPLICITLY in item 4. The agent definition enforces exclusions, but they must be named in the input.
 

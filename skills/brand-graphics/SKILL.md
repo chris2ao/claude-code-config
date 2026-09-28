@@ -24,13 +24,11 @@ Delegate to the brand-graphics agent:
 
 ```
 Agent(
-  prompt="Follow the instructions in ~/.claude/agents/brand-graphics.md.
-         Blog post: <resolved-path>
+  prompt="Source: <resolved-path>
          Type: <cover|inline>
-         Output mode: repo",
-  subagent_type="general-purpose",
-  model="sonnet",
-  name="brand-graphics"
+         Output mode: repo
+         Frontmatter: <edit, or skip when --no-frontmatter>",
+  subagent_type="brand-graphics"
 )
 ```
 

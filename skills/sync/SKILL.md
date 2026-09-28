@@ -49,13 +49,13 @@ Use AskUserQuestion for each:
 ## Step 4: Orchestrate
 
 Spawn a Task agent:
-- **subagent_type:** general-purpose
-- **name:** sync-orchestrator
+- **subagent_type:** sync-orchestrator (registered; tools and model come from its frontmatter)
+- **Do not pass `name`.** Agent teams are on, so a named spawn becomes a teammate and any subagents it spawns cannot hand back their reports.
 
 Pass to the agent:
 1. The survey JSON output
 2. The user's direction, target, and action choices
-3. Instruction: "Follow the instructions in ~/.claude/agents/sync-orchestrator.md"
+3. The task: run the sync per your instructions
 
 ## Step 5: Display Results
 
@@ -72,7 +72,7 @@ The agent returns JSON with classified files, actions taken, and git status.
 If claude-code-config was a sync target and files were added or changed, spawn a doc-updater agent:
 - **subagent_type:** general-purpose
 - **model:** haiku
-- **name:** config-doc-updater
+- **Do not pass `name`.** Agent teams are on, so a named spawn becomes a teammate and any subagents it spawns cannot hand back their reports.
 
 Pass to the agent:
 1. The list of new, changed, and removed files in claude-code-config

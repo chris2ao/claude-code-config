@@ -52,7 +52,7 @@ found_fields=()
 optional_fields=("featured" "series" "seriesOrder")
 found_optional_fields=()
 
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line="${line%$'\r'}"
     line_num=$((line_num + 1))
 
@@ -99,7 +99,7 @@ em_dash_lines=()
 in_code_block=false
 
 line_num=0
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
 
     # Toggle code block state
@@ -129,7 +129,7 @@ code_block_count=0
 missing_language=()
 
 line_num=0
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
 
     if [[ "$line" =~ ^\`\`\`([a-zA-Z0-9_+-]*) ]]; then
@@ -145,7 +145,7 @@ done < "$FILE"
 duplicate_gifs=()
 all_gif_urls=""
 line_num=0
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
     # Extract giphy URLs
     while [[ "$line" =~ (https://media\.giphy\.com/media/[^/]+/giphy\.gif) ]]; do
@@ -176,7 +176,7 @@ done
 heading_hierarchy_errors=()
 prev_level=0
 line_num=0
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
     if [[ "$line" =~ ^(#{2,6})[[:space:]] ]]; then
         hashes="${BASH_REMATCH[1]}"
@@ -222,7 +222,7 @@ strip_allowed_chris2ao() {
     echo "$s"
 }
 
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
 
     if [[ "$line" =~ ^\`\`\` ]]; then
@@ -280,7 +280,7 @@ done
 missing_alt=()
 
 line_num=0
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
 
     # Find markdown images: ![alt](url)
@@ -299,7 +299,7 @@ done < "$FILE"
 bare_digit_tags=()
 in_code_block=false
 line_num=0
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
     if [[ "$line" =~ ^\`\`\` ]]; then
         if $in_code_block; then in_code_block=false; else in_code_block=true; fi
@@ -318,7 +318,7 @@ done < "$FILE"
 jsx_quote_suspects=()
 in_code_block=false
 line_num=0
-while IFS= read -r line; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     line_num=$((line_num + 1))
     if [[ "$line" =~ ^\`\`\` ]]; then
         if $in_code_block; then in_code_block=false; else in_code_block=true; fi

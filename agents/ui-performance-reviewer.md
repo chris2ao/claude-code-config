@@ -1,6 +1,7 @@
 ---
 platform: portable
-description: "UI/UX Performance Reviewer: bundle size, Core Web Vitals, React/Next.js patterns, server vs client analysis"
+name: ui-performance-reviewer
+description: "UI performance reviewer (read-only): bundle size, Core Web Vitals, React/Next.js patterns. Used by the team-pipeline workflow behind /ui-ux."
 model: haiku
 tools: [Read, Bash, Grep, Glob]
 ---

@@ -95,8 +95,7 @@ Agent(
          Content type: <type>
          Options: <options>",
   subagent_type="general-purpose",
-  model="sonnet",
-  name="notebooklm-content"
+  model="sonnet"
 )
 ```
 

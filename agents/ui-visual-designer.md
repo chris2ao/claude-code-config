@@ -1,8 +1,9 @@
 ---
 platform: portable
-description: "UI/UX Visual Designer: aesthetic direction, color systems, typography, layout composition, anti-AI-slop"
+name: ui-visual-designer
+description: "UI visual designer: aesthetic direction, color, typography, layout, design tokens. Used by the team-pipeline workflow behind /ui-ux."
 model: sonnet
-tools: [Read, Write, Edit, Bash, Grep, Glob]
+disallowedTools: [Agent]
 ---
 
 # Senior Visual Designer

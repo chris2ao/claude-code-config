@@ -1,8 +1,9 @@
 ---
 platform: portable
-description: "Automated session wrap-up for multi-repo workflows"
+name: wrap-up-orchestrator
+description: "Automated session wrap-up for multi-repo workflows (CHANGELOG, README, MEMORY delta, commit, push). Used only by the /wrap-up skill."
 model: sonnet
-tools: [Read, Edit, Write, Bash]
+tools: [Read, Edit, Write, Bash, Grep, Glob]
 ---
 
 # wrap-up-orchestrator

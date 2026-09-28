@@ -113,7 +113,7 @@ For each finding, the reader should return:
 - **instinct_trigger**: if candidate, "when [situation]"
 - **instinct_action**: if candidate, what to do
 - **refine_candidate**: true/false (does this finding suggest an EXISTING skill/agent/command/instinct should be edited?)
-- **component_hint**: if refine_candidate, best guess at target component path (e.g. `skills/foo/SKILL.md`, `agents/bar.md`, `homunculus/instincts/personal/baz.md`). If unknown, set to "" and the refine captain will infer.
+- **component_hint**: if refine_candidate, best guess at target component path (e.g. `skills/foo/SKILL.md`, `agents/bar.md`, `homunculus/instincts/personal/baz.md`). If unknown, set to "" and /refine will infer it when consolidating.
 - **refinement_type**: if refine_candidate, one of `fact-update | gotcha-addition | trigger-tightening | deprecation`
 
 ### Phase 4: Deduplicate
@@ -150,7 +150,7 @@ mkdir -p "$HOME/.claude/state"
 touch "$HOME/.claude/state/refine-queue.jsonl"
 ```
 
-Do NOT dedup the queue here; the `/refine` captain will merge entries at consumption time. Do NOT attempt to apply any edits here. Queuing is the only action; `/refine` does the rest.
+Do NOT dedup the queue here; `/refine` merges entries at consumption time. Do NOT attempt to apply any edits here. Queuing is the only action; `/refine` does the rest.
 
 ### Phase 6: Create Instinct Drafts
 

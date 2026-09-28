@@ -70,12 +70,11 @@ cat "$HOME/.claude/homunculus/identity.json" 2>/dev/null
 ## Phase 4: Spawn Synthesizer Agent
 
 Launch a Task agent:
-- **subagent_type:** general-purpose
-- **model:** sonnet
-- **name:** evolve-synthesizer
+- **subagent_type:** evolve-synthesizer (registered; model and read-only tools come from its frontmatter)
+- **Do not pass `name`.** Agent teams are on, so a named spawn becomes a teammate and any subagents it spawns cannot hand back their reports.
 
 Pass to the agent:
-1. Instruction: "Follow the instructions in `~/.claude/agents/evolve-synthesizer.md`"
+1. The task: synthesize evolved component candidates per your instructions
 2. Mode: full or incremental
 3. Total instinct count
 4. List of existing evolved components (from Phase 2)

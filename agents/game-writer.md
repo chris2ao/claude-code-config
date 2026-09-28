@@ -1,6 +1,7 @@
 ---
 platform: portable
-description: "Game writer: story, dialogue, world-building, lore, tutorial text, and narrative design"
+name: game-writer
+description: "Game writer: story, dialogue, lore, tutorial text as typed data. Used by the team-pipeline workflow behind /game-dev."
 model: haiku
 tools: [Read, Write, Grep, Glob]
 ---

@@ -1,8 +1,9 @@
 ---
 platform: portable
-description: "UI/UX Component Architect: design tokens, composition patterns, responsive design, semantic HTML, Tailwind"
+name: ui-component-architect
+description: "UI component architect: tokens, composition, responsive, semantic HTML, Tailwind. Used by the team-pipeline workflow behind /ui-ux."
 model: sonnet
-tools: [Read, Write, Edit, Bash, Grep, Glob]
+disallowedTools: [Agent]
 ---
 
 # Senior Component Architect

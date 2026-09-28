@@ -5,7 +5,7 @@ description: "UI/UX design and quality system: aesthetic direction, component ar
 
 # /ui-ux - UI/UX Design Studio
 
-Orchestrates a team of UI/UX specialists to design, build, review, or audit frontend interfaces. Covers aesthetic direction, component architecture, performance optimization, and visual quality assurance.
+Runs a team of UI/UX specialists to design, build, review, fix, or audit frontend interfaces. This skill runs in the main conversation: it gathers inputs, calls the saved workflow `~/.claude/workflows/team-pipeline.js` (team `uiux`), and handles decisions and commits. There is no director agent anymore. The `ui-ux-lead` agent holds the brief, triage, integration, and synthesis judgment, and the workflow script does the orchestration.
 
 ## When to Activate
 
@@ -43,15 +43,19 @@ Ask the user these questions (use AskUserQuestion, one at a time):
    - Other: specify framework, CSS approach, component library
 
 5. **Team Composition:** Which specialists do you need?
-   - **Full team** (Director + Visual Designer + Component Architect + Performance Reviewer + UX Reviewer) - recommended for Design and Audit
-   - **Build team** (Director + Component Architect + UX Reviewer) - recommended for Build
-   - **Review team** (Director + Performance Reviewer + UX Reviewer) - recommended for Review
-   - **Minimal** (Director + one specialist) - recommended for Fix
-   - **Custom** - pick specific roles
+   - **Full team** (Visual Designer + Component Architect + Performance Reviewer + UX Reviewer): recommended for Design and Audit
+   - **Build team** (Component Architect + UX Reviewer): recommended for Build
+   - **Review team** (Performance Reviewer + UX Reviewer): recommended for Review
+   - **Minimal** (one specialist): recommended for Fix
+   - **Custom**: pick specific roles
+
+   The lead is always included. Map the answer to a `roster` of agent names: `ui-visual-designer`, `ui-component-architect`, `ui-performance-reviewer`, `ui-ux-reviewer`.
+
+6. **Iterate (Design and Build only):** If the UX gate comes back CONDITIONAL or FAIL, should the team fix the findings and re-review automatically (up to 2 cycles)? This sets `iterate`.
 
 ## Pre-Survey
 
-If the project path exists, run this before spawning the director:
+If the project path exists, run this before starting the workflow:
 
 ```bash
 cd {PROJECT_PATH} && echo "=== Recent Commits ===" && git log -5 --oneline 2>/dev/null && echo "=== Source Structure ===" && ls -1 src/ 2>/dev/null && echo "=== Component Count ===" && find src -name "*.tsx" -o -name "*.jsx" 2>/dev/null | wc -l && echo "=== Design Tokens ===" && (cat tailwind.config.ts 2>/dev/null || cat tailwind.config.js 2>/dev/null || echo "No tailwind config found") | head -30 && echo "=== Client Components ===" && grep -rl '"use client"' src/ 2>/dev/null | wc -l && echo "=== Global Styles ===" && ls src/app/globals.css src/styles/ 2>/dev/null
@@ -59,7 +63,7 @@ cd {PROJECT_PATH} && echo "=== Recent Commits ===" && git log -5 --oneline 2>/de
 
 ## Available Tooling
 
-- **Playwright MCP**: Browser automation for responsive testing, visual QA, and interactive state validation. The UX Reviewer uses this for screenshot-based quality checks at multiple viewports.
+- **Playwright MCP**: configured per project. When it's available, the UX Reviewer uses it. Otherwise the reviewer falls back to headless Chrome screenshots at each viewport, plus code inspection for keyboard and state checks.
 - **Context7**: Current API documentation for React, Next.js, Tailwind, and other frameworks.
 
 ## Knowledge Base
@@ -72,36 +76,46 @@ The following shared data files are available to all agents:
 
 ## Orchestration
 
-After gathering answers and pre-survey data, spawn a Task agent:
-- **subagent_type:** general-purpose
-- **model:** sonnet
-- **name:** ui-ux-director
+1. **Working directory:** workflow agents write into the project. If it isn't the session's working directory, ask the user to run `/add-dir <project-path>` first.
+2. Run the workflow. This skill's instructions are the opt-in for this one saved workflow.
+   ```
+   Workflow({ name: "team-pipeline", args: {
+     team: "uiux", mode: "design" | "build" | "review" | "fix" | "audit",
+     projectPath: "<abs path>", stack: "<tech stack>", scope: "<user's scope text>",
+     roster: ["ui-component-architect", ...], survey: "<pre-survey output>", iterate: <bool>
+   }})
+   ```
+3. The workflow runs in the background. **End the turn and wait for the completion notification.**
 
-Pass to the agent:
-1. Pre-survey output (if available)
-2. All user answers (project, mode, scope, tech stack, team composition)
-3. The project path as the working directory
-4. Instruction: "You are the UI/UX Director. Follow the instructions in ~/.claude/agents/ui-ux-director.md"
-5. Include which team members to activate based on the user's team composition choice
+**Stages by mode:**
+- **design:**
+  - `ui-ux-lead` brief
+  - visual designer, then component architect, in sequence
+  - review: performance and UX in parallel
+  - gate loop, only when `iterate` is on
+- **build:**
+  - brief
+  - parallel implementation (the visual designer only when new tokens are needed)
+  - integrate (build and test, failures routed to their owners)
+  - review
+  - gate loop
+- **review:** performance and UX reviewers in parallel, then lead synthesis.
+- **fix:** lead triage, then the owning specialist, then UX reviewer verification.
+- **audit:** all four specialists audit in parallel (read-only), then lead synthesis (launch-blocking vs post-launch).
 
-## After Agent Returns
+## After the Workflow Completes
 
-The director returns a structured report with phases completed, design decisions, files created/modified, quality scores, team reports, and next steps.
-
-1. Display the summary and quality scores
-2. Show design decisions and rationale
-3. List files created and modified
-4. If quality scores are available, display the heuristic and TASTE averages
-5. Show the UX Review gate decision (PASS/CONDITIONAL/FAIL)
-6. List recommended next steps
-7. Ask if the user wants to commit the changes
+1. Display the summary and `quality`: heuristic and TASTE averages, design rules passed out of 35, and the gate.
+2. Show the brief or synthesis, the files created and modified, and each specialist's report.
+3. Put each entry in `decisions_needed` to the user. If the gate isn't PASS and iterate was off, offer a fix run.
+4. List the recommended next steps, then ask whether the user wants to commit.
 
 ## Integration with Other Skills
 
 This skill's agents can be invoked by other orchestrators:
 
-- **game-director**: Can spawn `ui-ux-reviewer.md` for Playwright QA on game UI
-- **blog-captain**: Can spawn `ui-visual-designer.md` for blog design decisions
+- **team-pipeline (game)**: game-ux follows the same viewport QA method; `ui-ux-reviewer` can also be spawned directly on a game UI
+- **blog-pipeline** (workflow behind /blog-post): its cover and diagram stages follow the same design rules via `docs/cover-graphics-standards.md` and `docs/editorial-diagram-standards.md`
 - **Any agent**: Can reference `~/.claude/skills/ui-ux/data/` for design rules and patterns
 
 ## Ad-Hoc Agent Usage
@@ -109,15 +123,9 @@ This skill's agents can be invoked by other orchestrators:
 Individual agents can be spawned directly without the full skill workflow:
 
 ```
-# Quick design system review
-Agent: ui-visual-designer.md - "Review the color system in this project"
-
-# Component architecture audit
-Agent: ui-component-architect.md - "Audit the component structure in src/components/"
-
-# Performance check
-Agent: ui-performance-reviewer.md - "Run a performance audit on this Next.js app"
-
-# Full QA pass
-Agent: ui-ux-reviewer.md - "Run Playwright QA on http://localhost:3000"
+# Registered agent types: spawn by subagent_type, never with a name
+Agent(subagent_type="ui-visual-designer", prompt="Review the color system in this project")
+Agent(subagent_type="ui-component-architect", prompt="Audit the component structure in src/components/")
+Agent(subagent_type="ui-performance-reviewer", prompt="Run a performance audit on this Next.js app")
+Agent(subagent_type="ui-ux-reviewer", prompt="Run viewport QA on http://localhost:3000")
 ```

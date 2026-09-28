@@ -1,6 +1,7 @@
 ---
 platform: portable
-description: "Bidirectional config sync with security scanning"
+name: sync-orchestrator
+description: "Bidirectional ~/.claude config sync with security scanning. Used only by the /sync skill."
 model: haiku
 tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
@@ -29,7 +30,7 @@ You receive:
 
 For each new or diverged file:
 
-1. **Check frontmatter**: Read the `platform:` field from YAML frontmatter (`.md`) or comment marker (`.sh`, `.py`, `.ps1`)
+1. **Check frontmatter**: Read the `platform:` field from YAML frontmatter (`.md`), a `# platform:` comment marker (`.sh`, `.py`, `.ps1`), or a `// platform:` comment in the first 30 lines (`.js` workflow scripts)
 2. **Heuristic fallback** (if no frontmatter):
    - Contains `powershell`, `cmd /c`, `.ps1`, `MSYS`, `MINGW` -> `windows`
    - Contains `/opt/homebrew`, `launchctl`, `pmset`, `osascript` -> `macos`

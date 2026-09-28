@@ -87,6 +87,16 @@ ch_user = os.environ.get("CLICKHOUSE_USER_CLAUDE", "")
 
 Apply this to all scripts that gate a soak period, emit drift findings, or serve as health signals. If the environment is wrong, a loud crash + non-zero exit is far more useful than a successful-looking run with no data.
 
+### 7. Never Name an Orchestrator Spawn (Agent Teams Are On)
+
+`~/.claude/settings.json` sets `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`. With teams on, an Agent call from the main conversation that passes `name` launches an in-process **teammate** instead of a subagent. Every subagent that teammate spawns then fails `SubagentHandback` with "the agent that spawned you is no longer running". It retries 4-5 times (1.5-3 min each), and its report lands in the main session instead of with the orchestrator. On 2026-09-27 this cost a /blog-post run about 12 of its 46 minutes and needed five manual relays.
+
+**Rules:**
+- Never pass `name` when spawning an orchestrator (captain, director) from a skill. An unnamed subagent can nest up to 3 layers deep and waits for its children's results.
+- Use `name` only when you actually want a teammate you will message later.
+- For multi-stage pipelines, prefer a saved Workflow (`~/.claude/workflows/<name>.js`) called from the skill in the main conversation. `agent()` returns schema-validated results, so there is no handback at all. Stages can run concurrently, and the run is resumable by runId.
+- A workflow `agentType` only resolves when the agent file has `name:` frontmatter. Files without `name` are not registered subagent types, and their `model`/`tools` are silently ignored.
+
 ## Source Instincts
 
 - `parallel-scaffolding`: "when scaffolding large monolithic projects (50+ files)"
