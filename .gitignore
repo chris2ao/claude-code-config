@@ -35,6 +35,10 @@
 !scripts/*.yml
 !scripts/*.txt
 
+# Saved Workflow scripts (multi-stage agent pipelines, e.g. blog-pipeline)
+!workflows/
+!workflows/*.js
+
 # Hooks (PreToolUse, PostToolUse, Stop, SessionEnd)
 !hooks/
 !hooks/**
@@ -66,7 +70,7 @@ file-history/
 shell-snapshots/
 todos/
 tasks/
-plans/
+/plans/
 downloads/
 debug/
 ide/
