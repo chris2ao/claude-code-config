@@ -4,11 +4,14 @@
 # Always exits 0; failures notify via osascript and log CANARY FAIL lines.
 set -uo pipefail
 
-DB="/Users/chris2ao/Library/Application Support/mcp-memory/sqlite_vec.db"
-STATE="/Users/chris2ao/.claude/memory/canary-state.json"
-ARCHIVE_DIR="/Users/chris2ao/.claude/session_archive"
-LOG="/Users/chris2ao/.claude/logs/memory-health-canary.log"
-PY="/opt/homebrew/bin/python3.11"
+# CANARY_* env overrides exist so the test suite can point the canary at temp files.
+DB="${CANARY_DB:-/Users/chris2ao/Library/Application Support/mcp-memory/sqlite_vec.db}"
+STATE="${CANARY_STATE:-/Users/chris2ao/.claude/memory/canary-state.json}"
+ARCHIVE_DIR="${CANARY_ARCHIVE_DIR:-/Users/chris2ao/.claude/session_archive}"
+LOG="${CANARY_LOG:-/Users/chris2ao/.claude/logs/memory-health-canary.log}"
+PY="${CANARY_PY:-/opt/homebrew/bin/python3.11}"
+# Written by memory-stale-sweep.py --apply; lets a recorded sweep explain a count drop.
+SWEEP_LEDGER="${CANARY_SWEEP_LEDGER:-/Users/chris2ao/.claude/logs/memory-sweep/ledger.jsonl}"
 EXPECTED_DIM=768
 COUNT_TOLERANCE=5
 
@@ -21,6 +24,25 @@ prev_mem_hwm=0; prev_graph_hwm=0
 if [ -f "$STATE" ]; then
     prev_mem_hwm=$(jq -r '.memory_count_hwm // 0' "$STATE")
     prev_graph_hwm=$(jq -r '.graph_count_hwm // 0' "$STATE")
+fi
+
+# Monthly stale-memory sweep (com.chris2ao.memory-stale-sweep) soft-deletes rows on purpose.
+# Subtract what sweeps recorded in the ledger since the last canary run from the
+# high-water marks, so a recorded sweep is not flagged but any unexplained loss still is.
+if [ -f "$SWEEP_LEDGER" ]; then
+    since=0
+    [ -f "$STATE" ] && since=$(jq -r '(.last_run // empty) | fromdateiso8601' "$STATE" 2>/dev/null || echo 0)
+    [ -z "$since" ] && since=0
+    read -r swept_mem swept_graph < <(jq -rs --argjson since "$since" \
+        '[.[] | select((.mode // "apply") == "apply" and (.epoch // 0) > $since)]
+         | "\(map(.swept // 0) | add // 0) \(map(.graph_rows_deleted // 0) | add // 0)"' \
+        "$SWEEP_LEDGER" 2>/dev/null || echo "0 0")
+    swept_mem=${swept_mem:-0}; swept_graph=${swept_graph:-0}
+    if [ "$swept_mem" -gt 0 ] || [ "$swept_graph" -gt 0 ]; then
+        prev_mem_hwm=$(( prev_mem_hwm > swept_mem ? prev_mem_hwm - swept_mem : 0 ))
+        prev_graph_hwm=$(( prev_graph_hwm > swept_graph ? prev_graph_hwm - swept_graph : 0 ))
+        log "sweep ledger: lowered high-water marks by mem=$swept_mem graph=$swept_graph"
+    fi
 fi
 
 # (KG check retired 2026-07-20 with the knowledge graph layer)

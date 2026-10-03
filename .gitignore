@@ -34,6 +34,9 @@
 # homenet-device-profile; wrap-up-exclude.txt is read by wrap-up).
 !scripts/*.yml
 !scripts/*.txt
+# Test fixtures and test suite
+!scripts/tests/
+!scripts/tests/**
 
 # Saved Workflow scripts (multi-stage agent pipelines, e.g. blog-pipeline)
 !workflows/
@@ -80,3 +83,4 @@ session-env/
 node_modules/
 *.backup
 observations.jsonl
+.pytest_cache/
