@@ -2,7 +2,7 @@
 # observe-homunculus.sh — Runs on PostToolUse hook (async)
 # Captures tool usage observations for the Homunculus v2 continuous learning system.
 # Writes JSONL to ~/.claude/homunculus/observations.jsonl for later analysis
-# by the skill-extractor agent or /learn command.
+# by the /evolve pipeline.
 #
 # Hook input (JSON on stdin) includes:
 #   tool_name   — name of the tool (Bash, Edit, Write, Read, Grep, Glob, etc.)
@@ -35,8 +35,10 @@ fi
 # Read stdin
 input=$(cat)
 
-# Extract tool_name
-tool_name=$(echo "$input" | grep -o '"tool_name":"[^"]*"' | head -n1 | cut -d'"' -f4)
+# jq builds the observation so every line is valid JSON; skip quietly if jq is missing
+command -v jq >/dev/null 2>&1 || exit 0
+
+tool_name=$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)
 
 # Exit if no tool name
 if [ -z "$tool_name" ]; then
@@ -56,34 +58,29 @@ if [ $allowed -eq 0 ]; then
     exit 0
 fi
 
-# Extract session_id
-session_id=$(echo "$input" | grep -o '"session_id":"[^"]*"' | head -n1 | cut -d'"' -f4)
-
-# Extract tool_input (simplified - just capture the raw JSON fragment)
-tool_input=$(echo "$input" | grep -o '"tool_input":\{[^}]*\}' | sed 's/"tool_input"://')
-
-# Extract tool_output (simplified - just capture the raw JSON fragment)
-tool_output=$(echo "$input" | grep -o '"tool_output":\{[^}]*\}' | sed 's/"tool_output"://')
-
-# Truncate input if too long
-if [ ${#tool_input} -gt $max_input_chars ]; then
-    tool_input="${tool_input:0:$max_input_chars}...[truncated]"
-fi
-
-# Truncate output if too long
-if [ ${#tool_output} -gt $max_output_chars ]; then
-    tool_output="${tool_output:0:$max_output_chars}...[truncated]"
-fi
-
-# Get timestamp
 timestamp=$(date -u '+%Y-%m-%dT%H:%M:%S.000Z')
 
-# Build observation JSON (simplified)
-# Note: This is a basic implementation. Production version would need proper JSON escaping.
-json_line="{\"timestamp\":\"$timestamp\",\"session_id\":\"$session_id\",\"tool\":\"$tool_name\",\"input\":$tool_input,\"output\":$tool_output}"
+# Input stays an object when small; oversized input and all output are stored as truncated strings.
+# PostToolUse sends the result as tool_response (tool_output is the older name).
+json_line=$(printf '%s' "$input" | jq -c \
+    --arg ts "$timestamp" \
+    --argjson max_in "$max_input_chars" \
+    --argjson max_out "$max_output_chars" '
+    def clip($n): if length > $n then .[0:$n] + "...[truncated]" else . end;
+    (.tool_input // null) as $in
+    | ((.tool_response // .tool_output) // null) as $out
+    | {
+        timestamp: $ts,
+        session_id: (.session_id // ""),
+        tool: .tool_name,
+        input: (if ($in | tojson | length) > $max_in then ($in | tojson | clip($max_in)) else $in end),
+        output: (if $out == null then null elif ($out | type) == "string" then ($out | clip($max_out)) else ($out | tojson | clip($max_out)) end)
+      }' 2>/dev/null)
+
+[ -n "$json_line" ] || exit 0
 
 # Append to observations file
-echo "$json_line" >> "$observations_file"
+printf '%s\n' "$json_line" >> "$observations_file"
 
 # Archive if file exceeds size limit
 if [ -f "$observations_file" ]; then

@@ -22,10 +22,12 @@ fi
 # Extract session_id
 session_id=$(echo "$input" | grep -o '"session_id":"[^"]*"' | head -n1 | cut -d'"' -f4)
 
-# Resolve project root (script is in .claude/hooks, go up 2 levels)
-script_dir=$(cd "$(dirname "$0")" && pwd)
-project_root=$(cd "$script_dir/../.." && pwd)
-log_path="$project_root/activity_log.txt"
+# Resolve log directory. The script lives in ~/.claude/hooks, so walking up
+# from it lands in $HOME. Write to a dedicated directory instead
+# (override with CLAUDE_ACTIVITY_LOG_DIR).
+log_dir="${CLAUDE_ACTIVITY_LOG_DIR:-$HOME/.claude/logs/activity}"
+mkdir -p "$log_dir" || exit 0
+log_path="$log_dir/activity_log.txt"
 
 # Get timestamp
 timestamp=$(date '+%Y-%m-%d %H:%M:%S')
@@ -84,13 +86,13 @@ if [ -f "$log_path" ]; then
         fi
 
         archive_name="activity_log_${start_date}_to_${end_date}.txt"
-        archive_path="$project_root/$archive_name"
+        archive_path="$log_dir/$archive_name"
 
         # Avoid overwriting: append a counter if archive already exists
         counter=1
         while [ -f "$archive_path" ]; do
             archive_name="activity_log_${start_date}_to_${end_date}_${counter}.txt"
-            archive_path="$project_root/$archive_name"
+            archive_path="$log_dir/$archive_name"
             ((counter++))
         done
 

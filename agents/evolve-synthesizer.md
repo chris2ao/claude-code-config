@@ -31,7 +31,7 @@ Build a complete inventory before proceeding.
 ## Step 2: Load Reference Formats
 
 Read one example of each target component format to ensure generated output matches:
-- Agent: `~/.claude/agents/changelog-writer.md`
+- Agent: `~/.claude/agents/sync-orchestrator.md`
 - Skill: `~/.claude/skills/wrap-up/SKILL.md`
 - Command: `~/.claude/commands/smart-compact.md`
 

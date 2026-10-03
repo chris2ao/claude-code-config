@@ -16,7 +16,7 @@ No user prompt needed. Activate these automatically:
 
 ## Agent Discovery
 
-For a complete, up-to-date inventory of all agents, skills, commands, and hooks, run `/skill-catalog`. This dynamically reads from `~/.claude/agents/` and reports the current state.
+The live inventory is the agent and skill listing loaded into each session. On disk: `~/.claude/agents/`, `~/.claude/skills/`, `~/.claude/commands/`, `~/.claude/workflows/`, and hooks in `~/.claude/settings.json`. Retired components live in `~/.claude/archive/`.
 
 ## Mandatory Parallel Execution
 

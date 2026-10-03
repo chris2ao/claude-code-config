@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 37 agents, 31 invocable skills, 43 learned skills, 2 workflows, 40 scripts, 9 commands, 13 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 22 agents, 18 invocable skills, 43 learned skills, 2 workflows, 40 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -27,11 +27,6 @@ cp -r hooks/ ~/.claude/hooks/
 
 # 5. Copy skills
 cp -r skills/ ~/.claude/skills/
-
-# 6. (Optional) Install the everything-claude-code plugin for plugin agents
-# Inside a Claude Code session:
-/plugin marketplace add affaan-m/everything-claude-code
-/plugin install everything-claude-code@everything-claude-code
 ```
 
 ## Workflows
@@ -41,7 +36,7 @@ Saved Workflow scripts (`workflows/*.js`) orchestrate multi-stage agent pipeline
 | Workflow | Called by | Stages |
 |----------|-----------|--------|
 | `blog-pipeline` | `/blog-post` | Draft (writer, plus inline images), Assets (cover, diagrams), Review (editor, voice), Revise (max 2 cycles, rechecked), Finalize (drift check, cover patch, frontmatter, validate, content-security, build) |
-| `team-pipeline` | `/game-dev`, `/ui-ux` | Team specs (game, uiux) are data. Plan, Build (parallel by file ownership), QA (viewports), Integrate (max 3 fix rounds), Review (gate loop) |
+| `team-pipeline` | `/ui-ux` | Team specs (uiux) are data. Plan, Build (parallel by file ownership), QA (viewports), Integrate (max 3 fix rounds), Review (gate loop) |
 
 These replaced the captain and director agents (blog-captain, game-director, ui-ux-director) in 2026-09. With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, a named orchestrator spawn becomes a teammate, and its subagents can't hand back their reports. A workflow `agentType` only resolves for agent files that have `name:` frontmatter.
 
@@ -68,42 +63,22 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (39 files)
+### Agents (22 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
-**Core Agents** (18):
+**Core Agents** (6):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
-| `changelog-writer` | haiku | Auto-generate CHANGELOG.md entries from git diffs and session context |
-| `config-sync` | haiku | Compare local Claude Code config against claude-code-config repo |
-| `context-health` | haiku | Monitor context window usage and suggest compaction points |
-| `deploy-verifier` | haiku | Captain agent: end-to-end deploy verification with parallel checks |
 | `evolve-synthesizer` | sonnet | Synthesizes instinct clusters into evolved agent, skill, and command candidates |
-| `home-sync` | haiku | Harvest and sync config artifacts from all repos |
 | `notebooklm-assistant` | sonnet | Orchestrates NotebookLM workflows: notebooks, sources, content generation, research, downloads |
 | `notebooklm-content` | sonnet | Creates branded infographics and slide decks from blog posts using Google NotebookLM |
-| `pre-commit-checker` | inherit | Unified pre-commit security and code quality gate |
 | `refine-reader` | haiku | /refine evidence reader: extracts relevant transcript excerpts for component editing |
-| `session-analyzer` | sonnet | Captain agent: parallel session transcript analysis with synthesis |
-| `session-checkpoint` | haiku | Lightweight mid-session state preservation before context compaction |
-| `skill-extractor` | sonnet | Captain agent: parallel instinct extraction from transcripts |
 | `sync-orchestrator` | haiku | Bidirectional config sync with security scanning |
 | `wrap-up-orchestrator` | haiku | Automated session wrap-up for multi-repo workflows |
 
-**Game Development Team** (6):
-
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| `game-artist` | sonnet | Game visual artist: sprites, animations, CSS styling, canvas rendering |
-| `game-designer` | sonnet | Game mechanics designer: core loop, systems, balance, progression |
-| `game-developer` | sonnet | Game developer: engine logic, state management, game loop, physics, AI |
-| `game-architect` | opus | Architecture, triage, investigation, and integration stage of the `team-pipeline` workflow (game) |
-| `game-ux` | sonnet | Game UX/UI designer: menus, HUD, player feedback, accessibility |
-| `game-writer` | haiku | Game writer: story, dialogue, world-building, lore, tutorial text |
-
-**Blog Production Team** (8). No captain agent: the saved workflow `workflows/blog-pipeline.js`, called by `/blog-post`, orchestrates them.
+**Blog Production Team** (7). No captain agent: the saved workflow `workflows/blog-pipeline.js`, called by `/blog-post`, orchestrates them.
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -157,7 +132,7 @@ The [superpowers plugin](https://github.com/anthropics/claude-plugins-official) 
 
 Agent: `code-reviewer` reviews completed work against plans for quality, architecture, and docs.
 
-### Skills (30 invocable + 43 learned)
+### Skills (18 invocable + 43 learned)
 
 **Invocable skills** (in `skills/*/SKILL.md`) are slash commands for complex workflows:
 
@@ -165,14 +140,8 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 |-------|-------------|
 | `/blog-post` | Multi-agent blog post production pipeline with research and MDX generation |
 | `/brand-graphics` | Cover infographics and inline branded graphics for cryptoflexllc.com blog posts |
-| `/cmux` | Terminal CLI reference for cmux multiplexer and session management |
-| `/content-validation` | Validate content integrity beyond HTTP status codes: media, API responses, data contracts |
 | `/deep-research` | Multi-source deep research using Exa, Firecrawl, and WebSearch with citations |
-| `/cross-platform-parsing` | Safe text and CLI output parsing patterns across Windows and Unix |
-| `/game-dev` | Game development team orchestration and project automation |
-| `/gws` | Google Workspace CLI: Drive, Gmail, Calendar, Docs, Sheets, Slides, Tasks, and more |
 | `/homenet-allow-mac` | Add a MAC address to a UniFi SSID's allowlist (preview by default, --apply to commit) |
-| `/homenet-client-profile` | LLM-composed intelligence profile for a single client device joining UniFi state, persona, and Pi-hole DNS evidence (read-only against external systems, writes only to local override table) |
 | `/homenet-deny-mac` | Remove a MAC address from a UniFi SSID's allowlist (preview by default, --apply to commit) |
 | `/homenet-device-profile` | Device-first LAN behavior profile combining UniFi client state and Pi-hole DNS data (read-only) |
 | `/homenet-document` | Generate or refresh comprehensive UniFi network documentation with NotebookLM publication |
@@ -181,18 +150,13 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 | `/homenet-ppsk-remove` | Remove a PPSK entry from an SSID (preview by default, --apply to commit, refuses to brick SSID) |
 | `/homenet-review` | Reconcile each SSID's MAC allowlist against actually-seen clients (active + historical) |
 | `/homenet-snapshot` | Snapshot all UniFi wlanconf (SSID) state to HomeNetwork/backups for rollback |
-| `/memory-architecture` | Two-tier memory architecture and vector memory configuration for Claude sessions |
-| `/multi-agent-orchestration` | Patterns for structuring multi-agent teams with phase gating and sandbox constraints |
-| `/multi-repo-status` | Git status dashboard across all project repos in parallel |
+| `/memory-architecture` | Vector memory architecture, capture cadence, hooks, and retention for Claude sessions |
 | `/notebooklm-content` | Create branded infographics and slide decks from blog posts using Google NotebookLM |
 | `/openclaw-ops` | Configuration gotchas and operational patterns for OpenClaw multi-agent systems |
-| `/skill-catalog` | Full inventory of all agents, skills, commands, and hooks |
 | `/storage-cleanup` | Scan Mac storage, identify cleanup opportunities, and move safe files to external drive |
 | `/sync` | Configuration sync across repos, mirrors local state to git backups |
 | `/ui-ux` | UI/UX design and quality system: aesthetic direction, component architecture, performance, and visual QA with a coordinated agent team |
 | `/wrap-up` | End-of-session wrap-up: update docs, persist to memory systems, commit and push all repos |
-| `/memory-capture-patterns` | Operational patterns for continuous vector memory capture using hooks and save cadence rules |
-| `/vercel-nextjs-debugging` | Debugging patterns for Next.js MDX content and Vercel deployment failures |
 
 **Learned skills** (in `skills/learned/`) are debugging patterns extracted from real sessions. Each documents a non-obvious problem and its solution. 43 unique skills organized into 6 categories:
 
@@ -284,18 +248,17 @@ cd mcp-servers/project-tools && npm install
 
 See [mcp-servers/README.md](./mcp-servers/README.md) for detailed configuration, JSON snippets, and troubleshooting.
 
-## Hooks (12 lifecycle hooks)
+## Hooks (11 lifecycle hooks)
 
 Hooks in `hooks/` are shell scripts that fire automatically at different points in the Claude Code lifecycle. Configure them in your project's `.claude/settings.local.json` using the template at `hooks/settings.local.json.template`.
 
 | Hook | Event | Purpose |
 |------|-------|---------|
 | `file-guard.sh` | PreToolUse | Block Edit/Write on sensitive files (.env, .pem, credentials) |
-| `kg-update-detect.sh` | PostToolUse | Detect knowledge graph changes and trigger sync reminders |
-| `log-activity.sh` | PostToolUse | Log every tool execution with timestamps to activity log |
+| `log-activity.sh` | PostToolUse | Log every tool execution to ~/.claude/logs/activity/ (override with CLAUDE_ACTIVITY_LOG_DIR) |
 | `memory-checkpoint.sh` | Stop | Structured end-of-session memory checklist across 5 categories |
 | `memory-nudge.sh` | PostToolUse | Remind Claude to save context to vector memory after significant work |
-| `observe-homunculus.sh` | PostToolUse | Capture behavioral observations for the Homunculus learning system |
+| `observe-homunculus.sh` | PostToolUse | Capture behavioral observations as valid JSON with jq for the Homunculus learning system |
 | `session-scratchpad.sh` | PostToolUse | Write session state to scratchpad for context recovery |
 | `pre-compact.sh` | PreCompact | Preserve session context before compaction |
 | `prompt-notify.sh` | Stop | Play notification sound when Claude finishes a response |
@@ -355,11 +318,11 @@ This configuration supports both **macOS** and **Windows**:
 ```
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
-  agents/                        # 35 custom agent definitions
-  skills/                        # 30 invocable skills + 43 learned skills
+  agents/                        # 22 custom agent definitions
+  skills/                        # 18 invocable skills + 43 learned skills
   commands/                      # 9 commands
   scripts/                       # 31 automation scripts
-  hooks/                         # 17 lifecycle hooks (11 macOS/Linux + 6 Windows)
+  hooks/                         # 19 hook scripts (12 macOS/Linux + 7 Windows)
   mcp-servers/                   # MCP server docs + custom project-tools server
   templates/                     # Configuration file templates
   homunculus/                    # Continuous learning system (65 instincts)

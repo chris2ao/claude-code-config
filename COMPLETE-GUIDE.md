@@ -1373,23 +1373,18 @@ npm install -g @anthropic-ai/claude-code
 claude     # First run — will prompt you to log in
 ```
 
-### Step 2: Install the Everything-Claude-Code Plugin
+### Step 2: Create Your Settings
 
 Create or edit `~/.claude/settings.json`:
 
 ```json
 {
   "autoUpdatesChannel": "latest",
-  "extraKnownMarketplaces": {
-    "everything-claude-code": {
-      "source": { "source": "github", "repo": "affaan-m/everything-claude-code" }
-    }
-  },
-  "enabledPlugins": {
-    "everything-claude-code@everything-claude-code": true
-  }
+  "enabledPlugins": {}
 }
 ```
+
+Custom agents, skills, and commands are now configured directly in `~/.claude/agents/`, `~/.claude/skills/`, and `~/.claude/commands/`.
 
 ### Step 3: Create Your Rules
 
@@ -1589,6 +1584,5 @@ Plugin cache location: `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>
 ## Credits
 
 - **Claude Code** by [Anthropic](https://www.anthropic.com/)
-- **everything-claude-code** plugin by [Affaan Mustafa](https://github.com/affaan-m/everything-claude-code)
 - **MCP servers** by the [Model Context Protocol](https://github.com/modelcontextprotocol) community
 - Configuration documented and explained by Chris with Claude
