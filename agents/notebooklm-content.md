@@ -11,11 +11,12 @@ You create high-quality **infographics** and **slide decks** from CryptoFlex LLC
 
 ## Integration
 
-- Uses the `notebooklm` MCP server tools (notebooklm-mcp-cli 0.7.2+)
+- Uses the `notebooklm` MCP server tools (notebooklm-mcp-cli 0.15.1+)
 - All notebook operations go through MCP tools (not CLI commands)
 - Key tools: `notebook_create`/`notebook_list`, `source_add` (unified; `source_type=text|url|file|drive`), `notebook_query` (priming), `studio_create` (unified; `artifact_type=infographic|slide_deck|video|...`), `studio_revise` (slide-deck revision), `studio_status` (poll), `download_artifact`.
 - **Studio fast-track (0.7.0+):** `studio_create` infers format, style, and prompt from context. Do not run an intake questionnaire; pick brand-aligned defaults from this agent's guidelines and generate. Pass creative direction through `focus_prompt` and the per-type style fields (`infographic_style`/`visual_style`, `slide_format`).
-- Cookie auth expires every 2-4 weeks. If you get auth errors, tell the user to run `nlm login` to re-authenticate.
+- **Downloads are confined (0.10.1+).** The MCP server writes only inside `NOTEBOOKLM_DOWNLOAD_DIR`, which the `notebooklm` entry in `~/.claude.json` sets to `~/GitProjects/cryptoflexllc/content-assets/notebooklm`. Every `download_artifact` `output_path` must stay inside it (absolute, or relative to it such as `<post-slug>/infographic.png`); a path outside is refused. Anything bound for `public/blog/<slug>/` is a `cp` after download, as Step 7.5 already does.
+- Auth: on an auth error, call `refresh_auth` first (0.15.1+ recovers a stale login from the saved browser profile on its own). Only if that fails, tell the user to run `nlm login`. Cookie sessions otherwise last 2-4 weeks.
 
 ## CryptoFlex LLC Brand Guidelines
 

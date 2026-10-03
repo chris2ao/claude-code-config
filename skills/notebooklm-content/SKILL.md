@@ -61,7 +61,7 @@ Create high-quality infographics and slide decks from your blog posts using Goog
 2. Uses NotebookLM MCP tools to create a notebook and add the post content as a source
 3. Primes the notebook with CryptoFlex LLC branding guidelines via MCP query
 4. Generates the requested content type(s) via MCP studio tools (5-15 min per asset)
-5. Downloads output to `~/GitProjects/cryptoflexllc/content-assets/notebooklm/`
+5. Downloads output to `~/GitProjects/cryptoflexllc/content-assets/notebooklm/` (the MCP server's confined download directory, `NOTEBOOKLM_DOWNLOAD_DIR` in `~/.claude.json`; since 0.10.1 a download path outside it is refused)
 6. Runs QA review: spelling, accuracy, brand compliance, DLP scanning
 7. Revises if needed (max 2 cycles)
 8. Reports results with file paths and QA summary
@@ -131,7 +131,7 @@ After generation and QA, curate select slides into the article. Slides are prima
 
 - NotebookLM generation takes 5-15 minutes per asset
 - Infographic style is influenced but not fully controlled by instructions (NotebookLM makes its own design choices)
-- Cookie auth expires every 2-4 weeks (run `nlm login` to refresh; `nlm login --check` verifies the current session). If the MCP reports `auth_status: stale`, re-auth; `unverified` is a transient network error, not an auth failure.
+- Cookie auth expires every 2-4 weeks. The MCP `refresh_auth` tool (0.15.1+) usually recovers a stale login on its own; otherwise run `nlm login` (`nlm doctor` shows the current state). If the MCP reports `auth_status: stale`, re-auth; `unverified` is a transient network error, not an auth failure.
 - Uses reverse-engineered Google APIs via notebooklm-mcp-cli (may break without notice). Keep current with `uv tool upgrade notebooklm-mcp-cli`, then reconnect the `notebooklm` MCP server.
 - Maximum 50 sources per notebook
 - Free tier rate limit: approximately 50 queries per day

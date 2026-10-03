@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 33 agents, 31 invocable skills, 43 learned skills, 2 workflows, 40 scripts, 9 commands, 13 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 37 agents, 31 invocable skills, 43 learned skills, 2 workflows, 40 scripts, 9 commands, 13 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -68,7 +68,7 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (35 files)
+### Agents (39 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
@@ -124,6 +124,15 @@ Agents in `agents/` are specialized agent definitions spawned via Claude Code's 
 | `ui-ux-lead` | sonnet | Brief, triage, integration, and synthesis stage of the `team-pipeline` workflow (uiux) |
 | `ui-ux-reviewer` | sonnet | UI/UX Reviewer + QA: heuristics evaluation, TASTE scoring, anti-pattern detection, Playwright visual testing, final quality gate |
 | `ui-visual-designer` | sonnet | UI/UX Visual Designer: aesthetic direction, color systems, typography, layout composition, anti-AI-slop |
+
+**Home Network Team** (4). No captain agent: `/homenet-document` runs `network-architect`, which runs the three specialists.
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `network-architect` | opus | Runs the /homenet-document pipeline: live UniFi MCP data, the three specialists, diagrams, and a redacted NotebookLM notebook |
+| `network-research` | sonnet | Targeted deep-research threads on UniFi configuration best practices, with cited findings |
+| `network-security-engineer` | sonnet | Scans a UniFi snapshot for risks and proposes only MCP-executable fixes, ranked by severity and usability impact |
+| `network-tech-writer` | sonnet | Writes the HomeNetwork/ markdown documentation from a UniFi MCP snapshot |
 
 ### Superpowers Plugin Skills (14 skills + 1 agent)
 

@@ -763,6 +763,10 @@ No user prompt needed:
 | context-health | Monitor context window | haiku |
 | deploy-verifier | Post-deploy verification | haiku |
 | home-sync | CJClaudin_home repo sync | haiku |
+| network-architect | /homenet-document pipeline orchestrator (UniFi data, specialists, diagrams) | opus |
+| network-research | UniFi best-practice research with cited findings | sonnet |
+| network-security-engineer | UniFi snapshot risk scan with MCP-executable fixes | sonnet |
+| network-tech-writer | HomeNetwork/ documentation from a UniFi snapshot | sonnet |
 | pre-commit-checker | Pre-commit security and quality checks | haiku |
 | session-analyzer | Extract patterns from archives | sonnet |
 | session-checkpoint | Session context save/restore | sonnet |
