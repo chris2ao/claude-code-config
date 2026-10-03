@@ -32,6 +32,7 @@ About 56 diagram components already exist. Check `src/components/mdx/index.ts` f
 - **Tailwind v4 purges dynamic classes.** Never interpolate class fragments (`bg-${c}-600`). Use complete static class strings in `as const` maps.
 - Type at or above the standards' minimums for the rendered 760 px width: titles 14 px or larger (17-18 is the target), mono 10.5 px as a hard floor (12.5 or larger is the target).
 - No em dashes in any label.
+- Escape apostrophes in SVG text as `&apos;`. A raw `'` fails CI on `react/no-unescaped-entities`; `&apos;` is the existing convention across `src/components/mdx/`.
 - Register every new component in **all three** places:
   - `src/components/mdx/index.ts`
   - the component map in `src/app/blog/[slug]/page.tsx`

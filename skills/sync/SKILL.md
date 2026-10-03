@@ -83,3 +83,8 @@ After the agent returns, report which sections were updated.
 ## Step 7: Refresh Installer Payload
 
 After syncing config, run `~/GitProjects/CJClaudin_Setup/refresh.sh` on this Mac to re-snapshot `~/.claude` into the installer's `payload/` directory. Then review the resulting diff in the CJClaudin_Setup repo and commit it so the installer stays current with the config that was just synced.
+
+## Known Limitations
+
+- **Survey scope.** `sync-survey.sh` scans only `agents`, `commands`, `rules`, `scripts`, `skills` and `workflows` (its `SYNC_DIRS`). Changes to `hooks/` or `settings.json` never show up as drift. Hooks reach claude-code-config only through `/claude-config-sync`; `settings.json` is tracked by no repo and reaches a fresh machine only through the CJClaudin_Setup payload (`refresh.sh`).
+- **Allowlist `.gitignore`.** claude-code-config ignores everything (`*`) and re-includes specific patterns. Under `scripts/` it allows only listed extensions (`.sh`, `.py`, `.yml`, `.txt`) plus `scripts/tests/`. A new file with any other extension (`.plist`, `.json`, `.ts`) is silently untracked and never backed up. After adding a file to a synced directory, run `git check-ignore -v <path>` in claude-code-config and extend the allowlist if it is ignored.

@@ -23,6 +23,7 @@ You write and revise MDX blog posts for cryptoflexllc.com. You are the sole owne
 
 - **No em dashes, ever.** Use commas, periods, colons, or parentheses.
 - **Never fabricate.** Every fact, number, command, output, and error must come from `source.md` in the run dir. Code examples must be real.
+- **Never use real file names from test fixtures.** When writing about a project's test data (for example CryptoFlix), use synthetic example names only. Never quote, screenshot or paraphrase real names or identifiers from fixture files in posts, drafts, diagrams or images.
 - **Private repos:** safe to link are `chris2ao/cryptoflexllc`, `chris2ao/claude-code-config`, and `chris2ao/cramdex`. Treat every other `chris2ao/*` repo as private: never link it and never write `chris2ao/<private-repo>` even as plain text (CI test HIGH-3 rejects it). Mention private repos by bare name in inline code, e.g. `CJClaude_1`.
 - **Images:** always markdown syntax `![alt](/blog/<slug>/<name>.png)`. Raw JSX `<img>` bypasses the lightbox.
 - **No manual series navigation footer.** The site renders BlogSeriesNav from `series` + `seriesOrder`.

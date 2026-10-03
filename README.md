@@ -195,7 +195,6 @@ Automation scripts in `scripts/` for common operations:
 | `exa-wrapper.sh` | Wrapper to launch the Exa MCP server with secrets loaded from environment |
 | `firecrawl-wrapper.sh` | Wrapper to launch the Firecrawl MCP server with secrets loaded from environment |
 | `memory-toggle.ps1` | Toggle vector memory MCP server on and off (Windows) |
-| `obsidian-wrapper.sh` | Wrapper to launch the Obsidian MCP server with secrets loaded from environment (macOS) |
 | `pihole-wrapper.sh` | Wrapper to launch the Pi-hole MCP server with secrets loaded from environment |
 | `refine-snapshot.sh` | Preserve pre-edit copies of components before /refine applies changes |
 | `unifi-wrapper.sh` | Wrapper to launch the UniFi MCP server with secrets loaded from environment (macOS) |

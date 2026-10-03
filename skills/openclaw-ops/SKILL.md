@@ -104,6 +104,30 @@ Without this, you'll see the old cached behavior and incorrectly conclude your e
 
 If `AGENTS.md` unconditionally reads a date-stamped memory file (e.g. `memory/2026-05-09.md`) that doesn't exist yet, the resulting ENOENT drives the model into tool-error-recovery: it treats the error as transcript corruption and emits a duplicate canned fallback greeting alongside the legitimate reply. Guard the read with an existence check (`ls`) first, or provide a fallback value, rather than reading unconditionally.
 
+### 9. Upgrading to 2026.9.x: npm allow-scripts and Retired Config Keys
+
+npm 11.17 added an allow-scripts gate that skips OpenClaw's postinstall and native builds (koffi, tree-sitter-bash) with only a warning. Rerun the install with the scripts explicitly allowed:
+
+```bash
+npm i -g openclaw@<version> --allow-scripts=openclaw,@google/genai,koffi,tree-sitter-bash,protobufjs
+```
+
+Check the npm output for skipped scripts; the package list can change between releases.
+
+2026.9.4 hard-rejects unknown config keys, so `config validate`, `gateway status` and the gateway itself fail and the LaunchAgent crash-loops until config is fixed. `doctor --fix` migrates some legacy keys but not keys that were retired with no replacement (in 2026.9.4: `acp.stream.coalesceIdleMs`, `acp.stream.maxChunkChars`, `acp.runtime.ttlMinutes`, `acp.maxConcurrentSessions`, `commands.ownerDisplay`, `session.agentToAgent`). Delete those by hand BEFORE running doctor. Otherwise doctor runs its state migrations, kills the gateway and unloads the LaunchAgent, then fails final validation and writes nothing to `openclaw.json`. Afterwards bring the service back with `openclaw gateway install --force`.
+
+Back up `~/.openclaw/openclaw.json` and the state directory first; schema migrations are one-way.
+
+### 10. Heartbeat: Disable in Config, Not at Runtime
+
+`openclaw system heartbeat disable` is runtime-only and is lost on every gateway restart, which is why the heartbeat token drain kept coming back. Since 2026.7.x the durable switch is config-level and hot-reloads without a restart:
+
+```json
+{ "agents": { "defaults": { "heartbeat": { "every": "0m" } } } }
+```
+
+Verify in `openclaw status --json`. On 2026.7.x the heartbeat shows `everyMs: null` (ignore its `enabled: true`, which only means a config block exists); 2026.9.4 reports `enabled: false` / `every: "disabled"`.
+
 ## Vector 0.40 VRL Gotchas
 
 These gotchas apply when authoring VRL transforms for Vector 0.40 pipelines (SIEM log-lake and similar):
