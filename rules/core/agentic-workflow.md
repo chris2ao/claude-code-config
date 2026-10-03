@@ -23,9 +23,9 @@ Before starting ANY task with 2+ independent steps:
 | Code writing, bug fixes | general-purpose | sonnet |
 | Code review (after ANY code change) | code-reviewer | inherit |
 | Security analysis (before commits) | security-reviewer | inherit |
-| Build errors | build-error-resolver | inherit |
-| Architecture decisions | architect | opus |
-| Documentation updates | doc-updater | haiku |
+| Build errors | general-purpose (with superpowers:systematic-debugging) | inherit |
+| Architecture decisions | Plan | opus |
+| Documentation updates | general-purpose | haiku |
 | Research, web search | general-purpose | haiku |
 
 ## Automatic Agent Triggers
@@ -33,7 +33,7 @@ Before starting ANY task with 2+ independent steps:
 No user prompt needed — activate immediately:
 1. **2+ independent research queries** → parallel Explore agents
 2. **Code just written/modified** → code-reviewer agent
-3. **Complex feature request** → planner agent first, then parallel implementation
+3. **Complex feature request** → Plan agent first, then parallel implementation
 4. **Bug report** → parallel: Explore (find root cause) + Explore (find test coverage)
 5. **Pre-commit** → parallel: security-reviewer + code-reviewer
 6. **Multi-repo operation** → parallel agents per repo

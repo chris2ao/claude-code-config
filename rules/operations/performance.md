@@ -24,9 +24,9 @@ platform: portable
 | Code writing, bug fixes | general-purpose | sonnet |
 | Code review | code-reviewer | inherit |
 | Security analysis | security-reviewer | inherit |
-| Build errors | build-error-resolver | inherit |
-| Architecture decisions | architect | opus |
-| Documentation updates | doc-updater | haiku |
+| Build errors | general-purpose (with superpowers:systematic-debugging) | inherit |
+| Architecture decisions | Plan | opus |
+| Documentation updates | general-purpose | haiku |
 | Research, web search | general-purpose | haiku |
 
 ## Context Window Management

@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 22 agents, 18 invocable skills, 43 learned skills, 2 workflows, 40 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 24 agents, 18 invocable skills, 43 learned skills, 2 workflows, 40 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -63,14 +63,16 @@ Rules in `rules/` are loaded automatically into every Claude Code session. They 
 | `operations/context-preservation.md` | Session context preservation across compactions |
 | `operations/macos-platform.md` | macOS shell, Homebrew, notifications, file system |
 
-### Agents (22 files)
+### Agents (24 files)
 
 Agents in `agents/` are specialized agent definitions spawned via Claude Code's Task tool. Each has a focused role and optimal model assignment.
 
-**Core Agents** (6):
+**Core Agents** (8):
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
+| `code-reviewer` | inherit | Read-only review of a change for correctness bugs, edge cases, test gaps, and coding conventions |
+| `security-reviewer` | inherit | Read-only pre-commit security review: secrets, validation, injection, XSS, CSRF, auth, rate limits |
 | `evolve-synthesizer` | sonnet | Synthesizes instinct clusters into evolved agent, skill, and command candidates |
 | `notebooklm-assistant` | sonnet | Orchestrates NotebookLM workflows: notebooks, sources, content generation, research, downloads |
 | `notebooklm-content` | sonnet | Creates branded infographics and slide decks from blog posts using Google NotebookLM |
@@ -318,7 +320,7 @@ This configuration supports both **macOS** and **Windows**:
 ```
 claude-code-config/
   rules/                         # 15 global rule files (4 subdirectories)
-  agents/                        # 22 custom agent definitions
+  agents/                        # 24 custom agent definitions
   skills/                        # 18 invocable skills + 43 learned skills
   commands/                      # 9 commands
   scripts/                       # 31 automation scripts
