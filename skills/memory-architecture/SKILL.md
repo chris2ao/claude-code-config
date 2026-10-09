@@ -97,6 +97,15 @@ Two incidents made this mandatory: an observation-archival script silently lost 
 
 The server's built-in forgetting stays off (`MCP_FORGETTING_ENABLED=false`): its quality scores are flat, so it would archive most of the DB. Decay is handled by `~/.claude/scripts/memory-stale-sweep.py` (launchd `com.chris2ao.memory-stale-sweep`, 1st of the month), which soft-deletes decommissioned-topic, superseded, and never-accessed memories after a verified backup, and writes a restore manifest to `~/.claude/logs/memory-sweep/`. To keep a memory permanently, tag it `important`, `reference`, or `keep`.
 
+### 9. Near-Duplicate Rejections at Store Time
+
+The server's storage-time semantic dedup can reject a record that is genuinely new but overlaps an earlier memory (a session summary saved right after a related decision, or a corrected fact right after the old one was marked superseded). The error reads "Duplicate content detected (semantically similar to <hash>)".
+
+1. Check the named memory. If it really holds the same fact, update it (`memory_update`, or versioned) instead of storing again.
+2. If the new record differs in purpose, resend with a `conversation_id` (for example the session id). That skips semantic dedup; exact-hash duplicates are still refused.
+
+Seen in three sessions (2026-10-03, 2026-10-08 twice).
+
 ## Source Instincts
 
 - `two-tier-memory`: "when setting up persistent memory for Claude sessions"

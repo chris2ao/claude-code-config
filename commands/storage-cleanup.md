@@ -31,6 +31,11 @@ du -sh ~/Library ~/GitProjects ~/Downloads ~/Documents ~/Desktop ~/Movies ~/Musi
 
 # Hidden directories consuming space
 du -sh ~/.claude ~/.ollama ~/.docker ~/.npm ~/.pnpm-store ~/.cache ~/.local 2>/dev/null | sort -rh
+
+# macOS per-user temp folder (leaks here refilled the disk once: ~32 GiB of ONNX CoreML
+# model copies and Vitest module dirs). A daily tmpdir-leak-sweep job exists; still measure it.
+du -sh "$TMPDIR" 2>/dev/null
+du -sh "$TMPDIR"/* "$TMPDIR"/.[!.]* 2>/dev/null | sort -rh | head -15
 ```
 
 ### Agent 2: Library Deep Dive

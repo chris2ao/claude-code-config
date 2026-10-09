@@ -156,6 +156,8 @@ memory_store:
 5. **No hallucination.** If you do not know, say "insufficient data found."
 6. **Separate fact from inference.** Label estimates, projections, and opinions clearly.
 
+7. **Fact-check load-bearing claims before ranking options.** When findings (especially from research subagents) will drive a recommendation, verify each number or claim the ranking depends on against a primary source. Reject any "industry figure" that equals the project's own configuration constants (a subagent once echoed the project's size caps back as an external fact), and prefer live counts over numbers copied from briefs. If Exa times out repeatedly, fall back to WebSearch/WebFetch and note pages that returned 403.
+
 ## Examples
 
 ```
