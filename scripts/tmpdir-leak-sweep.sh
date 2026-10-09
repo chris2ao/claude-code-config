@@ -12,7 +12,19 @@ APPLY=0
 
 # Resolve symlinks (/var -> /private/var) so paths match lsof output.
 T="$(cd -P "$(getconf DARWIN_USER_TEMP_DIR)" && pwd)"
-EXTRA_DIRS=("/Volumes/MacExternal/CryptoFlix/cache/tmp")
+# Extra dirs to sweep, one absolute path per line ('#' comments allowed). They live in a
+# local file that no repo syncs, so machine-specific paths stay out of shared config.
+EXTRA_DIRS_FILE="${TMPDIR_SWEEP_EXTRA_DIRS_FILE:-$HOME/.config/tmpdir-leak-sweep/extra-dirs}"
+EXTRA_DIRS=()
+if [ -f "$EXTRA_DIRS_FILE" ]; then
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in
+      ''|'#'*) ;;
+      /*) EXTRA_DIRS+=("$line") ;;
+      *) echo "skipping non-absolute path in $EXTRA_DIRS_FILE: $line" >&2 ;;
+    esac
+  done < "$EXTRA_DIRS_FILE"
+fi
 
 open_entries() {
   # Top-level temp entries that any process holds open.
@@ -50,7 +62,10 @@ sweep_dir() {
 
 freed_kb=0; count=0
 sweep_dir "$T"
-for d in "${EXTRA_DIRS[@]}"; do sweep_dir "$d"; done
+# bash 3.2 treats an empty array as unbound under set -u, so guard the loop.
+if [ ${#EXTRA_DIRS[@]} -gt 0 ]; then
+  for d in "${EXTRA_DIRS[@]}"; do sweep_dir "$d"; done
+fi
 
 mode=$([ "$APPLY" -eq 1 ] && echo "removed" || echo "dry run")
 printf '%s %s: %d entries, %.2f GiB\n' "$(date '+%F %T')" "$mode" "$count" \
