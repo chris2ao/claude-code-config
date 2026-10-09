@@ -1,6 +1,6 @@
 # Claude Code Configuration
 
-A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 24 agents, 18 invocable skills, 43 learned skills, 2 workflows, 41 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
+A production-ready configuration for [Claude Code](https://docs.claude.com/en/docs/claude-code) with 15 rules, 24 agents, 18 invocable skills, 43 learned skills, 2 workflows, 42 scripts, 9 commands, 12 hooks, 7 MCP servers, and 65 instincts. Built through months of daily use across multiple projects on macOS and Windows.
 
 ## What This Is
 
@@ -173,7 +173,7 @@ Agent: `code-reviewer` reviews completed work against plans for quality, archite
 
 See `skills/learned/INDEX.md` for the full list with descriptions.
 
-### Scripts (41 files)
+### Scripts (42 files)
 
 Automation scripts in `scripts/` for common operations:
 
@@ -203,6 +203,7 @@ Automation scripts in `scripts/` for common operations:
 | `memory-p0-cutover.sh` | Memory P0 reliability cutover: Ollama 768d embedding migration and verification |
 | `memory-p2-apply.sh` | Memory P2 capability upgrades: consolidation schedule, quality scoring, entity links |
 | `memory-stale-sweep.py` | Monthly stale vector memory sweep with dry-run, backup, and restore capabilities |
+| `tmpdir-leak-sweep.sh` | Daily sweep of known $TMPDIR leaks (onnxruntime CoreML compiled models, Vitest client/ssr module dirs); dry run by default, `--apply` to delete, skips files still open |
 
 ## MCP Servers (7 configured)
 
