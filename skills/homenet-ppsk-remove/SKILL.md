@@ -30,10 +30,10 @@ Force removal even if it leaves 0 entries:
 
 ```bash
 # Revoke a compromised PPSK
-!bash "$HOME/.claude/scripts/homenet-ppsk-remove.sh" "LAN Solo" "CJpassword1023" --apply
+!bash "$HOME/.claude/scripts/homenet-ppsk-remove.sh" "LAN Solo" "RevokedDevicePSK-2026" --apply
 
 # Remove the initial test entry once real entries are populated
-!bash "$HOME/.claude/scripts/homenet-ppsk-remove.sh" "LAN Solo" "TestEntry-Apr2026" --apply
+!bash "$HOME/.claude/scripts/homenet-ppsk-remove.sh" "LAN Solo" "ExampleTestPSK-2026" --apply
 ```
 
 ## Effect timing
