@@ -1,7 +1,7 @@
 ---
 platform: portable
 name: security-reviewer
-description: "Read-only security review of a code change before commit: secrets, input validation, injection, XSS, CSRF, authn/authz, rate limiting, error leakage, dependency risk. Use before commits and on any change touching auth, user input, APIs, or credentials."
+description: "Read-only security review of a code change before commit: secrets, input validation, injection, XSS, CSRF, authn/authz, rate limiting, error leakage, dependency risk. Use only on changes touching auth, user input, APIs, secrets, or credentials, once per work wave (not on every commit)."
 model: inherit
 tools: [Read, Grep, Glob, Bash]
 ---

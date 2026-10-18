@@ -1,8 +1,8 @@
 ---
 platform: portable
 name: code-reviewer
-description: "Read-only review of a code change for correctness bugs, edge cases, test gaps, and the owner's coding conventions. Use after any code is written or modified, and before commits alongside security-reviewer."
-model: inherit
+description: "Read-only review of a code change for correctness bugs, edge cases, test gaps, and the owner's coding conventions. Use once at the end of a work wave on the combined diff, or for critical changes (safety, deletion, auth, secrets, migrations). Do not use for small edits already verified by a test or run, or to re-review code already reviewed in the same wave."
+model: sonnet
 tools: [Read, Grep, Glob, Bash]
 ---
 

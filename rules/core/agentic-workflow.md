@@ -21,8 +21,8 @@ Before starting ANY task with 2+ independent steps:
 | File search, codebase exploration | Explore | haiku |
 | Implementation planning | Plan | inherit |
 | Code writing, bug fixes | general-purpose | sonnet |
-| Code review (after ANY code change) | code-reviewer | inherit |
-| Security analysis (before commits) | security-reviewer | inherit |
+| Code review (end of wave or critical change, see Review Policy) | code-reviewer | sonnet |
+| Security analysis (changes touching auth, input, APIs, secrets) | security-reviewer | inherit |
 | Build errors | general-purpose (with superpowers:systematic-debugging) | inherit |
 | Architecture decisions | Plan | opus |
 | Documentation updates | general-purpose | haiku |
@@ -32,10 +32,10 @@ Before starting ANY task with 2+ independent steps:
 
 No user prompt needed — activate immediately:
 1. **2+ independent research queries** → parallel Explore agents
-2. **Code just written/modified** → code-reviewer agent
+2. **End of a work wave, or a critical change** → code-reviewer agent (see Review Policy)
 3. **Complex feature request** → Plan agent first, then parallel implementation
 4. **Bug report** → parallel: Explore (find root cause) + Explore (find test coverage)
-5. **Pre-commit** → parallel: security-reviewer + code-reviewer
+5. **Pre-commit** → security-reviewer only if the change touches auth, input, APIs, or secrets; no second code review of already-reviewed code
 6. **Multi-repo operation** → parallel agents per repo
 
 ## Parallel Patterns
@@ -46,11 +46,11 @@ When exploring unfamiliar code, launch 2-3 Explore agents simultaneously:
 - Agent 2: Find related tests and usage patterns
 - Agent 3: Check configuration and dependencies
 
-### Write-Then-Review Pipeline
-1. Write code (main context or general-purpose agent)
-2. Immediately launch in parallel:
+### Wave-End Review
+1. Write and verify code (main context or general-purpose agent)
+2. When the wave is done, launch one review of the combined diff:
    - code-reviewer agent
-   - security-reviewer agent (if touches auth, input, or API)
+   - security-reviewer agent in parallel (only if it touches auth, input, APIs, or secrets)
 3. Address findings before presenting to user
 
 ### Multi-File Changes
@@ -58,6 +58,14 @@ When modifying 3+ files:
 1. Plan agent designs the approach
 2. Parallel agents implement independent file changes
 3. code-reviewer validates the combined result
+
+## Review Policy (cost control)
+
+Reviewer subagents re-read the changed code, so they are expensive. Run them only:
+- **At the end of a work wave**: once per finished feature, phase, or batch of related edits, covering the combined diff. Never per edit, and never a second time at commit for code already reviewed in that wave.
+- **For critical changes**: safety, deletion or destructive operations, auth, secrets or credentials, data migrations.
+
+Skip review for small edits already verified by a direct test or run. Per-project review requirements still apply.
 
 ## Cost Optimization
 - Use `model: "haiku"` for read-only exploration and search

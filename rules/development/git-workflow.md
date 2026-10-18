@@ -29,5 +29,5 @@ When creating PRs:
 
 1. **Plan First** - Analyze requirements, identify dependencies, break into phases
 2. **TDD** - Write tests first (RED), implement (GREEN), refactor (IMPROVE), verify 80%+ coverage
-3. **Review** - Review code immediately after writing; address CRITICAL and HIGH issues
+3. **Review** - Review once at the end of the work wave (or immediately for critical changes); address CRITICAL and HIGH issues
 4. **Commit** - Detailed messages following conventional commits format

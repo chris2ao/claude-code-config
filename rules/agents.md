@@ -8,7 +8,7 @@ platform: portable
 
 No user prompt needed. Activate these automatically:
 1. **Complex feature request** - Use the Plan agent first, then parallel implementation
-2. **Code just written/modified** - Use the code-reviewer agent
+2. **End of a work wave, or a critical change** - Use the code-reviewer agent once on the combined diff (see Review Policy in `rules/core/agentic-workflow.md`); skip small, already-verified edits
 3. **Bug fix or new feature** - Use TDD workflow (superpowers:test-driven-development)
 4. **Architectural decision** - Use the Plan agent with model: opus
 5. **Build failure** - Use a general-purpose agent following superpowers:systematic-debugging

@@ -22,7 +22,7 @@ platform: portable
 | File search, codebase exploration | Explore | haiku |
 | Implementation planning | Plan | inherit |
 | Code writing, bug fixes | general-purpose | sonnet |
-| Code review | code-reviewer | inherit |
+| Code review (end of wave or critical change) | code-reviewer | sonnet |
 | Security analysis | security-reviewer | inherit |
 | Build errors | general-purpose (with superpowers:systematic-debugging) | inherit |
 | Architecture decisions | Plan | opus |
