@@ -24,7 +24,7 @@ platform: portable
 | Code writing, bug fixes | general-purpose | sonnet |
 | Code review (end of wave or critical change) | code-reviewer | sonnet |
 | Security analysis | security-reviewer | inherit |
-| Build errors | general-purpose (with superpowers:systematic-debugging) | inherit |
+| Bugs, test and build failures | main session (`systematic-debugging` skill) | n/a |
 | Architecture decisions | Plan | opus |
 | Documentation updates | general-purpose | haiku |
 | Research, web search | general-purpose | haiku |

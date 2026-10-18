@@ -15,4 +15,4 @@ When creating implementation plans, always save them as markdown files:
 
 This applies to all projects, regardless of framework or language.
 
-**Note:** This overrides the superpowers writing-plans default of `docs/superpowers/plans/`. The superpowers skill respects user preferences for plan location.
+**Note:** The `brainstorming` skill saves designs here as `<topic>-design.md`, and the `writing-plans` skill saves plans as `<topic>-plan.md`.

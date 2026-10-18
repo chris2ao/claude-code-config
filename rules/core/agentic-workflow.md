@@ -23,7 +23,7 @@ Before starting ANY task with 2+ independent steps:
 | Code writing, bug fixes | general-purpose | sonnet |
 | Code review (end of wave or critical change, see Review Policy) | code-reviewer | sonnet |
 | Security analysis (changes touching auth, input, APIs, secrets) | security-reviewer | inherit |
-| Build errors | general-purpose (with superpowers:systematic-debugging) | inherit |
+| Bugs, test and build failures | main session (`systematic-debugging` skill) | n/a |
 | Architecture decisions | Plan | opus |
 | Documentation updates | general-purpose | haiku |
 | Research, web search | general-purpose | haiku |
@@ -33,8 +33,8 @@ Before starting ANY task with 2+ independent steps:
 No user prompt needed — activate immediately:
 1. **2+ independent research queries** → parallel Explore agents
 2. **End of a work wave, or a critical change** → code-reviewer agent (see Review Policy)
-3. **Complex feature request** → Plan agent first, then parallel implementation
-4. **Bug report** → parallel: Explore (find root cause) + Explore (find test coverage)
+3. **Idea or complex feature request** → `brainstorming` skill, then `writing-plans` for project-size work
+4. **Bug report** → `systematic-debugging` skill in the main session; an Explore (haiku) agent only for a wide read-only search
 5. **Pre-commit** → security-reviewer only if the change touches auth, input, APIs, or secrets; no second code review of already-reviewed code
 6. **Multi-repo operation** → parallel agents per repo
 
