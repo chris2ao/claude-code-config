@@ -15,19 +15,9 @@ platform: portable
 **Opus 5** (Deepest reasoning):
 - Architectural decisions, security analysis, research
 
-## Subagent Model Routing
+## Subagent Use and Routing
 
-| Task Type | Subagent Type | Recommended Model |
-|-----------|--------------|-------------------|
-| File search, codebase exploration | Explore | haiku |
-| Implementation planning | Plan | inherit |
-| Code writing, bug fixes | general-purpose | sonnet |
-| Code review (end of wave or critical change) | code-reviewer | sonnet |
-| Security analysis | security-reviewer | inherit |
-| Bugs, test and build failures | main session (`systematic-debugging` skill) | n/a |
-| Architecture decisions | Plan | opus |
-| Documentation updates | general-purpose | haiku |
-| Research, web search | general-purpose | haiku |
+Default to the main session. When a helper agent is warranted, and which model it gets, is defined once in `rules/core/agentic-workflow.md`.
 
 ## Context Window Management
 
@@ -35,7 +25,6 @@ Avoid last 20% of context window for large-scale refactoring, multi-file feature
 
 ## Cost Optimization
 
-- Use `model: "haiku"` for read-only exploration and search agents
-- Use `model: "sonnet"` for code generation agents
-- Use `model: "opus"` only for architecture and security decisions
-- Default to `inherit` when the parent session model is appropriate
+- Every subagent re-reads files in a fresh context, so the cheapest agent is the one not spawned
+- Use `model: "haiku"` for read-only search agents and `model: "sonnet"` for code-writing and review agents
+- Use opus only for security review and owner-requested architecture review
